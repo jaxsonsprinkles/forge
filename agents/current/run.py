@@ -27,7 +27,7 @@ import importlib.util
 import json
 from pathlib import Path
 from types import ModuleType
-from typing import Any
+from typing import Any, Callable
 
 import yaml
 
@@ -152,6 +152,73 @@ def _run_verify(
     return step_index_by_name[on_fail]
 
 
+class _StepContext:
+    """Everything a step handler needs, threaded through run()'s loop.
+
+    Grouping this into one object (rather than a run() with a growing
+    parameter list) is what keeps run()'s loop itself agnostic to how
+    many kinds of state a given step type needs - a new step type can
+    read/write its own fields here without changing run()'s signature.
+
+    A plain class, not @dataclass: this module is always loaded
+    dynamically by file path (see module docstring), which never
+    registers it in sys.modules - and dataclass's handling of `from
+    __future__ import annotations` string annotations requires exactly
+    that registration, raising AttributeError otherwise.
+    """
+
+    def __init__(
+        self,
+        system_prompt: str,
+        task_input: dict[str, Any],
+        memory: dict[str, Any],
+        step_index_by_name: dict[str, int],
+    ) -> None:
+        self.system_prompt = system_prompt
+        self.task_input = task_input
+        self.memory = memory
+        self.step_index_by_name = step_index_by_name
+        self.retry_counts: dict[str, int] = {}
+        self.last_output_key: str | None = None
+
+
+def _handle_llm_call(step: dict[str, Any], i: int, ctx: _StepContext) -> int:
+    with _runner.open_step_span(f"llm_call:{step['name']}", "LLM"):
+        output = _run_llm_call(step, ctx.system_prompt, ctx.task_input, ctx.memory)
+    output_key = step.get("output_key", step["name"])
+    memory_mod.record(ctx.memory, output_key, output)
+    ctx.last_output_key = output_key
+    return i + 1
+
+
+def _handle_tool_call(step: dict[str, Any], i: int, ctx: _StepContext) -> int:
+    with _runner.open_step_span(f"tool_call:{step['name']}", "TOOL"):
+        output = _run_tool_call(step, ctx.memory)
+    output_key = step.get("output_key", step["name"])
+    memory_mod.record(ctx.memory, output_key, output)
+    ctx.last_output_key = output_key
+    return i + 1
+
+
+def _handle_verify(step: dict[str, Any], i: int, ctx: _StepContext) -> int:
+    with _runner.open_step_span(f"verify:{step['name']}", "GUARDRAIL"):
+        jump_to = _run_verify(step, ctx.memory, ctx.step_index_by_name, ctx.retry_counts)
+    return jump_to if jump_to is not None else i + 1
+
+
+# Step-type dispatch table: type name -> handler(step, i, ctx) -> next index.
+# This is the interpreter's one extension point. graph.yaml can list any
+# number of steps in any order/shape (see run() below, which never
+# assumes a step count or fixed position); adding a new step type (e.g.
+# a future "reflect" type) means writing one handler with this signature
+# and adding it here - run()'s loop itself never needs to change.
+_STEP_HANDLERS: dict[str, Callable[[dict[str, Any], int, _StepContext], int]] = {
+    "llm_call": _handle_llm_call,
+    "tool_call": _handle_tool_call,
+    "verify": _handle_verify,
+}
+
+
 def _finalize_output(memory: dict[str, Any], output_key: str | None) -> Any:
     """Return the last step's raw output, parsed as JSON when it looks
     like one - so a JSON-object answer (invoices, docqa) comes back as a
@@ -178,45 +245,32 @@ def run(task_input: dict) -> Any:
     AGENTS.md's `run(task_input: dict) -> dict` entrypoint shape; in
     practice returns whatever the graph's last step produced, parsed as
     JSON when possible (see _finalize_output).
+
+    Fully generic over graph.yaml's shape: this loop never assumes a
+    step count, a fixed sequence, or that any particular step name
+    exists. It only knows how to (a) look up a step's type in
+    _STEP_HANDLERS and (b) advance to whatever index that handler
+    returns - so graph.yaml mutations (core/proposer.py's orchestration
+    surface) can insert, split, reorder, or remove steps freely without
+    ever requiring a change here.
     """
     steps = _load_graph()
-    system_prompt = _load_system_prompt()
-    memory = memory_mod.create(task_input)
+    ctx = _StepContext(
+        system_prompt=_load_system_prompt(),
+        task_input=task_input,
+        memory=memory_mod.create(task_input),
+        step_index_by_name={step["name"]: i for i, step in enumerate(steps)},
+    )
 
-    step_index_by_name = {step["name"]: i for i, step in enumerate(steps)}
-    retry_counts: dict[str, int] = {}
-
-    last_output_key: str | None = None
     i = 0
     guard = 0
     max_iterations = len(steps) * 4 + 4  # bounds retry loops so a bad graph can't hang a run
     while i < len(steps) and guard < max_iterations:
         guard += 1
         step = steps[i]
-        step_type = step.get("type")
+        handler = _STEP_HANDLERS.get(step.get("type"))
+        if handler is None:
+            raise ValueError(f"graph.yaml step {step.get('name')!r} has unknown type {step.get('type')!r}")
+        i = handler(step, i, ctx)
 
-        if step_type == "llm_call":
-            with _runner.open_step_span(f"llm_call:{step['name']}", "LLM"):
-                output = _run_llm_call(step, system_prompt, task_input, memory)
-            output_key = step.get("output_key", step["name"])
-            memory_mod.record(memory, output_key, output)
-            last_output_key = output_key
-            i += 1
-
-        elif step_type == "tool_call":
-            with _runner.open_step_span(f"tool_call:{step['name']}", "TOOL"):
-                output = _run_tool_call(step, memory)
-            output_key = step.get("output_key", step["name"])
-            memory_mod.record(memory, output_key, output)
-            last_output_key = output_key
-            i += 1
-
-        elif step_type == "verify":
-            with _runner.open_step_span(f"verify:{step['name']}", "GUARDRAIL"):
-                jump_to = _run_verify(step, memory, step_index_by_name, retry_counts)
-            i = jump_to if jump_to is not None else i + 1
-
-        else:
-            raise ValueError(f"graph.yaml step {step.get('name')!r} has unknown type {step_type!r}")
-
-    return _finalize_output(memory, last_output_key)
+    return _finalize_output(ctx.memory, ctx.last_output_key)
