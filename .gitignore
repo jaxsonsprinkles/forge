@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+.venv/
+ledger/llm_cache/
+.pytest_cache/
