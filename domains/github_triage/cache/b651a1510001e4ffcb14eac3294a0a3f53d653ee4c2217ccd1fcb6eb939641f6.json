@@ -1,0 +1,162 @@
+{
+  "incomplete_results": false,
+  "items": [
+    {
+      "active_lock_reason": null,
+      "assignee": {
+        "avatar_url": "https://avatars.githubusercontent.com/u/189319565?v=4",
+        "events_url": "https://api.github.com/users/electrohyun/events{/privacy}",
+        "followers_url": "https://api.github.com/users/electrohyun/followers",
+        "following_url": "https://api.github.com/users/electrohyun/following{/other_user}",
+        "gists_url": "https://api.github.com/users/electrohyun/gists{/gist_id}",
+        "gravatar_id": "",
+        "html_url": "https://github.com/electrohyun",
+        "id": 189319565,
+        "login": "electrohyun",
+        "node_id": "U_kgDOC0jJjQ",
+        "organizations_url": "https://api.github.com/users/electrohyun/orgs",
+        "received_events_url": "https://api.github.com/users/electrohyun/received_events",
+        "repos_url": "https://api.github.com/users/electrohyun/repos",
+        "site_admin": false,
+        "starred_url": "https://api.github.com/users/electrohyun/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/electrohyun/subscriptions",
+        "type": "User",
+        "url": "https://api.github.com/users/electrohyun",
+        "user_view_type": "public"
+      },
+      "assignees": [
+        {
+          "avatar_url": "https://avatars.githubusercontent.com/u/189319565?v=4",
+          "events_url": "https://api.github.com/users/electrohyun/events{/privacy}",
+          "followers_url": "https://api.github.com/users/electrohyun/followers",
+          "following_url": "https://api.github.com/users/electrohyun/following{/other_user}",
+          "gists_url": "https://api.github.com/users/electrohyun/gists{/gist_id}",
+          "gravatar_id": "",
+          "html_url": "https://github.com/electrohyun",
+          "id": 189319565,
+          "login": "electrohyun",
+          "node_id": "U_kgDOC0jJjQ",
+          "organizations_url": "https://api.github.com/users/electrohyun/orgs",
+          "received_events_url": "https://api.github.com/users/electrohyun/received_events",
+          "repos_url": "https://api.github.com/users/electrohyun/repos",
+          "site_admin": false,
+          "starred_url": "https://api.github.com/users/electrohyun/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/electrohyun/subscriptions",
+          "type": "User",
+          "url": "https://api.github.com/users/electrohyun",
+          "user_view_type": "public"
+        }
+      ],
+      "author_association": "CONTRIBUTOR",
+      "body": "<img width=\"1439\" height=\"634\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/6f19222c-2e12-4d04-9f43-1b5e0785149b\" />\n\n### Environment\n\nNode version: v24.11.1\nnpm version: v11.6.4\nLocal ESLint version: v10.9.1\nGlobal ESLint version: None\nOperating System: Windows 11\n\n### What parser are you using?\n\nDefault (Espree)\n\n### What did you do?\n\n<details>\n<summary>Configuration</summary>\n\n```js\nexport default [{\n    rules: {\n        \"no-unexpected-multiline\": \"error\",\n    },\n}];\n```\n\n</details>\n\n```js\nfoo\n/bar/d.test(baz);\n\nfoo\n/bar/v.test(baz);\n```\n\n### What did you expect to happen?\n\nBoth expressions should be reported just like the same code using the `g` or `s`.\n\n### What actually happened?\n\nNo errors were reported.\n\n### Link to Minimal Reproducible Example\n\n[Playground](https://eslint.org/play/#eyJ0ZXh0IjoiLyogZXNsaW50IG5vLXVuZXhwZWN0ZWQtbXVsdGlsaW5lOiBcImVycm9yXCIsIG5vLXVuZGVmOiBcIm9mZlwiICovXG5cbi8vIHJlcG9ydGVkXG5mb29cbi9iYXIvZy50ZXN0KGJheik7XG5cbi8vIG5vdCByZXBvcnRlZFxuZm9vXG4vYmFyL2QudGVzdChiYXopO1xuXG4vLyBub3QgcmVwb3J0ZWRcbmZvb1xuL2Jhci92LnRlc3QoYmF6KTsiLCJvcHRpb25zIjp7InJ1bGVzIjp7ImNvbnN0cnVjdG9yLXN1cGVyIjpbImVycm9yIl0sImZvci1kaXJlY3Rpb24iOlsiZXJyb3IiXSwiZ2V0dGVyLXJldHVybiI6WyJlcnJvciJdLCJuby1hc3luYy1wcm9taXNlLWV4ZWN1dG9yIjpbImVycm9yIl0sIm5vLWNhc2UtZGVjbGFyYXRpb25zIjpbImVycm9yIl0sIm5vLWNsYXNzLWFzc2lnbiI6WyJlcnJvciJdLCJuby1jb21wYXJlLW5lZy16ZXJvIjpbImVycm9yIl0sIm5vLWNvbmQtYXNzaWduIjpbImVycm9yIl0sIm5vLWNvbnN0LWFzc2lnbiI6WyJlcnJvciJdLCJuby1jb25zdGFudC1iaW5hcnktZXhwcmVzc2lvbiI6WyJlcnJvciJdLCJuby1jb25zdGFudC1jb25kaXRpb24iOlsiZXJyb3IiXSwibm8tY29udHJvbC1yZWdleCI6WyJlcnJvciJdLCJuby1kZWJ1Z2dlciI6WyJlcnJvciJdLCJuby1kZWxldGUtdmFyIjpbImVycm9yIl0sIm5vLWR1cGUtYXJncyI6WyJlcnJvciJdLCJuby1kdXBlLWNsYXNzLW1lbWJlcnMiOlsiZXJyb3IiXSwibm8tZHVwZS1lbHNlLWlmIjpbImVycm9yIl0sIm5vLWR1cGUta2V5cyI6WyJlcnJvciJdLCJuby1kdXBsaWNhdGUtY2FzZSI6WyJlcnJvciJdLCJuby1lbXB0eSI6WyJlcnJvciJdLCJuby1lbXB0eS1jaGFyYWN0ZXItY2xhc3MiOlsiZXJyb3IiXSwibm8tZW1wdHktcGF0dGVybiI6WyJlcnJvciJdLCJuby1lbXB0eS1zdGF0aWMtYmxvY2siOlsiZXJyb3IiXSwibm8tZXgtYXNzaWduIjpbImVycm9yIl0sIm5vLWV4dHJhLWJvb2xlYW4tY2FzdCI6WyJlcnJvciJdLCJuby1mYWxsdGhyb3VnaCI6WyJlcnJvciJdLCJuby1mdW5jLWFzc2lnbiI6WyJlcnJvciJdLCJuby1nbG9iYWwtYXNzaWduIjpbImVycm9yIl0sIm5vLWltcG9ydC1hc3NpZ24iOlsiZXJyb3IiXSwibm8taW52YWxpZC1yZWdleHAiOlsiZXJyb3IiXSwibm8taXJyZWd1bGFyLXdoaXRlc3BhY2UiOlsiZXJyb3IiXSwibm8tbG9zcy1vZi1wcmVjaXNpb24iOlsiZXJyb3IiXSwibm8tbWlzbGVhZGluZy1jaGFyYWN0ZXItY2xhc3MiOlsiZXJyb3IiXSwibm8tbmV3LW5hdGl2ZS1ub25jb25zdHJ1Y3RvciI6WyJlcnJvciJdLCJuby1ub25vY3RhbC1kZWNpbWFsLWVzY2FwZSI6WyJlcnJvciJdLCJuby1vYmotY2FsbHMiOlsiZXJyb3IiXSwibm8tb2N0YWwiOlsiZXJyb3IiXSwibm8tcHJvdG90eXBlLWJ1aWx0aW5zIjpbImVycm9yIl0sIm5vLXJlZGVjbGFyZSI6WyJlcnJvciJdLCJuby1yZWdleC1zcGFjZXMiOlsiZXJyb3IiXSwibm8tc2VsZi1hc3NpZ24iOlsiZXJyb3IiXSwibm8tc2V0dGVyLXJldHVybiI6WyJlcnJvciJdLCJuby1zaGFkb3ctcmVzdHJpY3RlZC1uYW1lcyI6WyJlcnJvciJdLCJuby1zcGFyc2UtYXJyYXlzIjpbImVycm9yIl0sIm5vLXRoaXMtYmVmb3JlLXN1cGVyIjpbImVycm9yIl0sIm5vLXVuYXNzaWduZWQtdmFycyI6WyJlcnJvciJdLCJuby11bmRlZiI6WyJlcnJvciJdLCJuby11bmV4cGVjdGVkLW11bHRpbGluZSI6WyJlcnJvciJdLCJuby11bnJlYWNoYWJsZSI6WyJlcnJvciJdLCJuby11bnNhZmUtZmluYWxseSI6WyJlcnJvciJdLCJuby11bnNhZmUtbmVnYXRpb24iOlsiZXJyb3IiXSwibm8tdW5zYWZlLW9wdGlvbmFsLWNoYWluaW5nIjpbImVycm9yIl0sIm5vLXVudXNlZC1sYWJlbHMiOlsiZXJyb3IiXSwibm8tdW51c2VkLXByaXZhdGUtY2xhc3MtbWVtYmVycyI6WyJlcnJvciJdLCJuby11bnVzZWQtdmFycyI6WyJlcnJvciJdLCJuby11c2VsZXNzLWFzc2lnbm1lbnQiOlsiZXJyb3IiXSwibm8tdXNlbGVzcy1iYWNrcmVmZXJlbmNlIjpbImVycm9yIl0sIm5vLXVzZWxlc3MtY2F0Y2giOlsiZXJyb3IiXSwibm8tdXNlbGVzcy1lc2NhcGUiOlsiZXJyb3IiXSwibm8td2l0aCI6WyJlcnJvciJdLCJwcmVzZXJ2ZS1jYXVnaHQtZXJyb3IiOlsiZXJyb3IiXSwicmVxdWlyZS15aWVsZCI6WyJlcnJvciJdLCJ1c2UtaXNuYW4iOlsiZXJyb3IiXSwidmFsaWQtdHlwZW9mIjpbImVycm9yIl19LCJsYW5ndWFnZU9wdGlvbnMiOnsicGFyc2VyT3B0aW9ucyI6eyJlY21hRmVhdHVyZXMiOnt9fX19fQ==)\n\n### Participation\n\n- [x] I am willing to submit a pull request for this issue.\n\n### AI acknowledgment\n\n- [x] I did not use AI to generate this issue report.\n- [ ] (If the above is not checked) I have reviewed the AI-generated content before submitting.\n\n### Additional comments\n\n_No response_\n\n<hr />\n\nDisclosure: I'm a participant of [open source contribution program OSSCA](https://github.com/eslint-ossca)",
+      "closed_at": "2026-09-04T07:43:20Z",
+      "comments": 2,
+      "comments_url": "https://api.github.com/repos/eslint/eslint/issues/21304/comments",
+      "created_at": "2026-09-04T02:12:11Z",
+      "events_url": "https://api.github.com/repos/eslint/eslint/issues/21304/events",
+      "html_url": "https://github.com/eslint/eslint/issues/21304",
+      "id": 5343404733,
+      "issue_dependencies_summary": {
+        "blocked_by": 0,
+        "blocking": 0,
+        "total_blocked_by": 0,
+        "total_blocking": 0
+      },
+      "issue_field_values": [],
+      "labels": [
+        {
+          "color": "fc2929",
+          "default": true,
+          "description": "ESLint is working incorrectly",
+          "id": 45711350,
+          "name": "bug",
+          "node_id": "MDU6TGFiZWw0NTcxMTM1MA==",
+          "url": "https://api.github.com/repos/eslint/eslint/labels/bug"
+        },
+        {
+          "color": "fbca04",
+          "default": false,
+          "description": "Relates to ESLint's core rules",
+          "id": 45798639,
+          "name": "rule",
+          "node_id": "MDU6TGFiZWw0NTc5ODYzOQ==",
+          "url": "https://api.github.com/repos/eslint/eslint/labels/rule"
+        },
+        {
+          "color": "0052cc",
+          "default": false,
+          "description": "There is consensus among the team that this change meets the criteria for inclusion",
+          "id": 131106229,
+          "name": "accepted",
+          "node_id": "MDU6TGFiZWwxMzExMDYyMjk=",
+          "url": "https://api.github.com/repos/eslint/eslint/labels/accepted"
+        },
+        {
+          "color": "7A14E9",
+          "default": false,
+          "description": "Issues with a reproducible example",
+          "id": 2786823532,
+          "name": "repro:yes",
+          "node_id": "MDU6TGFiZWwyNzg2ODIzNTMy",
+          "url": "https://api.github.com/repos/eslint/eslint/labels/repro:yes"
+        }
+      ],
+      "labels_url": "https://api.github.com/repos/eslint/eslint/issues/21304/labels{/name}",
+      "locked": false,
+      "milestone": null,
+      "node_id": "I_kwDOAKjKDc8AAAABPn3ivQ",
+      "number": 21304,
+      "performed_via_github_app": null,
+      "pinned_comment": null,
+      "reactions": {
+        "+1": 0,
+        "-1": 0,
+        "confused": 0,
+        "eyes": 0,
+        "heart": 0,
+        "hooray": 0,
+        "laugh": 0,
+        "rocket": 0,
+        "total_count": 0,
+        "url": "https://api.github.com/repos/eslint/eslint/issues/21304/reactions"
+      },
+      "repository_url": "https://api.github.com/repos/eslint/eslint",
+      "score": 1.0,
+      "state": "closed",
+      "state_reason": "completed",
+      "sub_issues_summary": {
+        "completed": 0,
+        "percent_completed": 0,
+        "total": 0
+      },
+      "timeline_url": "https://api.github.com/repos/eslint/eslint/issues/21304/timeline",
+      "title": "Bug: `no-unexpected-multiline` ignores the `d` and `v` regex flags",
+      "type": null,
+      "updated_at": "2026-09-04T07:43:20Z",
+      "url": "https://api.github.com/repos/eslint/eslint/issues/21304",
+      "user": {
+        "avatar_url": "https://avatars.githubusercontent.com/u/189319565?v=4",
+        "events_url": "https://api.github.com/users/electrohyun/events{/privacy}",
+        "followers_url": "https://api.github.com/users/electrohyun/followers",
+        "following_url": "https://api.github.com/users/electrohyun/following{/other_user}",
+        "gists_url": "https://api.github.com/users/electrohyun/gists{/gist_id}",
+        "gravatar_id": "",
+        "html_url": "https://github.com/electrohyun",
+        "id": 189319565,
+        "login": "electrohyun",
+        "node_id": "U_kgDOC0jJjQ",
+        "organizations_url": "https://api.github.com/users/electrohyun/orgs",
+        "received_events_url": "https://api.github.com/users/electrohyun/received_events",
+        "repos_url": "https://api.github.com/users/electrohyun/repos",
+        "site_admin": false,
+        "starred_url": "https://api.github.com/users/electrohyun/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/electrohyun/subscriptions",
+        "type": "User",
+        "url": "https://api.github.com/users/electrohyun",
+        "user_view_type": "public"
+      }
+    }
+  ],
+  "search_type": "lexical",
+  "total_count": 1
+}
