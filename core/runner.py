@@ -13,6 +13,14 @@ are caught and recorded on `RunResult.error`, never re-raised.
 Neatlogs tracing is best-effort. If the SDK isn't installed, no API key is
 configured, or any call into it fails, tracing silently degrades to
 `trace_id=None` (with a logged warning) - it must never break a run.
+
+Tracing follows the documented SDK surface at docs.neatlogs.com/sdk/python:
+`neatlogs.init(api_key=...)` to configure the client, and
+`with neatlogs.trace(name=..., kind=...) as span:` context managers for
+spans (kinds are the documented WORKFLOW/AGENT/.../GUARDRAIL values). The
+docs don't expose a way to read a trace/span id back off that context
+manager, so `_neatlogs_trace_id` best-effort-probes common attribute names
+and degrades to `None` if none are present.
 """
 
 from __future__ import annotations
@@ -78,7 +86,8 @@ def _load_dataset(dataset_path: str, split: str, max_tasks: int) -> list[dict]:
 
 
 def _neatlogs_init() -> Any | None:
-    """Best-effort Neatlogs tracer init. Never raises; returns None on any failure."""
+    """Best-effort `neatlogs.init(api_key=...)`. Never raises; returns the SDK
+    module on success (there to call `.trace()`/`.flush()` on), else None."""
     if _neatlogs_sdk is None:
         logger.warning("neatlogs package not installed; tracing disabled for this run")
         return None
@@ -87,52 +96,80 @@ def _neatlogs_init() -> Any | None:
         logger.warning("NEATLOGS_API_KEY not set; tracing disabled for this run")
         return None
     try:
-        return _neatlogs_sdk.init(api_key=api_key)
+        _neatlogs_sdk.init(api_key=api_key)
     except Exception:
         logger.warning("neatlogs.init() failed; tracing disabled for this run", exc_info=True)
         return None
+    return _neatlogs_sdk
 
 
-def _neatlogs_start_trace(tracer: Any, task_id: str) -> tuple[Any, str | None]:
-    """Start a per-task trace. Returns (trace_or_None, trace_id_or_None)."""
-    if tracer is None:
-        return None, None
-    try:
-        trace = tracer.start_trace(name=f"task:{task_id}")
-        trace_id = getattr(trace, "id", None) or getattr(trace, "trace_id", None)
-        return trace, trace_id
-    except Exception:
-        logger.warning("neatlogs start_trace failed for task %s", task_id, exc_info=True)
-        return None, None
+class _NoopSpan:
+    """No-op stand-in for `neatlogs.trace(...)` when tracing is inactive."""
 
-
-def _neatlogs_end_trace(trace: Any) -> None:
-    if trace is None:
-        return
-    try:
-        trace.end()
-    except Exception:
-        logger.warning("neatlogs end_trace failed", exc_info=True)
-
-
-def _neatlogs_start_span(trace: Any, name: str) -> Any | None:
-    """Start a named span (e.g. an agent step or tool call) within a trace."""
-    if trace is None:
-        return None
-    try:
-        return trace.start_span(name)
-    except Exception:
-        logger.warning("neatlogs start_span(%r) failed", name, exc_info=True)
+    def __enter__(self) -> None:
         return None
 
+    def __exit__(self, *exc_info: object) -> bool:
+        return False
 
-def _neatlogs_end_span(span: Any | None) -> None:
+
+class _SafeSpan:
+    """Wraps a real `neatlogs.trace(...)` context manager so that a failure to
+    start or stop tracing degrades silently instead of affecting the run."""
+
+    def __init__(self, inner: Any, label: str) -> None:
+        self._inner = inner
+        self._label = label
+        self._active = False
+
+    def __enter__(self) -> Any:
+        try:
+            value = self._inner.__enter__()
+        except Exception:
+            logger.warning("neatlogs span %r failed to start", self._label, exc_info=True)
+            return None
+        self._active = True
+        return value
+
+    def __exit__(self, *exc_info: object) -> bool:
+        if not self._active:
+            return False
+        try:
+            return bool(self._inner.__exit__(*exc_info))
+        except Exception:
+            logger.warning("neatlogs span %r failed to stop", self._label, exc_info=True)
+            return False
+
+
+def _neatlogs_span(sdk: Any | None, name: str, kind: str) -> _NoopSpan | _SafeSpan:
+    """Best-effort `with neatlogs.trace(name=..., kind=...) as span:` per the
+    documented span kinds (WORKFLOW, AGENT, CHAIN, TOOL, RETRIEVER, EMBEDDING,
+    GUARDRAIL, MCP_TOOL). Degrades to a no-op span on any failure."""
+    if sdk is None:
+        return _NoopSpan()
+    try:
+        inner = sdk.trace(name=name, kind=kind)
+    except Exception:
+        logger.warning("neatlogs.trace(name=%r, kind=%r) failed", name, kind, exc_info=True)
+        return _NoopSpan()
+    return _SafeSpan(inner, name)
+
+
+def _neatlogs_trace_id(span: Any | None) -> str | None:
+    """Best-effort trace id extraction; the documented span only exposes
+    `set_attribute`, so this probes common id attribute names instead."""
     if span is None:
+        return None
+    return getattr(span, "trace_id", None) or getattr(span, "id", None)
+
+
+def _neatlogs_flush(sdk: Any | None) -> None:
+    if sdk is None:
         return
     try:
-        span.end()
+        sdk.flush()
     except Exception:
-        logger.warning("neatlogs end_span failed", exc_info=True)
+        logger.warning("neatlogs.flush() failed", exc_info=True)
 
 
 def run_agent(agent_path: str, task_spec: TaskSpec, split: str) -> list[RunResult]:
@@ -146,7 +183,7 @@ def run_agent(agent_path: str, task_spec: TaskSpec, split: str) -> list[RunResul
     scorer_fn = _load_scorer(task_spec.scorer_id)
     tasks = _load_dataset(task_spec.dataset_path, split, task_spec.max_tasks)
 
-    tracer = _neatlogs_init()
+    sdk = _neatlogs_init()
 
     results: list[RunResult] = []
     for task in tasks:
@@ -154,31 +191,27 @@ def run_agent(agent_path: str, task_spec: TaskSpec, split: str) -> list[RunResul
         task_input = task.get("input", {})
         expected = task.get("expected")
 
-        trace, trace_id = _neatlogs_start_trace(tracer, task_id)
         spend_before = llm._cumulative_spend_usd
         start = monotonic()
 
         output: Any = None
         error: str | None = None
         passed = False
+        trace_id: str | None = None
         try:
-            span = _neatlogs_start_span(trace, "agent_run")
-            try:
-                output = run_fn(task_input)
-            finally:
-                _neatlogs_end_span(span)
+            with _neatlogs_span(sdk, f"task:{task_id}", "WORKFLOW") as trace:
+                trace_id = _neatlogs_trace_id(trace)
 
-            span = _neatlogs_start_span(trace, "score")
-            try:
-                passed = bool(scorer_fn(output, expected))
-            finally:
-                _neatlogs_end_span(span)
+                with _neatlogs_span(sdk, "agent_run", "AGENT"):
+                    output = run_fn(task_input)
+
+                with _neatlogs_span(sdk, "score", "GUARDRAIL"):
+                    passed = bool(scorer_fn(output, expected))
         except Exception as exc:  # noqa: BLE001 - a task's crash must never kill the run
             error = f"{type(exc).__name__}: {exc}"
         finally:
             latency_ms = int((monotonic() - start) * 1000)
             cost_usd = llm._cumulative_spend_usd - spend_before
-            _neatlogs_end_trace(trace)
 
         results.append(
             RunResult(
@@ -191,5 +224,7 @@ def run_agent(agent_path: str, task_spec: TaskSpec, split: str) -> list[RunResul
                 trace_id=trace_id,
             )
         )
+
+    _neatlogs_flush(sdk)
 
     return results
