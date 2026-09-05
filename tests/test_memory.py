@@ -96,6 +96,39 @@ def test_retrieve_increments_times_retrieved(tmp_path):
     assert results[0].times_retrieved == 2
 
 
+def test_peek_matches_retrieve_ranking_without_bumping_times_retrieved(tmp_path):
+    relevant = _entry(id="mem-relevant", trigger="fixing a null pointer exception in java")
+    irrelevant = _entry(id="mem-irrelevant", trigger="formatting yaml indentation")
+    memory.write(relevant, base_dir=tmp_path)
+    memory.write(irrelevant, base_dir=tmp_path)
+
+    peeked = memory.peek(
+        {"bug_report": "we are seeing a null pointer exception in java"},
+        domain_id="coderepair",
+        k=5,
+        base_dir=tmp_path,
+    )
+
+    assert [e.id for e in peeked] == ["mem-relevant"]
+    assert peeked[0].times_retrieved == 0
+
+    reloaded = memory.get_entry("mem-relevant", "coderepair", base_dir=tmp_path)
+    assert reloaded.times_retrieved == 0, "peek() must never durably bump times_retrieved"
+
+
+def test_peek_never_calls_write(tmp_path, monkeypatch):
+    memory.write(_entry(id="mem-001", trigger="null pointer exception"), base_dir=tmp_path)
+
+    def _fail_if_called(*args, **kwargs):
+        raise AssertionError("memory.write should not have been called")
+
+    monkeypatch.setattr(memory, "write", _fail_if_called)
+
+    found = memory.peek({"bug": "null pointer exception"}, "coderepair", k=5, base_dir=tmp_path)
+    assert len(found) == 1
+    assert found[0].id == "mem-001"
+
+
 def test_reinforce_helped_raises_confidence(tmp_path):
     memory.write(_entry(confidence=0.5), base_dir=tmp_path)
 

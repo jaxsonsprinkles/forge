@@ -11,7 +11,8 @@ from typing import Any, Callable
 import pytest
 import yaml
 
-from core import architect, llm
+from core import architect, llm, memory
+from core.memory import MemoryEntry
 from core.runner import _load_agent_run_fn
 
 AGENT_DIR = Path("agents/current")
@@ -198,3 +199,57 @@ def test_five_step_fixture_graph_runs_through_unmodified_run_py(tmp_path, monkey
     # step_five's input_keys: [out_four] must carry step_four's output forward.
     step_five_prompt = calls[2][-1]["content"]
     assert "combined-answer" in step_five_prompt
+
+
+def test_reflect_step_dedup_lookup_never_bumps_times_retrieved(tmp_path, monkeypatch):
+    """The reflect step's `existing` entries are only ever handed to
+    core.reflect.reflect() as dedup context - they're never written back
+    into ctx.memory, so the agent's own prompt never sees them. That
+    lookup must use core.memory.peek(), not retrieve(): using retrieve()
+    would durably bump times_retrieved for an entry the agent was never
+    actually shown, and would double-count it whenever some other caller
+    (e.g. evals/learning_curve.py) also retrieves for the same task."""
+    agent_dir = architect.scaffold(tmp_path / "agent", source=AGENT_DIR)
+    base_dir = tmp_path / "mem"
+    (agent_dir / "graph.yaml").write_text(
+        "steps:\n"
+        "  - name: solve\n"
+        "    type: llm_call\n"
+        "    output_key: draft\n"
+        "  - name: reflect_step\n"
+        "    type: reflect\n"
+        "    domain_id: demo\n"
+        "    input_key: draft\n"
+        f"    base_dir: {base_dir}\n"
+        "    k: 5\n"
+    )
+
+    entry = MemoryEntry(
+        id="mem-1",
+        domain_id="demo",
+        scope="rule",
+        content="a lesson about anything",
+        trigger="question anything",
+        evidence_task_ids=[],
+        source_run_id="seed",
+        created_gen=0,
+        confidence=0.8,
+    )
+    memory.write(entry, base_dir=base_dir)
+
+    def fake(messages: list[dict[str, Any]], model: str, **params: Any) -> tuple[str, float, int]:
+        system = messages[0]["content"]
+        if "reflection step" in system:
+            return "[]", 0.0, 1  # core.reflect.reflect(): nothing new to learn
+        return "draft text", 0.0, 1
+
+    monkeypatch.setattr(llm, "complete", fake)
+    run_fn = _load_agent_run_fn(str(agent_dir))
+
+    run_fn({"question": "anything"})
+
+    # The entry was relevant enough to be looked up (proving the lookup
+    # actually ran and matched), but that lookup must never have counted
+    # as a real retrieval.
+    reloaded = memory.get_entry("mem-1", "demo", base_dir=base_dir)
+    assert reloaded.times_retrieved == 0
