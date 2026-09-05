@@ -146,6 +146,69 @@
   .winner-cell.accepted { color: var(--good); font-weight: 600; }
   .winner-cell.noop { color: var(--muted); }
   .empty-note { color: var(--muted); font-style: italic; padding: 12px 0; }
+  nav.tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 14px clamp(16px, 4vw, 48px) 0;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  nav.tabs button {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    color: var(--muted);
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  nav.tabs button:hover { color: var(--text); }
+  nav.tabs button.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #061018;
+    font-weight: 600;
+  }
+  .view { display: none; }
+  .view.active { display: block; }
+  .chart-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 16px;
+  }
+  .search-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .search-row input {
+    flex: 1;
+    max-width: 420px;
+    background: #0006;
+    border: 1px solid var(--panel-border);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.86rem;
+    font-family: inherit;
+  }
+  .search-row .count { color: var(--muted); font-size: 0.8rem; }
+  td.content-cell { max-width: 320px; }
+  td.trigger-cell { max-width: 220px; color: var(--muted); }
+  .badge.scope-rule { background: #1b2842; color: var(--accent); }
+  .badge.scope-tool_fact { background: #2a2110; color: var(--accent-2); }
+  .badge.scope-exception { background: #3d1616; color: var(--bad); }
+  .badge.scope-preference { background: #1b2230; color: var(--muted); }
+  .badge.status-active { background: #143d29; color: var(--good); }
+  .badge.status-retired { background: #3d1616; color: var(--bad); }
+  .badge.status-merged { background: #1b2230; color: var(--muted); }
+  .trace-note { color: var(--muted); font-size: 0.78rem; margin-top: 2px; }
+  .stack-legend { display: flex; flex-wrap: wrap; gap: 10px 16px; font-size: 0.76rem; color: var(--muted); margin-bottom: 8px; }
+  .stack-legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .stack-legend i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
   footer {
     padding: 24px clamp(16px, 4vw, 48px) 40px;
     color: var(--muted);
@@ -166,7 +229,17 @@
 
 <div id="status"></div>
 
+<nav class="tabs" id="tabs">
+  <button data-view="evolution" class="active">Evolution loop</button>
+  <button data-view="learning-curve">Learning curve</button>
+  <button data-view="memory-growth">Memory growth</button>
+  <button data-view="memory-inspector">Memory inspector</button>
+  <button data-view="cost-accuracy">Cost / accuracy</button>
+</nav>
+
 <main id="app" style="display:none">
+
+<div id="view-evolution" class="view active">
 
   <section>
     <h2>Improvement curves</h2>
@@ -218,6 +291,102 @@
     </div>
   </section>
 
+</div>
+
+<div id="view-learning-curve" class="view">
+
+  <section>
+    <h2>Learning curve &mdash; holdout accuracy, memory on vs. off</h2>
+    <p class="section-note">
+      Reads <code>ledger/learning_curves/{domain}_memory_on.jsonl</code> and
+      <code>..._memory_off.jsonl</code> (written by <code>evals/learning_curve.py</code>, TASK 13).
+      Each line is one train-then-holdout pass; the y-axis is that pass's holdout
+      <code>accuracy</code>. If the "on" line rises while "off" stays flat, memory made the
+      same unmodified agent code measurably better. Domains are hardcoded below
+      (<code>LEARNING_CURVE_DOMAINS</code>) because a static page can't list a directory over
+      <code>file://</code>.
+    </p>
+    <div id="learning-curve-charts"></div>
+  </section>
+
+</div>
+
+<div id="view-memory-growth" class="view">
+
+  <section>
+    <h2>Memory growth</h2>
+    <p class="section-note">
+      Reads <code>memory/{domain}/entries.jsonl</code> directly &mdash; the same append-only,
+      one-record-per-write log <code>core/memory.py</code> writes and folds. There is no
+      separate timestamp field on a <code>MemoryEntry</code>, so "over time" here means
+      chronological write order in that file (the x-axis is the Nth write to the ledger, not a
+      wall-clock date). At each write, the chart replays every record up to that point and
+      counts current entries by <code>scope</code> (stacked) plus <code>retired</code> and
+      <code>merged</code> entries (also stacked, never dropped from the log per that module's
+      append-only design) so compaction and retirement stay visible rather than looking like
+      entries vanished.
+    </p>
+    <div id="memory-growth-charts"></div>
+  </section>
+
+</div>
+
+<div id="view-memory-inspector" class="view">
+
+  <section>
+    <h2>Memory inspector</h2>
+    <p class="section-note">
+      Every memory entry ever written for a domain, folded to its current state (latest record
+      per <code>id</code>, exactly like <code>core/memory.py</code>'s own read path). Search
+      matches content, trigger, id, source run, or evidence task ids. Every row carries its
+      <code>source_run_id</code>, <code>evidence_task_ids</code>, and <code>created_gen</code>
+      (the pass it first appeared in) &mdash; that's the full trace back to the run/task that
+      produced it, per AGENTS.md's traceability requirement.
+    </p>
+    <div class="search-row">
+      <input type="text" id="memory-search" placeholder="Search content, trigger, id, source run..." />
+      <span class="count" id="memory-search-count"></span>
+    </div>
+    <div class="panel">
+      <table id="memory-table">
+        <thead>
+          <tr>
+            <th>Domain</th>
+            <th>Scope</th>
+            <th>Status</th>
+            <th>Content</th>
+            <th>Trigger</th>
+            <th>Confidence</th>
+            <th>Retrieved</th>
+            <th>Helped</th>
+            <th>Hurt</th>
+            <th>Traceback</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+
+<div id="view-cost-accuracy" class="view">
+
+  <section>
+    <h2>Cost &amp; latency vs. accuracy, across passes</h2>
+    <p class="section-note">
+      Same per-pass records as the learning curve view, re-plotted against
+      <code>cost_per_task</code> and <code>p50_latency_ms</code> (both already recorded per
+      pass by <code>evals/learning_curve.py</code>). Points are connected in pass order so you
+      can see whether accuracy improved without cost/latency creeping up. There is no
+      routing/no-routing comparison here &mdash; step-level model routing (TASK 15) was skipped
+      for budget reasons, so this is the existing routing-less cost data only.
+    </p>
+    <div class="chart-row" id="cost-accuracy-charts"></div>
+  </section>
+
+</div>
+
 </main>
 
 <footer>
@@ -230,6 +399,30 @@
 
   var LEDGER_PATH = "../ledger/generations.jsonl";
   var COLORS = { train: "#5da8ff", holdout: "#ffb454", winner: "#57c785", candidate: "#8b93a3", baseline: "#e7e9ee" };
+
+  // Static pages can't list a directory over file://, so the domains behind
+  // TASK 13's learning-curve harness and TASK 11's memory store are named
+  // here rather than discovered. Extend these arrays as new domains get a
+  // real ledger/learning_curves/{domain}_memory_{on,off}.jsonl pair or a
+  // real memory/{domain}/entries.jsonl.
+  var LEARNING_CURVE_DOMAINS = ["github_triage"];
+  var MEMORY_DOMAINS = ["github_triage"];
+
+  var ARM_COLORS = { on: "#57c785", off: "#8b93a3" };
+  var SCOPE_COLORS = { rule: "#5da8ff", tool_fact: "#ffb454", exception: "#e05c5c", preference: "#8b93a3" };
+  var STATUS_COLORS = { retired: "#e05c5c88", merged: "#8b93a355" };
+
+  function setupTabs() {
+    var buttons = document.querySelectorAll("#tabs button");
+    buttons.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        buttons.forEach(function (b) { b.classList.remove("active"); });
+        document.querySelectorAll(".view").forEach(function (v) { v.classList.remove("active"); });
+        btn.classList.add("active");
+        document.getElementById("view-" + btn.dataset.view).classList.add("active");
+      });
+    });
+  }
 
   function showStatus(html) {
     var el = document.getElementById("status");
@@ -565,6 +758,468 @@
     return div.innerHTML;
   }
 
+  // --- Shared loading helpers for the new views -----------------------------
+  //
+  // Unlike ledger/generations.jsonl, these sources are optional/per-domain:
+  // a domain may simply not have a real learning-curve file or memory store
+  // committed yet. Missing files resolve to `null` instead of rejecting, so
+  // one absent file never blocks the sections that do have data.
+
+  function loadJsonlOrNull(path) {
+    return loadLedgerText(path)
+      .then(parseJsonl)
+      .catch(function () { return null; });
+  }
+
+  // Folds a raw JSONL array (already-parsed objects, in file order) down to
+  // the latest record per `id` - mirrors core/memory.py's `_fold`. Kept
+  // separate from parseJsonl so the memory-growth chart can still replay the
+  // *un-folded* record stream to reconstruct history.
+  function foldMemoryRecords(records) {
+    var latest = {};
+    records.forEach(function (rec) { latest[rec.id] = rec; });
+    return Object.keys(latest).map(function (id) { return latest[id]; });
+  }
+
+  // --- Learning curve (memory on vs. off) -----------------------------------
+
+  function seriesLineChart(seriesList, opts) {
+    opts = opts || {};
+    var w = 640, h = 220, padL = 44, padB = 32, padT = 12, padR = 16;
+    var allPoints = [];
+    seriesList.forEach(function (s) { allPoints = allPoints.concat(s.points); });
+
+    var xMax = Math.max(1, allPoints.reduce(function (m, p) { return Math.max(m, p.x); }, 0));
+    var yMin = opts.yMin !== undefined ? opts.yMin : 0;
+    var yMax = opts.yMax !== undefined ? opts.yMax : Math.max(1, Math.max.apply(null, allPoints.map(function (p) { return p.y; }).concat([0])));
+
+    var svg = svgEl("svg", { width: "100%", height: h, viewBox: "0 0 " + w + " " + h });
+
+    function toXY(p) {
+      var x = padL + (xMax === 0 ? 0 : p.x / xMax) * (w - padL - padR);
+      var y = (h - padB) - ((p.y - yMin) / (yMax - yMin || 1)) * (h - padB - padT);
+      return [x, y];
+    }
+
+    svg.appendChild(svgEl("line", { class: "axis-line", x1: padL, y1: h - padB, x2: w - padR, y2: h - padB }));
+    svg.appendChild(svgEl("line", { class: "axis-line", x1: padL, y1: padT, x2: padL, y2: h - padB }));
+
+    if (allPoints.length === 0) {
+      var msg = svgEl("text", { x: padL + 8, y: padT + 16 });
+      msg.textContent = "no data points";
+      svg.appendChild(msg);
+      return svg;
+    }
+
+    [0, 0.5, 1].forEach(function (frac) {
+      var yVal = yMin + frac * (yMax - yMin);
+      var xy = toXY({ x: 0, y: yVal });
+      var t = svgEl("text", { x: 4, y: xy[1] + 3 });
+      t.textContent = opts.yFormat ? opts.yFormat(yVal) : yVal.toFixed(2);
+      svg.appendChild(t);
+    });
+    [0, 0.5, 1].forEach(function (frac) {
+      var xVal = frac * xMax;
+      var xy = toXY({ x: xVal, y: yMin });
+      var t = svgEl("text", { x: xy[0] - 6, y: h - padB + 14 });
+      t.textContent = opts.xFormat ? opts.xFormat(xVal) : Math.round(xVal);
+      svg.appendChild(t);
+    });
+
+    seriesList.forEach(function (s) {
+      if (s.points.length === 0) return;
+      var sorted = s.points.slice().sort(function (a, b) { return a.x - b.x; });
+      var d = sorted.map(toXY).map(function (xy, i) {
+        return (i === 0 ? "M" : "L") + xy[0].toFixed(1) + "," + xy[1].toFixed(1);
+      }).join(" ");
+      var path = svgEl("path", { d: d, fill: "none", stroke: s.color, "stroke-width": 2 });
+      svg.appendChild(path);
+      sorted.forEach(function (p) {
+        var xy = toXY(p);
+        var c = svgEl("circle", { cx: xy[0], cy: xy[1], r: 2.8, fill: s.color });
+        var title = svgEl("title", {});
+        title.textContent = s.label + ": " + (opts.pointLabel ? opts.pointLabel(p) : "(" + p.x + ", " + p.y.toFixed(3) + ")");
+        c.appendChild(title);
+        svg.appendChild(c);
+      });
+    });
+
+    return svg;
+  }
+
+  function seriesLegend(seriesList) {
+    var legend = document.createElement("div");
+    legend.className = "legend";
+    legend.innerHTML = seriesList.map(function (s) {
+      return '<span><span class="swatch" style="background:' + s.color + '"></span>' + escapeHtml(s.label) + '</span>';
+    }).join("");
+    return legend;
+  }
+
+  function renderLearningCurveView(dataByDomain) {
+    var container = document.getElementById("learning-curve-charts");
+    container.innerHTML = "";
+    var anyData = false;
+
+    LEARNING_CURVE_DOMAINS.forEach(function (domain) {
+      var d = dataByDomain[domain];
+      var card = document.createElement("div");
+      card.className = "panel domain-card";
+      var h3 = document.createElement("h3");
+      h3.textContent = domain;
+      card.appendChild(h3);
+
+      if ((!d.on || d.on.length === 0) && (!d.off || d.off.length === 0)) {
+        var note = document.createElement("p");
+        note.className = "empty-note";
+        note.textContent = "No ledger/learning_curves/" + domain + "_memory_{on,off}.jsonl found.";
+        card.appendChild(note);
+        container.appendChild(card);
+        return;
+      }
+      anyData = true;
+
+      var series = [];
+      if (d.on && d.on.length) {
+        series.push({
+          label: "memory on",
+          color: ARM_COLORS.on,
+          points: d.on.map(function (r) { return { x: r.pass, y: r.holdout_scorecard.accuracy }; }),
+        });
+      }
+      if (d.off && d.off.length) {
+        series.push({
+          label: "memory off",
+          color: ARM_COLORS.off,
+          points: d.off.map(function (r) { return { x: r.pass, y: r.holdout_scorecard.accuracy }; }),
+        });
+      }
+
+      card.appendChild(seriesLegend(series));
+      card.appendChild(seriesLineChart(series, {
+        yMin: 0, yMax: 1,
+        yFormat: function (v) { return Math.round(v * 100) + "%"; },
+        xFormat: function (v) { return "pass " + Math.round(v); },
+        pointLabel: function (p) { return "pass " + p.x + ", holdout accuracy " + (p.y * 100).toFixed(1) + "%"; },
+      }));
+
+      var flat = series.every(function (s) {
+        return s.points.every(function (p) { return p.y === s.points[0].y; });
+      });
+      if (flat) {
+        var flatNote = document.createElement("p");
+        flatNote.className = "section-note";
+        flatNote.style.marginTop = "6px";
+        flatNote.textContent = "Every point on this chart is flat 0% accuracy. This matches what's actually " +
+          "on disk in ledger/learning_curves/ right now: PR #21's original 5-pass run predates a fix and never " +
+          "produced nonzero scores, and PR #22's follow-up only ran a 2-pass sanity check without overwriting " +
+          "these files. A full, real 5-pass memory-on-vs-off refresh for github_triage was deliberately skipped " +
+          "(budget) - this chart is wired correctly and will show real separation once that refresh runs.";
+        card.appendChild(flatNote);
+      }
+
+      container.appendChild(card);
+    });
+
+    if (!anyData) {
+      container.innerHTML = '<p class="empty-note">No learning-curve ledger files found for any known domain.</p>';
+    }
+  }
+
+  // --- Memory growth ---------------------------------------------------------
+
+  function computeGrowthSeries(rawRecords) {
+    var scopeLayers = ["rule", "tool_fact", "exception", "preference"];
+    var layers = scopeLayers.concat(["retired", "merged"]);
+    var state = {};
+    var points = [];
+
+    rawRecords.forEach(function (rec, i) {
+      state[rec.id] = rec;
+      var counts = {};
+      layers.forEach(function (l) { counts[l] = 0; });
+      Object.keys(state).forEach(function (id) {
+        var e = state[id];
+        if (e.status === "active" && counts.hasOwnProperty(e.scope)) {
+          counts[e.scope]++;
+        } else if (e.status === "retired") {
+          counts.retired++;
+        } else if (e.status === "merged") {
+          counts.merged++;
+        }
+      });
+      points.push({ x: i + 1, counts: counts });
+    });
+
+    return { layers: layers, points: points };
+  }
+
+  function stackedAreaChart(growth) {
+    var w = 640, h = 240, padL = 44, padB = 32, padT = 12, padR = 16;
+    var svg = svgEl("svg", { width: "100%", height: h, viewBox: "0 0 " + w + " " + h });
+
+    if (growth.points.length === 0) {
+      var msg = svgEl("text", { x: padL + 8, y: padT + 16 });
+      msg.textContent = "no memory entries recorded";
+      svg.appendChild(msg);
+      return svg;
+    }
+
+    var xMax = Math.max(1, growth.points.length);
+    var yMax = Math.max(1, growth.points.reduce(function (m, p) {
+      var total = growth.layers.reduce(function (s, l) { return s + p.counts[l]; }, 0);
+      return Math.max(m, total);
+    }, 0));
+
+    function toXY(x, y) {
+      return [
+        padL + (x / xMax) * (w - padL - padR),
+        (h - padB) - (y / yMax) * (h - padB - padT),
+      ];
+    }
+
+    svg.appendChild(svgEl("line", { class: "axis-line", x1: padL, y1: h - padB, x2: w - padR, y2: h - padB }));
+    svg.appendChild(svgEl("line", { class: "axis-line", x1: padL, y1: padT, x2: padL, y2: h - padB }));
+    [0, 0.5, 1].forEach(function (frac) {
+      var yVal = frac * yMax;
+      var xy = toXY(0, yVal);
+      var t = svgEl("text", { x: 4, y: xy[1] + 3 });
+      t.textContent = Math.round(yVal);
+      svg.appendChild(t);
+    });
+    var xLabel = svgEl("text", { x: w / 2, y: h - 6 });
+    xLabel.textContent = "Nth memory.py write (chronological, not wall-clock)";
+    svg.appendChild(xLabel);
+
+    var cumulative = growth.points.map(function () { return 0; });
+    growth.layers.forEach(function (layer) {
+      var topPath = [];
+      var bottomPath = [];
+      growth.points.forEach(function (p, i) {
+        var base = cumulative[i];
+        var top = base + p.counts[layer];
+        cumulative[i] = top;
+        topPath.push(toXY(p.x, top));
+        bottomPath.push(toXY(p.x, base));
+      });
+      var d = topPath.map(function (xy, i) { return (i === 0 ? "M" : "L") + xy[0].toFixed(1) + "," + xy[1].toFixed(1); }).join(" ") +
+        " L" + bottomPath[bottomPath.length - 1][0].toFixed(1) + "," + bottomPath[bottomPath.length - 1][1].toFixed(1) +
+        " " + bottomPath.slice().reverse().map(function (xy) { return "L" + xy[0].toFixed(1) + "," + xy[1].toFixed(1); }).join(" ") + " Z";
+      var fill = SCOPE_COLORS[layer] || STATUS_COLORS[layer] || "#666";
+      svg.appendChild(svgEl("path", { d: d, fill: fill, stroke: "none", opacity: layer === "retired" || layer === "merged" ? "0.7" : "0.9" }));
+    });
+
+    return svg;
+  }
+
+  function renderMemoryGrowthView(entriesByDomain) {
+    var container = document.getElementById("memory-growth-charts");
+    container.innerHTML = "";
+
+    MEMORY_DOMAINS.forEach(function (domain) {
+      var raw = entriesByDomain[domain];
+      var card = document.createElement("div");
+      card.className = "panel domain-card";
+      var h3 = document.createElement("h3");
+      h3.textContent = domain;
+      card.appendChild(h3);
+
+      if (!raw || raw.length === 0) {
+        var note = document.createElement("p");
+        note.className = "empty-note";
+        note.textContent = "No memory/" + domain + "/entries.jsonl on disk. The learning-curve harness writes " +
+          "to a scratch dir (memory/_learning_curve/...) that's wiped at the start of every invocation and was " +
+          "never committed, so there's no real per-entry history for this domain in the repo yet - this chart " +
+          "reads the real schema and will render the moment a non-scratch memory/" + domain + "/entries.jsonl exists.";
+        card.appendChild(note);
+        container.appendChild(card);
+        return;
+      }
+
+      var growth = computeGrowthSeries(raw);
+      var legend = document.createElement("div");
+      legend.className = "stack-legend";
+      growth.layers.forEach(function (l) {
+        var color = SCOPE_COLORS[l] || STATUS_COLORS[l] || "#666";
+        legend.innerHTML += '<span><i style="background:' + color + '"></i>' + escapeHtml(l) + '</span>';
+      });
+      card.appendChild(legend);
+      card.appendChild(stackedAreaChart(growth));
+      container.appendChild(card);
+    });
+  }
+
+  // --- Memory inspector --------------------------------------------------------
+
+  function memoryRowHtml(entry) {
+    var traceback = "run <code>" + escapeHtml(entry.source_run_id || "unknown-run") + "</code>, pass " +
+      escapeHtml(String(entry.created_gen)) + (entry.evidence_task_ids && entry.evidence_task_ids.length
+        ? ", tasks " + entry.evidence_task_ids.map(escapeHtml).join(", ")
+        : "");
+    return (
+      '<td>' + escapeHtml(entry.domain_id) + '</td>' +
+      '<td><span class="badge scope-' + escapeHtml(entry.scope) + '">' + escapeHtml(entry.scope) + '</span></td>' +
+      '<td><span class="badge status-' + escapeHtml(entry.status) + '">' + escapeHtml(entry.status) + '</span></td>' +
+      '<td class="content-cell">' + escapeHtml(entry.content) + '</td>' +
+      '<td class="trigger-cell">' + escapeHtml(entry.trigger) + '</td>' +
+      '<td>' + entry.confidence.toFixed(2) + '</td>' +
+      '<td>' + entry.times_retrieved + '</td>' +
+      '<td>' + entry.times_helped + '</td>' +
+      '<td>' + entry.times_hurt + '</td>' +
+      '<td><code class="sha">' + escapeHtml(entry.id) + '</code><div class="trace-note">' + traceback + '</div></td>'
+    );
+  }
+
+  function searchHaystack(entry) {
+    return [entry.id, entry.content, entry.trigger, entry.source_run_id, entry.domain_id]
+      .concat(entry.evidence_task_ids || [])
+      .join(" ")
+      .toLowerCase();
+  }
+
+  function renderMemoryInspector(allEntries) {
+    var tbody = document.querySelector("#memory-table tbody");
+    var countEl = document.getElementById("memory-search-count");
+    var searchInput = document.getElementById("memory-search");
+
+    function draw() {
+      var q = searchInput.value.trim().toLowerCase();
+      var filtered = q ? allEntries.filter(function (e) { return searchHaystack(e).indexOf(q) !== -1; }) : allEntries;
+
+      tbody.innerHTML = "";
+      if (filtered.length === 0) {
+        var tr = document.createElement("tr");
+        tr.innerHTML = '<td colspan="10" class="empty-note">' +
+          (allEntries.length === 0
+            ? "No memory/{domain}/entries.jsonl found for " + MEMORY_DOMAINS.join(", ") + "."
+            : "No entries match \"" + escapeHtml(q) + "\".") +
+          '</td>';
+        tbody.appendChild(tr);
+      } else {
+        filtered
+          .slice()
+          .sort(function (a, b) { return b.created_gen - a.created_gen || a.id.localeCompare(b.id); })
+          .forEach(function (entry) {
+            var tr = document.createElement("tr");
+            tr.innerHTML = memoryRowHtml(entry);
+            tbody.appendChild(tr);
+          });
+      }
+      countEl.textContent = filtered.length + " / " + allEntries.length + " entries";
+    }
+
+    searchInput.addEventListener("input", draw);
+    draw();
+  }
+
+  // --- Cost / accuracy ---------------------------------------------------------
+
+  function scatterWithPath(seriesList, opts) {
+    var w = 420, h = 300, padL = 56, padB = 40, padT = 16, padR = 16;
+    var allPoints = [];
+    seriesList.forEach(function (s) { allPoints = allPoints.concat(s.points); });
+    var svg = svgEl("svg", { width: "100%", height: h, viewBox: "0 0 " + w + " " + h });
+
+    if (allPoints.length === 0) {
+      var msg = svgEl("text", { x: padL + 8, y: padT + 16 });
+      msg.textContent = "no data points";
+      svg.appendChild(msg);
+      return svg;
+    }
+
+    var xs = allPoints.map(function (p) { return p.x; });
+    var ys = allPoints.map(function (p) { return p.y; });
+    var xMax = Math.max(0.0001, Math.max.apply(null, xs)) * 1.15;
+    var yMin = Math.min(0, Math.min.apply(null, ys) - 0.05);
+    var yMax = Math.max(1, Math.max.apply(null, ys) + 0.05);
+
+    function toXY(p) {
+      var x = padL + (p.x / xMax) * (w - padL - padR);
+      var y = (h - padB) - ((p.y - yMin) / (yMax - yMin)) * (h - padB - padT);
+      return [x, y];
+    }
+
+    svg.appendChild(svgEl("line", { class: "axis-line", x1: padL, y1: h - padB, x2: w - padR, y2: h - padB }));
+    svg.appendChild(svgEl("line", { class: "axis-line", x1: padL, y1: padT, x2: padL, y2: h - padB }));
+    var xLabel = svgEl("text", { x: w / 2, y: h - 8 });
+    xLabel.textContent = opts.xLabel;
+    svg.appendChild(xLabel);
+    var yLabel = svgEl("text", { x: 14, y: h / 2, transform: "rotate(-90 14 " + (h / 2) + ")" });
+    yLabel.textContent = "holdout accuracy";
+    svg.appendChild(yLabel);
+
+    [0, 0.5, 1].forEach(function (frac) {
+      var yVal = yMin + frac * (yMax - yMin);
+      var xy = toXY({ x: 0, y: yVal });
+      var t = svgEl("text", { x: 4, y: xy[1] + 3 });
+      t.textContent = yVal.toFixed(2);
+      svg.appendChild(t);
+    });
+    [0, 0.5, 1].forEach(function (frac) {
+      var xVal = frac * xMax;
+      var xy = toXY({ x: xVal, y: yMin });
+      var t = svgEl("text", { x: xy[0] - 14, y: h - padB + 16 });
+      t.textContent = opts.xFormat(xVal);
+      svg.appendChild(t);
+    });
+
+    seriesList.forEach(function (s) {
+      if (s.points.length === 0) return;
+      var sorted = s.points.slice().sort(function (a, b) { return a.pass - b.pass; });
+      var d = sorted.map(toXY).map(function (xy, i) { return (i === 0 ? "M" : "L") + xy[0].toFixed(1) + "," + xy[1].toFixed(1); }).join(" ");
+      svg.appendChild(svgEl("path", { d: d, fill: "none", stroke: s.color, "stroke-width": 1.5, "stroke-dasharray": "3,2" }));
+      sorted.forEach(function (p) {
+        var xy = toXY(p);
+        var c = svgEl("circle", { cx: xy[0], cy: xy[1], r: 4, fill: s.color });
+        var title = svgEl("title", {});
+        title.textContent = s.label + " pass " + p.pass + ": " + opts.xFormat(p.x) + ", accuracy " + (p.y * 100).toFixed(1) + "%";
+        c.appendChild(title);
+        svg.appendChild(c);
+      });
+    });
+
+    return svg;
+  }
+
+  function renderCostAccuracyView(dataByDomain) {
+    var container = document.getElementById("cost-accuracy-charts");
+    container.innerHTML = "";
+
+    LEARNING_CURVE_DOMAINS.forEach(function (domain) {
+      var d = dataByDomain[domain];
+      var records = (d.on || []).concat(d.off || []);
+      if (records.length === 0) return;
+
+      function seriesFor(mode, field) {
+        return {
+          label: "memory " + mode,
+          color: ARM_COLORS[mode],
+          points: (d[mode] || []).map(function (r) { return { pass: r.pass, x: r[field], y: r.holdout_scorecard.accuracy }; }),
+        };
+      }
+
+      var costCard = document.createElement("div");
+      costCard.className = "panel";
+      costCard.innerHTML = "<h3>" + escapeHtml(domain) + " &mdash; cost per task</h3>";
+      var costSeries = [seriesFor("on", "cost_per_task"), seriesFor("off", "cost_per_task")];
+      costCard.appendChild(seriesLegend(costSeries));
+      costCard.appendChild(scatterWithPath(costSeries, { xLabel: "cost per task (USD)", xFormat: function (v) { return "$" + v.toFixed(4); } }));
+      container.appendChild(costCard);
+
+      var latCard = document.createElement("div");
+      latCard.className = "panel";
+      latCard.innerHTML = "<h3>" + escapeHtml(domain) + " &mdash; p50 latency</h3>";
+      var latSeries = [seriesFor("on", "p50_latency_ms"), seriesFor("off", "p50_latency_ms")];
+      latCard.appendChild(seriesLegend(latSeries));
+      latCard.appendChild(scatterWithPath(latSeries, { xLabel: "p50 latency (ms)", xFormat: function (v) { return Math.round(v) + "ms"; } }));
+      container.appendChild(latCard);
+    });
+
+    if (container.children.length === 0) {
+      container.innerHTML = '<p class="empty-note">No learning-curve ledger files found for any known domain.</p>';
+    }
+  }
+
   // --- Boot -----------------------------------------------------------------
 
   function render(generations) {
@@ -574,6 +1229,33 @@
     renderScatter(generations);
     renderTable(generations);
   }
+
+  function loadLearningCurveData() {
+    var byDomain = {};
+    return Promise.all(
+      LEARNING_CURVE_DOMAINS.map(function (domain) {
+        return Promise.all([
+          loadJsonlOrNull("../ledger/learning_curves/" + domain + "_memory_on.jsonl"),
+          loadJsonlOrNull("../ledger/learning_curves/" + domain + "_memory_off.jsonl"),
+        ]).then(function (results) {
+          byDomain[domain] = { on: results[0], off: results[1] };
+        });
+      })
+    ).then(function () { return byDomain; });
+  }
+
+  function loadMemoryData() {
+    var byDomain = {};
+    return Promise.all(
+      MEMORY_DOMAINS.map(function (domain) {
+        return loadJsonlOrNull("../memory/" + domain + "/entries.jsonl").then(function (records) {
+          byDomain[domain] = records;
+        });
+      })
+    ).then(function () { return byDomain; });
+  }
+
+  setupTabs();
 
   loadLedgerText(LEDGER_PATH)
     .then(function (text) {
@@ -591,6 +1273,22 @@
       );
       render([]);
     });
+
+  loadLearningCurveData().then(function (dataByDomain) {
+    renderLearningCurveView(dataByDomain);
+    renderCostAccuracyView(dataByDomain);
+  });
+
+  loadMemoryData().then(function (rawByDomain) {
+    renderMemoryGrowthView(rawByDomain);
+
+    var allEntries = [];
+    MEMORY_DOMAINS.forEach(function (domain) {
+      var raw = rawByDomain[domain];
+      if (raw) allEntries = allEntries.concat(foldMemoryRecords(raw));
+    });
+    renderMemoryInspector(allEntries);
+  });
 })();
 </script>
 
