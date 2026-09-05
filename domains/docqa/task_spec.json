@@ -1,0 +1,7 @@
+{
+    "goal": "Answer a natural-language question by reading a corpus of reference documents (multi-hop question answering).",
+    "tools": [],
+    "dataset_path": "domains/docqa/dataset.jsonl",
+    "scorer_id": "domains.docqa.scorer:score_v1",
+    "max_tasks": 30
+}
