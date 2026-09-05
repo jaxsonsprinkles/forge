@@ -7,6 +7,11 @@ using a fixed seed so the split is reproducible on demand:
     shuffled = task_ids[:]
     random.shuffle(shuffled)
     train, holdout = sorted(shuffled[:20]), sorted(shuffled[20:])
+
+core.runner's dataset loader filters on an inline "split" field on each
+dataset.jsonl row (not on split.json, which it never reads), so this
+also rewrites dataset.jsonl with that field set to match split.json -
+the same convention domains/invoices and domains/github_triage use.
 """
 
 from __future__ import annotations
@@ -21,16 +26,24 @@ DOMAIN_DIR = Path(__file__).parent
 
 def main() -> None:
     with (DOMAIN_DIR / "dataset.jsonl").open() as f:
-        task_ids = [json.loads(line)["task_id"] for line in f]
+        rows = [json.loads(line) for line in f if line.strip()]
+    task_ids = [row["task_id"] for row in rows]
 
     random.seed(SEED)
     shuffled = task_ids[:]
     random.shuffle(shuffled)
 
-    split = {"train": sorted(shuffled[:20]), "holdout": sorted(shuffled[20:])}
+    train, holdout = sorted(shuffled[:20]), sorted(shuffled[20:])
+    split_of = {tid: "train" for tid in train}
+    split_of.update({tid: "holdout" for tid in holdout})
+
+    with (DOMAIN_DIR / "dataset.jsonl").open("w") as f:
+        for row in rows:
+            row["split"] = split_of[row["task_id"]]
+            f.write(json.dumps(row) + "\n")
 
     with (DOMAIN_DIR / "split.json").open("w") as f:
-        json.dump(split, f, indent=2)
+        json.dump({"train": train, "holdout": holdout}, f, indent=2)
         f.write("\n")
 
 
