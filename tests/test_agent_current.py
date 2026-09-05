@@ -15,6 +15,22 @@ from core import architect, llm
 from core.runner import _load_agent_run_fn
 
 AGENT_DIR = Path("agents/current")
+FIXTURES_DIR = Path("tests/fixtures")
+
+
+def _recording_fake_complete(
+    replies: list[str],
+) -> tuple[Callable[..., tuple[str, float, int]], list[list[dict[str, Any]]]]:
+    """Like _fake_complete, but also records every call's `messages` list -
+    so a test can assert on what context (memory) a later step actually
+    received, proving data flows by name rather than by step position."""
+    calls: list[list[dict[str, Any]]] = []
+
+    def fake(messages: list[dict[str, Any]], model: str, **params: Any) -> tuple[str, float, int]:
+        calls.append(messages)
+        return replies[len(calls) - 1], 0.0, 1
+
+    return fake, calls
 
 
 def _fake_complete(replies: list[str]) -> Callable[..., tuple[str, float, int]]:
@@ -130,3 +146,55 @@ def test_tools_module_exposes_working_run_python_and_search_text():
 
     matches = agent_dir_module.TOOLS["search_text"](text="alpha\nbeta\ngamma", query="beta")
     assert matches == ["beta"]
+
+
+def test_two_step_fixture_graph_runs_through_unmodified_run_py(tmp_path, monkeypatch):
+    """Proves run.py has no hardcoded step count: a 2-step graph.yaml runs
+    correctly through the exact same run.py copied unmodified from
+    agents/current/ (see the 5-step counterpart below)."""
+    agent_dir = architect.scaffold(tmp_path / "agent", source=AGENT_DIR)
+    (agent_dir / "graph.yaml").write_text((FIXTURES_DIR / "graph_2_steps.yaml").read_text())
+    fake, calls = _recording_fake_complete(["draft-text", "final-text"])
+    monkeypatch.setattr(llm, "complete", fake)
+    run_fn = _load_agent_run_fn(str(agent_dir))
+
+    result = run_fn({"question": "anything"})
+
+    assert result == "final-text"
+    assert len(calls) == 2
+    # step "wrap_up"'s input_keys: [draft] must carry step "only_step"'s
+    # output forward, purely by name - proving order/data-flow is driven
+    # by the graph, not by any fixed step count or position in run.py.
+    wrap_up_prompt = calls[1][-1]["content"]
+    assert "draft-text" in wrap_up_prompt
+
+
+def test_five_step_fixture_graph_runs_through_unmodified_run_py(tmp_path, monkeypatch):
+    """Proves run.py has no hardcoded step count/sequence: a longer,
+    differently-shaped 5-step graph.yaml mixing all three step types runs
+    correctly through the exact same, byte-identical run.py as the 2-step
+    fixture above - see test_two_step_fixture_graph_runs_through_unmodified_run_py."""
+    agent_dir = architect.scaffold(tmp_path / "agent", source=AGENT_DIR)
+    (agent_dir / "graph.yaml").write_text((FIXTURES_DIR / "graph_5_steps.yaml").read_text())
+    fake, calls = _recording_fake_complete(["draft-one", "combined-answer", "FINAL-RESULT"])
+    monkeypatch.setattr(llm, "complete", fake)
+    run_fn = _load_agent_run_fn(str(agent_dir))
+
+    result = run_fn({"question": "anything"})
+
+    assert result == "FINAL-RESULT"
+    # Exactly 3 llm_call steps (step_one, step_four, step_five); step_two
+    # is a tool_call and step_three is a verify - neither calls the model.
+    assert len(calls) == 3
+
+    # step_four's input_keys: [out_one, out_two] must carry both step_one's
+    # llm output AND step_two's tool_call output forward by name, proving
+    # a tool_call's result flows into a later llm_call just like any other
+    # step's output would, regardless of graph shape or step count.
+    step_four_prompt = calls[1][-1]["content"]
+    assert "draft-one" in step_four_prompt
+    assert "hello-from-tool" in step_four_prompt
+
+    # step_five's input_keys: [out_four] must carry step_four's output forward.
+    step_five_prompt = calls[2][-1]["content"]
+    assert "combined-answer" in step_five_prompt

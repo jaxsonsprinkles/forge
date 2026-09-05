@@ -1,0 +1,13 @@
+# Fixture for test_agent_current.py: a minimal 2-step graph, used to prove
+# run.py's interpreter has no hardcoded step count/sequence by running it
+# unmodified alongside graph_5_steps.yaml (a longer, differently-shaped
+# graph) - see test_two_and_five_step_graphs_both_run_through_same_run_py.
+steps:
+  - name: only_step
+    type: llm_call
+    output_key: draft
+
+  - name: wrap_up
+    type: llm_call
+    input_keys: [draft]
+    output_key: final
