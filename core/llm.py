@@ -3,6 +3,12 @@
 Nothing outside this module may call a model provider directly (see
 AGENTS.md). Every call is cached to disk, keyed by a hash of
 (model, messages, params), so re-running unchanged code costs nothing.
+
+No real provider is wired up yet: the actual network call lives behind
+the `_invoke_provider` seam below, which raises NotImplementedError by
+default. Tests monkeypatch that seam to prove caching and spend-ceiling
+behavior with zero real network access. When a provider is chosen,
+`_invoke_provider` is the only function that needs to change.
 """
 
 from __future__ import annotations
@@ -10,12 +16,10 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
+from time import monotonic
 from typing import Any
-
-import anthropic
 
 DEFAULT_CACHE_DIR = Path(os.environ.get("FORGE_LLM_CACHE_DIR", "ledger/llm_cache"))
 
@@ -26,18 +30,30 @@ PRICING_PER_MTOK: dict[str, tuple[float, float]] = {
     "claude-haiku-4-5": (1.00, 5.00),
 }
 
+# Assumed output size when estimating cost *before* a call is made, since
+# the real output length isn't known until the provider responds.
+_DEFAULT_ASSUMED_OUTPUT_TOKENS = 1024
+
+# Process-wide cumulative spend, checked against FORGE_MAX_SPEND_USD.
+_cumulative_spend_usd = 0.0
+
+
+class SpendCeilingExceeded(Exception):
+    """Raised when a call would push cumulative spend past FORGE_MAX_SPEND_USD."""
+
 
 @dataclass
-class LLMResponse:
-    """The result of a single (possibly cached) model call."""
+class ProviderConfig:
+    """Provider credentials/config, read from the environment."""
 
-    content: str
-    model: str
-    cost_usd: float
-    latency_ms: int
-    cached: bool
-    stop_reason: str | None
-    raw: dict[str, Any] = field(default_factory=dict)
+    api_key: str | None
+    base_url: str | None
+
+
+def reset_spend_tracker() -> None:
+    """Reset the process-wide cumulative spend counter. Mainly for tests."""
+    global _cumulative_spend_usd
+    _cumulative_spend_usd = 0.0
 
 
 def estimate_cost_usd(model: str, input_tokens: int, output_tokens: int) -> float:
@@ -48,6 +64,52 @@ def estimate_cost_usd(model: str, input_tokens: int, output_tokens: int) -> floa
     """
     input_rate, output_rate = PRICING_PER_MTOK.get(model, (0.0, 0.0))
     return (input_tokens * input_rate + output_tokens * output_rate) / 1_000_000
+
+
+def _estimate_precall_cost_usd(model: str, messages: list[dict[str, Any]], params: dict[str, Any]) -> float:
+    """Rough worst-case cost estimate used only to enforce the spend ceiling.
+
+    Uses a ~4-chars-per-token heuristic for input size and `max_tokens`
+    (or a conservative default) as the assumed output size. This is
+    intentionally approximate: it only needs to guard against blowing the
+    budget, not to bill accurately (the real cost, from actual token
+    usage, is what gets cached and returned).
+    """
+    input_tokens = max(1, len(json.dumps(messages)) // 4)
+    output_tokens = params.get("max_tokens", _DEFAULT_ASSUMED_OUTPUT_TOKENS)
+    return estimate_cost_usd(model, input_tokens, output_tokens)
+
+
+def _spend_ceiling_usd() -> float | None:
+    raw = os.environ.get("FORGE_MAX_SPEND_USD")
+    return float(raw) if raw is not None else None
+
+
+def _load_provider_config() -> ProviderConfig:
+    """Read provider credentials/config from the environment."""
+    return ProviderConfig(
+        api_key=os.environ.get("ANTHROPIC_API_KEY"),
+        base_url=os.environ.get("ANTHROPIC_BASE_URL"),
+    )
+
+
+def _invoke_provider(
+    model: str,
+    messages: list[dict[str, Any]],
+    params: dict[str, Any],
+    config: ProviderConfig,
+) -> tuple[str, int, int]:
+    """Make the real model call. Not wired to a provider yet.
+
+    This is the only function in the module that would perform network
+    I/O. Tests monkeypatch `core.llm._invoke_provider` to return
+    (text, input_tokens, output_tokens) without touching the network.
+    """
+    raise NotImplementedError(
+        "core.llm._invoke_provider has no real provider wired up yet. "
+        "Monkeypatch this function in tests, or implement it once a "
+        "provider is chosen."
+    )
 
 
 def _cache_key(model: str, messages: list[dict[str, Any]], params: dict[str, Any]) -> str:
@@ -82,70 +144,48 @@ def _write_cache(cache_dir: Path, key: str, entry: dict[str, Any]) -> None:
     tmp_path.replace(path)
 
 
-def complete(
-    model: str,
-    messages: list[dict[str, Any]],
-    *,
-    system: str | None = None,
-    max_tokens: int = 16000,
-    cache_dir: Path | str | None = None,
-    client: anthropic.Anthropic | None = None,
-    **params: Any,
-) -> LLMResponse:
-    """Run a single model completion, transparently cached on disk.
+def complete(messages: list[dict[str, Any]], model: str, **params: Any) -> tuple[str, float, int]:
+    """Run a single model completion, returning (text, cost_usd, latency_ms).
 
-    The cache key hashes (model, messages, system, max_tokens, and any
-    extra params); a repeated call with identical inputs never hits the
-    network. Set FORGE_LLM_CACHE_DIR to change where cache entries live.
+    Cached on disk, keyed by a hash of (model, messages, params) - a
+    repeat call with identical inputs is served from disk and never
+    invokes the provider. Pass `cache_dir` in params to override where
+    cache entries live (defaults to FORGE_LLM_CACHE_DIR or ledger/llm_cache).
+
+    Enforces FORGE_MAX_SPEND_USD as a per-process cumulative spend
+    ceiling: raises SpendCeilingExceeded *before* invoking the provider
+    if the call's estimated cost would push cumulative spend past it.
+    Cache hits never touch the ceiling, since they cost nothing.
     """
-    resolved_cache_dir = Path(cache_dir) if cache_dir is not None else DEFAULT_CACHE_DIR
-    key_params = {"system": system, "max_tokens": max_tokens, **params}
-    key = _cache_key(model, messages, key_params)
+    global _cumulative_spend_usd
 
-    cached_entry = _read_cache(resolved_cache_dir, key)
+    params = dict(params)
+    cache_dir = Path(params.pop("cache_dir", None) or DEFAULT_CACHE_DIR)
+    key = _cache_key(model, messages, params)
+
+    cached_entry = _read_cache(cache_dir, key)
     if cached_entry is not None:
-        return LLMResponse(
-            content=cached_entry["content"],
-            model=model,
-            cost_usd=cached_entry["cost_usd"],
-            latency_ms=cached_entry["latency_ms"],
-            cached=True,
-            stop_reason=cached_entry.get("stop_reason"),
-            raw=cached_entry.get("raw", {}),
-        )
+        return cached_entry["text"], cached_entry["cost_usd"], cached_entry["latency_ms"]
 
-    active_client = client or anthropic.Anthropic()
-    request_kwargs: dict[str, Any] = {
-        "model": model,
-        "max_tokens": max_tokens,
-        "messages": messages,
-        **params,
-    }
-    if system is not None:
-        request_kwargs["system"] = system
+    ceiling = _spend_ceiling_usd()
+    if ceiling is not None:
+        estimated_cost = _estimate_precall_cost_usd(model, messages, params)
+        projected_spend = _cumulative_spend_usd + estimated_cost
+        if projected_spend > ceiling:
+            raise SpendCeilingExceeded(
+                f"Call to model {model!r} would cost an estimated ${estimated_cost:.4f}, "
+                f"bringing cumulative spend to ${projected_spend:.4f}, over the "
+                f"FORGE_MAX_SPEND_USD ceiling of ${ceiling:.4f}."
+            )
 
-    start = time.monotonic()
-    response = active_client.messages.create(**request_kwargs)
-    latency_ms = int((time.monotonic() - start) * 1000)
+    config = _load_provider_config()
+    start = monotonic()
+    text, input_tokens, output_tokens = _invoke_provider(model, messages, params, config)
+    latency_ms = int((monotonic() - start) * 1000)
 
-    content = "".join(block.text for block in response.content if block.type == "text")
-    cost_usd = estimate_cost_usd(model, response.usage.input_tokens, response.usage.output_tokens)
+    cost_usd = estimate_cost_usd(model, input_tokens, output_tokens)
+    _cumulative_spend_usd += cost_usd
 
-    entry = {
-        "content": content,
-        "cost_usd": cost_usd,
-        "latency_ms": latency_ms,
-        "stop_reason": response.stop_reason,
-        "raw": response.to_dict(),
-    }
-    _write_cache(resolved_cache_dir, key, entry)
+    _write_cache(cache_dir, key, {"text": text, "cost_usd": cost_usd, "latency_ms": latency_ms})
 
-    return LLMResponse(
-        content=content,
-        model=model,
-        cost_usd=cost_usd,
-        latency_ms=latency_ms,
-        cached=False,
-        stop_reason=response.stop_reason,
-        raw=entry["raw"],
-    )
+    return text, cost_usd, latency_ms
