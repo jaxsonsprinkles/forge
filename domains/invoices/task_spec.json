@@ -1,0 +1,7 @@
+{
+    "goal": "Extract structured invoice data (vendor, invoice_number, date, line_items, subtotal, tax, total, currency) from raw invoice text.",
+    "tools": [],
+    "dataset_path": "domains/invoices/dataset.jsonl",
+    "scorer_id": "domains.invoices.scorer:score",
+    "max_tasks": 35
+}
