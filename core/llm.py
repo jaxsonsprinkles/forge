@@ -4,11 +4,9 @@ Nothing outside this module may call a model provider directly (see
 AGENTS.md). Every call is cached to disk, keyed by a hash of
 (model, messages, params), so re-running unchanged code costs nothing.
 
-No real provider is wired up yet: the actual network call lives behind
-the `_invoke_provider` seam below, which raises NotImplementedError by
-default. Tests monkeypatch that seam to prove caching and spend-ceiling
-behavior with zero real network access. When a provider is chosen,
-`_invoke_provider` is the only function that needs to change.
+The actual network call lives behind the `_invoke_provider` seam below,
+which calls the Anthropic API. Tests monkeypatch that seam to prove
+caching and spend-ceiling behavior with zero real network access.
 """
 
 from __future__ import annotations
@@ -20,6 +18,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from time import monotonic
 from typing import Any
+
+import anthropic
 
 DEFAULT_CACHE_DIR = Path(os.environ.get("FORGE_LLM_CACHE_DIR", "ledger/llm_cache"))
 
@@ -99,17 +99,35 @@ def _invoke_provider(
     params: dict[str, Any],
     config: ProviderConfig,
 ) -> tuple[str, int, int]:
-    """Make the real model call. Not wired to a provider yet.
+    """Make the real model call against the Anthropic API.
 
-    This is the only function in the module that would perform network
-    I/O. Tests monkeypatch `core.llm._invoke_provider` to return
+    This is the only function in the module that performs network I/O.
+    Tests monkeypatch `core.llm._invoke_provider` to return
     (text, input_tokens, output_tokens) without touching the network.
+
+    `messages` may include `role: "system"` entries (Anthropic takes the
+    system prompt as a separate top-level parameter, not as a message).
     """
-    raise NotImplementedError(
-        "core.llm._invoke_provider has no real provider wired up yet. "
-        "Monkeypatch this function in tests, or implement it once a "
-        "provider is chosen."
+    client = anthropic.Anthropic(api_key=config.api_key, base_url=config.base_url)
+
+    call_params = dict(params)
+    max_tokens = call_params.pop("max_tokens", _DEFAULT_ASSUMED_OUTPUT_TOKENS)
+
+    system_parts = [m["content"] for m in messages if m.get("role") == "system"]
+    chat_messages = [m for m in messages if m.get("role") != "system"]
+
+    if system_parts:
+        call_params["system"] = "\n\n".join(system_parts)
+
+    response = client.messages.create(
+        model=model,
+        max_tokens=max_tokens,
+        messages=chat_messages,
+        **call_params,
     )
+
+    text = "".join(block.text for block in response.content if block.type == "text")
+    return text, response.usage.input_tokens, response.usage.output_tokens
 
 
 def _cache_key(model: str, messages: list[dict[str, Any]], params: dict[str, Any]) -> str:
