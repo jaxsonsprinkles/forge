@@ -15,12 +15,13 @@ from typing import Any
 
 import pytest
 
-from core import llm, memory, reflect
+from core import architect, llm, memory, reflect
 from core.memory import MemoryEntry
 from evals import learning_curve
 
 FIXTURES_DOMAINS_ROOT = str(Path(__file__).parent / "fixtures" / "domains")
 GOOD_AGENT = str(Path(__file__).parent / "fixtures" / "agents" / "good_agent")
+BASELINE_AGENT = str(Path(__file__).parent.parent / "agents" / "current")
 DOMAIN = "dummy"
 
 # tests/fixtures/dataset.jsonl: t1,t2,t3 train (a+b matches expected); t4,t5 holdout.
@@ -175,6 +176,79 @@ def test_holdout_never_writes_memory_even_when_it_retrieves(tmp_path, monkeypatc
     assert reloaded.times_retrieved == 0
 
 
+def test_reflect_step_lookup_does_not_double_count_times_retrieved(tmp_path, monkeypatch):
+    """Regression test for the reflect-step double-retrieval bug.
+
+    This harness's own `_run_one_task` already calls `memory.retrieve()`
+    once per train task to inject lessons into `task_input` (see module
+    docstring's "Injecting memory" section). If the agent's own graph.yaml
+    also has a `reflect` step pointed at the same memory store, that step
+    used to call `core.memory.retrieve()` again purely to get dedup context
+    for `core.reflect.reflect()` - a second, independent bump of
+    `times_retrieved` for the very same task, even though the agent was
+    only ever exposed to the lesson once (via this harness's own
+    injection). `agents/current/run.py`'s reflect step must use
+    `core.memory.peek()` for that lookup instead, so a lesson retrieved
+    for N train tasks ends up with `times_retrieved == N`, not `2N`.
+    """
+    base_dir = tmp_path / "mem"
+    domain_id = DOMAIN
+
+    agent_dir = architect.scaffold(tmp_path / "agent", source=BASELINE_AGENT)
+    (agent_dir / "graph.yaml").write_text(
+        "steps:\n"
+        "  - name: solve\n"
+        "    type: llm_call\n"
+        "    output_key: draft\n"
+        "  - name: reflect_step\n"
+        "    type: reflect\n"
+        f"    domain_id: {domain_id}\n"
+        "    input_key: draft\n"
+        f"    base_dir: {base_dir}\n"
+        "    k: 5\n"
+    )
+
+    seeded = MemoryEntry(
+        id="mem-seeded",
+        domain_id=domain_id,
+        scope="rule",
+        content="always add both operands directly",
+        trigger="a b 1 2 3",
+        evidence_task_ids=[],
+        source_run_id="seed",
+        created_gen=0,
+        confidence=0.9,
+    )
+    memory.write(seeded, base_dir=base_dir)
+
+    def fake_complete(messages: list[dict[str, Any]], model: str, **params: Any) -> tuple[str, float, int]:
+        system = messages[0]["content"]
+        if "reflection step" in system:
+            return "[]", 0.0, 1  # core.reflect.reflect(): nothing new to learn
+        return "some draft answer", 0.0, 1
+
+    monkeypatch.setattr(llm, "complete", fake_complete)
+
+    learning_curve.run_learning_curve(
+        domain_id,
+        passes=1,
+        memory_mode="on",
+        agent_path=str(agent_dir),
+        domains_root=FIXTURES_DOMAINS_ROOT,
+        memory_base_dir=base_dir,
+        reset_memory=False,
+        output_dir=tmp_path / "out",
+    )
+
+    # 3 train tasks (t1-t3) each bump times_retrieved exactly once, via
+    # this harness's own real memory.retrieve() call. Holdout (t4, t5)
+    # never bumps at all: this harness's own call uses memory.peek() for
+    # holdout, and the graph's reflect step now also uses peek() for its
+    # dedup lookup regardless of train/holdout.
+    reloaded = memory.get_entry("mem-seeded", domain_id, base_dir=base_dir)
+    assert reloaded.times_retrieved == 3
+
+
 def test_output_jsonl_has_one_record_per_pass_with_documented_fields(tmp_path, monkeypatch):
     monkeypatch.setattr(llm, "complete", _fake_reflect_complete())
     output_dir = tmp_path / "out"
@@ -254,28 +328,6 @@ def test_augment_task_input_does_not_mutate_original_or_add_key_when_empty():
     assert augmented is not original
     assert learning_curve._MEMORY_CONTEXT_KEY not in original
     assert augmented[learning_curve._MEMORY_CONTEXT_KEY][0]["content"] == "c"
-
-
-def test_peek_retrieve_never_calls_memory_write(tmp_path, monkeypatch):
-    base_dir = tmp_path / "mem"
-    entry = MemoryEntry(
-        id="mem-1",
-        domain_id=DOMAIN,
-        scope="rule",
-        content="c",
-        trigger="foo",
-        evidence_task_ids=[],
-        source_run_id="r",
-        created_gen=0,
-        confidence=0.8,
-    )
-    memory.write(entry, base_dir=base_dir)
-
-    monkeypatch.setattr(memory, "write", _fail_if_called("memory.write"))
-
-    found = learning_curve._peek_retrieve({"question": "foo bar"}, DOMAIN, 5, base_dir)
-    assert len(found) == 1
-    assert found[0].id == "mem-1"
 
 
 def test_cli_main_writes_same_records_it_prints(tmp_path, monkeypatch, capsys):
