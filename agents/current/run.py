@@ -25,6 +25,8 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import logging
+import os
 from pathlib import Path
 from types import ModuleType
 from typing import Any, Callable
@@ -32,7 +34,12 @@ from typing import Any, Callable
 import yaml
 
 from core import llm
+from core import memory as _memory
+from core import reflect as _reflect
 from core import runner as _runner
+from core.types import RunResult
+
+logger = logging.getLogger(__name__)
 
 AGENT_DIR = Path(__file__).resolve().parent
 DEFAULT_MODEL = "claude-sonnet-5"
@@ -206,16 +213,67 @@ def _handle_verify(step: dict[str, Any], i: int, ctx: _StepContext) -> int:
     return jump_to if jump_to is not None else i + 1
 
 
+def _handle_reflect(step: dict[str, Any], i: int, ctx: _StepContext) -> int:
+    """Best-effort in-run reflection via core.reflect.reflect(); see
+    README.md's `reflect` step docs for the full field contract and the
+    limitations noted there (no real task_id/expected/trace at this
+    layer - run(task_input) never receives them, by the fixed entrypoint
+    contract every agent shares). Never raises: a broken reflect call
+    must never fail the task it's reflecting on.
+    """
+    domain_id = step.get("domain_id")
+    if not domain_id:
+        return i + 1
+
+    input_key = step.get("input_key", ctx.last_output_key)
+    output = ctx.memory.get(input_key) if input_key else None
+    run_result = RunResult(
+        task_id="",
+        output=output,
+        passed=_check_non_empty(output),
+        error=None,
+        cost_usd=0.0,
+        latency_ms=0,
+        trace_id=None,
+    )
+    base_dir = step.get("base_dir", _memory.DEFAULT_MEMORY_ROOT)
+
+    new_entries: list[Any] = []
+    with _runner.open_step_span(f"reflect:{step['name']}", "GUARDRAIL"):
+        try:
+            existing = _memory.retrieve(ctx.task_input, domain_id=domain_id, k=step.get("k", 5), base_dir=base_dir)
+            new_entries = _reflect.reflect(
+                run_result,
+                ctx.task_input,
+                None,
+                None,
+                existing,
+                domain_id=domain_id,
+                gen_n=int(os.environ.get("FORGE_GEN_N", "0")),
+            )
+            for entry in new_entries:
+                _memory.write(entry, base_dir=base_dir)
+        except Exception:  # noqa: BLE001 - reflection must never crash a run
+            logger.warning("reflect step %r failed", step["name"], exc_info=True)
+            new_entries = []
+
+    output_key = step.get("output_key", step["name"])
+    memory_mod.record(ctx.memory, output_key, [entry.id for entry in new_entries])
+    ctx.last_output_key = output_key
+    return i + 1
+
+
 # Step-type dispatch table: type name -> handler(step, i, ctx) -> next index.
 # This is the interpreter's one extension point. graph.yaml can list any
 # number of steps in any order/shape (see run() below, which never
-# assumes a step count or fixed position); adding a new step type (e.g.
-# a future "reflect" type) means writing one handler with this signature
-# and adding it here - run()'s loop itself never needs to change.
+# assumes a step count or fixed position); adding a new step type means
+# writing one handler with this signature and adding it here - run()'s
+# loop itself never needs to change.
 _STEP_HANDLERS: dict[str, Callable[[dict[str, Any], int, _StepContext], int]] = {
     "llm_call": _handle_llm_call,
     "tool_call": _handle_tool_call,
     "verify": _handle_verify,
+    "reflect": _handle_reflect,
 }
 
 

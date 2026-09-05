@@ -78,8 +78,9 @@ looks up the current step's type and jumps to whatever index the handler
 returns. This is why an orchestration mutation (`core/proposer.py`
 inserting, splitting, reordering, or removing steps in this file) never
 requires touching `run.py` - and why adding an entirely new step type
-later (e.g. a future `reflect` type) only means writing one more handler
-function and adding it to `_STEP_HANDLERS`, not restructuring the loop.
+only means writing one more handler function and adding it to
+`_STEP_HANDLERS`, not restructuring the loop (see `reflect` below, added
+this way).
 
 ### `llm_call`
 
@@ -125,6 +126,41 @@ interpreter.
 
 If the check passes, or fails with no `on_fail` (or a retry budget
 already spent), execution just continues to the next step in the list.
+
+### `reflect`
+
+Calls `core.reflect.reflect()` on the run so far and persists whatever
+`MemoryEntry` list it returns via `core.memory.write()` - the inner
+learning loop's write path. Not used by any step type above it in
+execution: it's an independent extension point an orchestration mutation
+can add, remove, or reposition in `graph.yaml` to control *when* and
+*how often* the agent reflects, without ever touching `run.py` (see
+"graph.yaml step-type vocabulary" above).
+
+| field        | required | meaning                                                                 |
+|--------------|----------|--------------------------------------------------------------------------|
+| `domain_id`  | yes      | the `core.memory` domain to read/write lessons under                     |
+| `input_key`  | no       | memory key holding the output to reflect on (defaults to the previous step's output) |
+| `output_key` | no       | memory key the list of written/updated entry ids is recorded under (defaults to `name`) |
+| `k`          | no       | how many existing entries to retrieve as context (default `5`)           |
+| `base_dir`   | no       | override for `core.memory`'s storage root (default `memory/`)            |
+
+**Important limitation:** `run(task_input)` is a fixed entrypoint that
+only ever receives the dataset row's `input` dict - never the dataset
+row's `task_id`, the scorer's `expected` answer, or a `passed` verdict
+(by design: the agent must not see ground truth while it works the
+task). A `reflect` step placed in this graph therefore reflects with a
+*local approximation* of a `core.types.RunResult`: `passed` is a
+non-empty-output proxy (not the real scorer's verdict), and `task_id`,
+`expected`, and the Neatlogs `trace` are all unavailable here, so they're
+passed as empty/`None`. Full, ground-truth-based reflection (the real
+`RunResult` and `expected`, as `core.reflect.reflect()`'s signature
+supports) is expected to happen from a caller that actually has them -
+e.g. a future integration in `core/runner.py` or `core/loop.py`, called
+once scoring has happened, outside this per-task graph. The `reflect`
+step here still has value on its own: even without ground truth, it can
+notice things like "this step needed two retries before its output
+looked non-empty" from the trace of the run itself.
 
 ## memory.py
 
