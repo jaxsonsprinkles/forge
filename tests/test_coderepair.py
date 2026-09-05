@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 
+from core import runner
 from domains.coderepair.scorer import score
 
 DOMAIN_DIR = Path("domains/coderepair")
@@ -35,6 +36,30 @@ def test_split_covers_dataset_without_overlap():
     assert len(split["holdout"]) == 10
     assert train.isdisjoint(holdout)
     assert train | holdout == set(tasks)
+
+
+def test_dataset_row_split_field_matches_split_json():
+    """core.runner filters dataset rows by a per-row 'split' field; keep both in sync."""
+    tasks = _load_dataset()
+    with (DOMAIN_DIR / "split.json").open() as f:
+        split = json.load(f)
+
+    for task_id in split["train"]:
+        assert tasks[task_id]["split"] == "train"
+    for task_id in split["holdout"]:
+        assert tasks[task_id]["split"] == "holdout"
+
+
+def test_runner_loads_nonzero_tasks_for_each_split():
+    """Regression test: core.runner._load_dataset must find coderepair's rows via
+    their inline 'split' field, not just split.json (which it never reads)."""
+    dataset_path = str(DOMAIN_DIR / "dataset.jsonl")
+
+    train_tasks = runner._load_dataset(dataset_path, "train", 100)
+    holdout_tasks = runner._load_dataset(dataset_path, "holdout", 100)
+
+    assert len(train_tasks) == 20
+    assert len(holdout_tasks) == 10
 
 
 def test_fixed_code_passes_for_every_task():
