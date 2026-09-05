@@ -1,0 +1,35 @@
+# Fixture for test_agent_current.py: a longer 5-step graph mixing all
+# three step types, used to prove run.py's interpreter has no hardcoded
+# step count/sequence by running it unmodified alongside
+# graph_2_steps.yaml - see
+# test_two_and_five_step_graphs_both_run_through_same_run_py.
+#
+# step_two's tool output and step_one's llm output both flow forward into
+# step_four purely by name (input_keys), and step_three verifies step_two's
+# output before continuing - none of that depends on step count or position.
+steps:
+  - name: step_one
+    type: llm_call
+    output_key: out_one
+
+  - name: step_two
+    type: tool_call
+    tool: run_python
+    args:
+      code: "print('hello-from-tool')"
+    output_key: out_two
+
+  - name: step_three
+    type: verify
+    input_key: out_two
+    check: non_empty
+
+  - name: step_four
+    type: llm_call
+    input_keys: [out_one, out_two]
+    output_key: out_four
+
+  - name: step_five
+    type: llm_call
+    input_keys: [out_four]
+    output_key: final
