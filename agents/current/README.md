@@ -17,6 +17,34 @@ agents/current/
 `core/architect.validate()` enforces that this directory contains exactly
 these files (plus this README) and that they're well-formed.
 
+## How a fresh agent is built: `core.architect.build_agent()`
+
+`build_agent(task_spec, dest)` produces a brand-new agent for a domain's
+`TaskSpec` with exactly ONE `core.llm.complete()` call - not five. The
+five files split into two groups:
+
+- **Fixed scaffolding - copied byte-for-byte, never regenerated:**
+  `run.py` (the generic graph interpreter below - it has no task-specific
+  knowledge by construction, so a model has nothing useful to generate
+  there), `memory.py` (an equally generic scratchpad), and `tools.py`
+  (ships `run_python` and `search_text`, which already cover every tool
+  name any shipped domain's `task_spec.tools` names).
+- **Model-generated - the one thing that actually varies per domain:**
+  `prompt.md` (system instructions) and `graph.yaml` (the step list). One
+  `complete()` call, prompted with `task_spec.goal` and the tool names
+  the fixed `tools.py` exposes, returns a JSON object with `prompt_md`
+  and `graph_steps` (a list of step dicts); `build_agent()` serializes
+  `graph_steps` to YAML itself via `yaml.dump` rather than asking the
+  model for raw YAML text, since a model only has to get JSON right that
+  way, not indentation.
+
+The prompt explicitly asks for a **weak** first draft (typically a single
+`llm_call` step): a strong first draft would leave Forge's outer mutation
+loop (`core/proposer.py`, which edits exactly these five files) nothing
+left to measurably improve. `build_agent()` validates its own output with
+`validate()` and raises `ValueError` rather than ever handing back a
+broken agent.
+
 ## The `run(task_input)` contract
 
 - `task_input` is one dataset row's `"input"` dict (see a domain's
@@ -41,6 +69,17 @@ these files (plus this README) and that they're well-formed.
 `graph.yaml` is a mapping with one key, `steps`: a list of step mappings,
 executed in order (top to bottom) unless a `verify` step jumps backward.
 Every step needs `name` (unique) and `type` (one of the three below).
+
+`run.py`'s interpreter is fully generic over this list: it never assumes
+a step count, a fixed sequence, or that a particular step name exists.
+Internally it holds one dict, `_STEP_HANDLERS`, mapping each `type` string
+to a handler function `(step, i, ctx) -> next_index`; the main loop just
+looks up the current step's type and jumps to whatever index the handler
+returns. This is why an orchestration mutation (`core/proposer.py`
+inserting, splitting, reordering, or removing steps in this file) never
+requires touching `run.py` - and why adding an entirely new step type
+later (e.g. a future `reflect` type) only means writing one more handler
+function and adding it to `_STEP_HANDLERS`, not restructuring the loop.
 
 ### `llm_call`
 
