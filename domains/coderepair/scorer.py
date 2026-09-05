@@ -79,3 +79,18 @@ def score(output: str, expected: dict[str, Any]) -> tuple[bool, dict[str, Any]]:
             "stderr": "",
             "error": f"scorer crashed: {exc!r}",
         }
+
+
+def score_v1(output: str, expected: dict[str, Any]) -> bool:
+    """Bool-only wrapper of `score`, for use as a TaskSpec.scorer_id target.
+
+    `core.runner.run_agent` calls `bool(scorer_fn(output, expected))` on
+    whatever the resolved scorer_id returns. Since `score` returns a
+    `(passed, details)` tuple, a non-empty tuple is always truthy under
+    `bool()` regardless of `passed` - wiring `score` itself up as a
+    task_spec.json's scorer_id would make every task register as passed.
+    This wrapper works around that, mirroring domains/docqa/scorer.py's
+    identical fix: a coderepair task_spec.json should point scorer_id at
+    "domains.coderepair.scorer:score_v1" instead of at `score` directly.
+    """
+    return score(output, expected)[0]
