@@ -64,10 +64,13 @@ import os
 import re
 import subprocess
 import time
+from pathlib import Path
 
 from core.types import Mutation
 
 logger = logging.getLogger(__name__)
+
+_MUTATION_WORKER_PROMPT_PATH = Path(__file__).parent / "prompts" / "mutation_worker.md"
 
 _SPAWNED_SESSION_RE = re.compile(r"spawned session (\S+)")
 
@@ -85,18 +88,20 @@ def _branch_name(mutation_id: str, parent_sha: str) -> str:
 
 
 def _mutation_prompt(mutation: Mutation) -> str:
+    """Build the prompt handed to a mutation worker session.
+
+    Prepends the shared instructions in core/prompts/mutation_worker.md
+    (framing, and the "don't hardcode eval answers" constraint) to this
+    mutation's specific surface/target_files/rationale/instruction.
+    """
+    base_prompt = _MUTATION_WORKER_PROMPT_PATH.read_text()
     files = ", ".join(mutation.target_files)
     return (
-        "You are an AO worker implementing exactly one mutation to the agent "
-        f"under agents/current/, as part of Forge's automated improvement loop "
-        f"(surface: {mutation.surface}; target file(s): {files}).\n\n"
+        f"{base_prompt}\n\n"
+        f"Surface: {mutation.surface}\n"
+        f"Target file(s): {files}\n\n"
         f"Rationale: {mutation.rationale}\n\n"
-        f"Instruction: {mutation.instruction}\n\n"
-        "Make exactly this change, scoped to the named target file(s). If any "
-        "detail is ambiguous, make the simplest reasonable choice and note the "
-        "assumption in your commit message - nobody is watching this session "
-        "interactively, so do not stop to ask a question. When the change is "
-        "made, commit it with a clear message. Do not open a PR."
+        f"Instruction: {mutation.instruction}"
     )
 
 

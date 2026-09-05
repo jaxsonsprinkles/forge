@@ -3,3 +3,5 @@ __pycache__/
 .venv/
 ledger/llm_cache/
 .pytest_cache/
+*.egg-info/
+build/
