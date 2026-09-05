@@ -12,6 +12,13 @@ importlib, the same way core.runner._load_agent_run_fn loads this very
 file - so this works whether agents/current/ is imported as a package,
 loaded from an arbitrary checkout (a mutation's worktree, an archived
 generation), or copied elsewhere entirely.
+
+Each step opens its own best-effort Neatlogs span via
+core.runner.open_step_span (LLM for llm_call, TOOL for tool_call), so a
+task's trace shows every model/tool call individually instead of one
+span for the whole run. Tracing is entirely optional here: outside of a
+core.runner.run_agent() call (e.g. a test that calls run() directly)
+open_step_span degrades to a no-op, same as tracing being unconfigured.
 """
 
 from __future__ import annotations
@@ -25,6 +32,7 @@ from typing import Any
 import yaml
 
 from core import llm
+from core import runner as _runner
 
 AGENT_DIR = Path(__file__).resolve().parent
 DEFAULT_MODEL = "claude-sonnet-5"
@@ -188,21 +196,24 @@ def run(task_input: dict) -> Any:
         step_type = step.get("type")
 
         if step_type == "llm_call":
-            output = _run_llm_call(step, system_prompt, task_input, memory)
+            with _runner.open_step_span(f"llm_call:{step['name']}", "LLM"):
+                output = _run_llm_call(step, system_prompt, task_input, memory)
             output_key = step.get("output_key", step["name"])
             memory_mod.record(memory, output_key, output)
             last_output_key = output_key
             i += 1
 
         elif step_type == "tool_call":
-            output = _run_tool_call(step, memory)
+            with _runner.open_step_span(f"tool_call:{step['name']}", "TOOL"):
+                output = _run_tool_call(step, memory)
             output_key = step.get("output_key", step["name"])
             memory_mod.record(memory, output_key, output)
             last_output_key = output_key
             i += 1
 
         elif step_type == "verify":
-            jump_to = _run_verify(step, memory, step_index_by_name, retry_counts)
+            with _runner.open_step_span(f"verify:{step['name']}", "GUARDRAIL"):
+                jump_to = _run_verify(step, memory, step_index_by_name, retry_counts)
             i = jump_to if jump_to is not None else i + 1
 
         else:

@@ -31,3 +31,25 @@ If a requirement is ambiguous, implement the simplest thing that satisfies the a
 
 Definition of done
 A task is done when its acceptance criteria pass from a clean checkout, and python -m pytest is green.
+
+## Forge has two learning loops. Both matter. The inner one is new.
+
+**Outer loop (already built).** Between generations, Forge analyzes failures and rewrites the agent's own code - prompt, tools, memory policy, orchestration graph - dispatching each candidate change to a parallel AO worker. This changes the agent's *source*.
+
+**Inner loop (this milestone).** At runtime, the agent reflects on each completed task, extracts durable lessons, writes them to a persistent memory store, and retrieves relevant lessons on later runs. This changes the agent's *knowledge* with no code edit at all.
+
+The claim we must be able to demonstrate: **the same agent code, run repeatedly on the same task type, gets measurably better because its memory grew.** If accuracy only improves when code changes, the inner loop does not exist and this milestone failed.
+
+## Memory is a first-class artifact
+
+Memory is not a scratchpad and not conversation history. It is a persisted, inspectable, growing store of learned rules - written by the agent about its own experience, and read back on later runs.
+
+Every memory entry must be traceable: which run produced it, which task, what evidence. A judge will ask "show me a specific thing it learned and where it came from." That must be a one-command answer.
+
+## Third-party tool learning
+
+The agent must be given access to a real third-party API and learn that system's *conventions* over time - not the API's schema, but the contextual logic that only shows up in the data. Learning "this org labels performance bugs as `perf` not `performance`" is the target. Learning "the endpoint is /issues" is not.
+
+## Determinism still holds
+
+Scorers stay offline and deterministic. Third-party calls go through a record/replay cache so runs are reproducible. Never let a live network response change a score.
