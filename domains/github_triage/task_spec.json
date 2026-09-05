@@ -1,0 +1,7 @@
+{
+    "goal": "Given an incoming GitHub issue for a specific repository, predict the labels, priority, and assignee it should receive - matching that repo's actual (unwritten) triage conventions rather than generic labeling logic.",
+    "tools": ["search_issues", "get_issue", "list_labels", "get_contributor_activity", "get_file_owners"],
+    "dataset_path": "domains/github_triage/dataset.jsonl",
+    "scorer_id": "domains.github_triage.scorer:score_v1",
+    "max_tasks": 40
+}
