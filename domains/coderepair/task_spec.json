@@ -1,0 +1,7 @@
+{
+    "goal": "Fix a buggy Python function so it passes its hidden tests.",
+    "tools": ["run_python"],
+    "dataset_path": "domains/coderepair/dataset.jsonl",
+    "scorer_id": "domains.coderepair.scorer:score_v1",
+    "max_tasks": 30
+}

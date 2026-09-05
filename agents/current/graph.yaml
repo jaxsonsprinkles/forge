@@ -1,0 +1,30 @@
+# Baseline general-purpose agent graph: solve, verify, finalize.
+#
+# core/proposer.py's "orchestration" mutations edit this file - add,
+# remove, or reorder steps. See README.md in this directory for the
+# step-type vocabulary run.py's interpreter supports.
+steps:
+  - name: solve
+    type: llm_call
+    instruction: >
+      Produce your best attempt at the final answer to the task input
+      above, in the exact format requested (see your system
+      instructions).
+    output_key: draft
+
+  - name: check_draft
+    type: verify
+    check: non_empty
+    input_key: draft
+    on_fail: solve
+    max_retries: 1
+
+  - name: finalize
+    type: llm_call
+    instruction: >
+      Here is your draft answer from the previous step, given as context
+      below. Review it once more against the task input above, correct
+      any mistakes, and respond with ONLY the final answer in the exact
+      format requested - no extra commentary.
+    input_keys: [draft]
+    output_key: final
