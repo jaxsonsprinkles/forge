@@ -1,0 +1,40 @@
+{"task_id": "gt_001", "input": {"repo": "eslint/eslint", "issue_number": 21303}, "expected": {"labels": ["build"], "assignee": null, "priority": "critical"}, "split": "holdout"}
+{"task_id": "gt_002", "input": {"repo": "eslint/eslint", "issue_number": 21250}, "expected": {"labels": ["bug", "accepted", "repro:yes"], "assignee": "sethamus", "priority": "medium"}, "split": "holdout"}
+{"task_id": "gt_003", "input": {"repo": "eslint/eslint", "issue_number": 21304}, "expected": {"labels": ["bug", "rule", "accepted", "repro:yes"], "assignee": "electrohyun", "priority": "critical"}, "split": "holdout"}
+{"task_id": "gt_004", "input": {"repo": "eslint/eslint", "issue_number": 21274}, "expected": {"labels": ["enhancement", "core", "accepted"], "assignee": "uncoolclub", "priority": "high"}, "split": "train"}
+{"task_id": "gt_005", "input": {"repo": "eslint/eslint", "issue_number": 21209}, "expected": {"labels": ["build", "accepted"], "assignee": "fasttime", "priority": "medium"}, "split": "train"}
+{"task_id": "gt_006", "input": {"repo": "eslint/eslint", "issue_number": 20999}, "expected": {"labels": ["enhancement", "core"], "assignee": null, "priority": "low"}, "split": "holdout"}
+{"task_id": "gt_007", "input": {"repo": "eslint/eslint", "issue_number": 21279}, "expected": {"labels": ["bug", "accepted", "repro:yes"], "assignee": "cchaeyoung", "priority": "high"}, "split": "holdout"}
+{"task_id": "gt_008", "input": {"repo": "eslint/eslint", "issue_number": 21273}, "expected": {"labels": ["bug", "rule", "accepted", "repro:needed"], "assignee": "tahakotil", "priority": "high"}, "split": "holdout"}
+{"task_id": "gt_009", "input": {"repo": "eslint/eslint", "issue_number": 21281}, "expected": {"labels": ["documentation", "accepted"], "assignee": "koreahghg", "priority": "high"}, "split": "holdout"}
+{"task_id": "gt_010", "input": {"repo": "eslint/eslint", "issue_number": 21255}, "expected": {"labels": ["bug", "rule", "accepted", "repro:yes"], "assignee": "crimsonjay0", "priority": "high"}, "split": "train"}
+{"task_id": "gt_011", "input": {"repo": "eslint/eslint", "issue_number": 21283}, "expected": {"labels": ["enhancement", "rule"], "assignee": "HakeemTheEmperor", "priority": "critical"}, "split": "train"}
+{"task_id": "gt_012", "input": {"repo": "eslint/eslint", "issue_number": 21258}, "expected": {"labels": ["bug", "rule", "accepted", "repro:yes"], "assignee": "synthex-byte", "priority": "high"}, "split": "train"}
+{"task_id": "gt_013", "input": {"repo": "eslint/eslint", "issue_number": 21212}, "expected": {"labels": ["release", "triage:no"], "assignee": "mdjermanovic", "priority": "medium"}, "split": "train"}
+{"task_id": "gt_014", "input": {"repo": "eslint/eslint", "issue_number": 21257}, "expected": {"labels": ["enhancement", "core"], "assignee": null, "priority": "critical"}, "split": "train"}
+{"task_id": "gt_015", "input": {"repo": "eslint/eslint", "issue_number": 21254}, "expected": {"labels": ["documentation", "accepted"], "assignee": "MuslumYilmaz", "priority": "critical"}, "split": "holdout"}
+{"task_id": "gt_016", "input": {"repo": "eslint/eslint", "issue_number": 20960}, "expected": {"labels": ["accepted", "chore"], "assignee": "crimsonjay0", "priority": "low"}, "split": "holdout"}
+{"task_id": "gt_017", "input": {"repo": "eslint/eslint", "issue_number": 21217}, "expected": {"labels": ["enhancement", "core"], "assignee": "caribou-code", "priority": "high"}, "split": "train"}
+{"task_id": "gt_018", "input": {"repo": "eslint/eslint", "issue_number": 21252}, "expected": {"labels": ["enhancement", "core"], "assignee": null, "priority": "critical"}, "split": "holdout"}
+{"task_id": "gt_019", "input": {"repo": "eslint/eslint", "issue_number": 21146}, "expected": {"labels": ["enhancement", "core", "repro:yes"], "assignee": "dong7812", "priority": "medium"}, "split": "train"}
+{"task_id": "gt_020", "input": {"repo": "eslint/eslint", "issue_number": 21111}, "expected": {"labels": ["enhancement", "core", "accepted"], "assignee": "uncoolclub", "priority": "medium"}, "split": "train"}
+{"task_id": "gt_021", "input": {"repo": "eslint/eslint", "issue_number": 21193}, "expected": {"labels": ["bug", "rule", "accepted", "autofix"], "assignee": "sethamus", "priority": "medium"}, "split": "train"}
+{"task_id": "gt_022", "input": {"repo": "eslint/eslint", "issue_number": 21194}, "expected": {"labels": ["bug", "rule", "accepted", "autofix", "repro:yes"], "assignee": "8ell", "priority": "high"}, "split": "train"}
+{"task_id": "gt_023", "input": {"repo": "eslint/eslint", "issue_number": 20844}, "expected": {"labels": ["bug", "accepted", "repro:yes"], "assignee": "sethamus", "priority": "low"}, "split": "train"}
+{"task_id": "gt_024", "input": {"repo": "eslint/eslint", "issue_number": 21160}, "expected": {"labels": ["release", "triage:no"], "assignee": "fasttime", "priority": "medium"}, "split": "train"}
+{"task_id": "gt_025", "input": {"repo": "eslint/eslint", "issue_number": 21201}, "expected": {"labels": [], "assignee": null, "priority": "critical"}, "split": "train"}
+{"task_id": "gt_026", "input": {"repo": "eslint/eslint", "issue_number": 21165}, "expected": {"labels": ["bug", "rule", "accepted", "autofix", "repro:yes"], "assignee": "dong7812", "priority": "medium"}, "split": "train"}
+{"task_id": "gt_027", "input": {"repo": "eslint/eslint", "issue_number": 21190}, "expected": {"labels": ["build"], "assignee": null, "priority": "critical"}, "split": "train"}
+{"task_id": "gt_028", "input": {"repo": "eslint/eslint", "issue_number": 20886}, "expected": {"labels": ["accepted"], "assignee": "crimsonjay0", "priority": "low"}, "split": "holdout"}
+{"task_id": "gt_029", "input": {"repo": "eslint/eslint", "issue_number": 21171}, "expected": {"labels": [], "assignee": null, "priority": "critical"}, "split": "train"}
+{"task_id": "gt_030", "input": {"repo": "eslint/eslint", "issue_number": 21170}, "expected": {"labels": [], "assignee": "mike-north", "priority": "critical"}, "split": "train"}
+{"task_id": "gt_031", "input": {"repo": "eslint/eslint", "issue_number": 21157}, "expected": {"labels": ["bug", "accepted", "repro:yes"], "assignee": "Grit03", "priority": "high"}, "split": "train"}
+{"task_id": "gt_032", "input": {"repo": "eslint/eslint", "issue_number": 21080}, "expected": {"labels": ["release", "triage:no"], "assignee": "fasttime", "priority": "medium"}, "split": "train"}
+{"task_id": "gt_033", "input": {"repo": "eslint/eslint", "issue_number": 20931}, "expected": {"labels": ["bug", "accepted", "repro:yes"], "assignee": "Kuldeep2822k", "priority": "low"}, "split": "train"}
+{"task_id": "gt_034", "input": {"repo": "eslint/eslint", "issue_number": 21121}, "expected": {"labels": ["bug", "repro:needed"], "assignee": null, "priority": "critical"}, "split": "holdout"}
+{"task_id": "gt_035", "input": {"repo": "eslint/eslint", "issue_number": 21085}, "expected": {"labels": ["bug", "repro:needed"], "assignee": "synthex-byte", "priority": "medium"}, "split": "train"}
+{"task_id": "gt_036", "input": {"repo": "eslint/eslint", "issue_number": 21133}, "expected": {"labels": ["enhancement", "core", "Invalid"], "assignee": "parezanovicluka863-byte", "priority": "critical"}, "split": "train"}
+{"task_id": "gt_037", "input": {"repo": "eslint/eslint", "issue_number": 21132}, "expected": {"labels": ["enhancement", "core", "Invalid"], "assignee": "parezanovicluka863-byte", "priority": "critical"}, "split": "train"}
+{"task_id": "gt_038", "input": {"repo": "eslint/eslint", "issue_number": 21131}, "expected": {"labels": ["enhancement", "core", "Invalid"], "assignee": null, "priority": "critical"}, "split": "train"}
+{"task_id": "gt_039", "input": {"repo": "eslint/eslint", "issue_number": 21130}, "expected": {"labels": ["enhancement", "core", "Invalid"], "assignee": "parezanovicluka863-byte", "priority": "critical"}, "split": "holdout"}
+{"task_id": "gt_040", "input": {"repo": "eslint/eslint", "issue_number": 21134}, "expected": {"labels": ["enhancement", "core"], "assignee": "parezanovicluka863-byte", "priority": "critical"}, "split": "holdout"}

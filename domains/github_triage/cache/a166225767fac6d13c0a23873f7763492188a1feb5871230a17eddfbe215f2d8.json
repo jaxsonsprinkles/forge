@@ -1,0 +1,622 @@
+[
+  {
+    "archived_at": null,
+    "color": "abbbea",
+    "default": false,
+    "description": "This is an issue related to a 3rd party consumer",
+    "id": 1682064095,
+    "name": "3rd party integration",
+    "node_id": "MDU6TGFiZWwxNjgyMDY0MDk1",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/3rd%20party%20integration"
+  },
+  {
+    "archived_at": null,
+    "color": "abbbea",
+    "default": false,
+    "description": "This is an issue related to a 3rd party plugin, config, or parser",
+    "id": 1580310450,
+    "name": "3rd party plugin",
+    "node_id": "MDU6TGFiZWwxNTgwMzEwNDUw",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/3rd%20party%20plugin"
+  },
+  {
+    "archived_at": null,
+    "color": "0052cc",
+    "default": false,
+    "description": "There is consensus among the team that this change meets the criteria for inclusion",
+    "id": 131106229,
+    "name": "accepted",
+    "node_id": "MDU6TGFiZWwxMzExMDYyMjk=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/accepted"
+  },
+  {
+    "archived_at": null,
+    "color": "eeeeee",
+    "default": false,
+    "description": "This issue has been archived; please open a new issue for any further discussion",
+    "id": 829215248,
+    "name": "archived due to age",
+    "node_id": "MDU6TGFiZWw4MjkyMTUyNDg=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/archived%20due%20to%20age"
+  },
+  {
+    "archived_at": null,
+    "color": "eeeeee",
+    "default": false,
+    "description": "The bot closed this issue",
+    "id": 1138140293,
+    "name": "auto closed",
+    "node_id": "MDU6TGFiZWwxMTM4MTQwMjkz",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/auto%20closed"
+  },
+  {
+    "archived_at": null,
+    "color": "dcfc92",
+    "default": false,
+    "description": "This change is related to ESLint's autofixing capabilities",
+    "id": 1566829073,
+    "name": "autofix",
+    "node_id": "MDU6TGFiZWwxNTY2ODI5MDcz",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/autofix"
+  },
+  {
+    "archived_at": null,
+    "color": "bfe5bf",
+    "default": false,
+    "description": null,
+    "id": 66363433,
+    "name": "backlog",
+    "node_id": "MDU6TGFiZWw2NjM2MzQzMw==",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/backlog"
+  },
+  {
+    "archived_at": null,
+    "color": "e11d21",
+    "default": false,
+    "description": "This change can't be completed until another issue is resolved",
+    "id": 154929020,
+    "name": "blocked",
+    "node_id": "MDU6TGFiZWwxNTQ5MjkwMjA=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/blocked"
+  },
+  {
+    "archived_at": null,
+    "color": "129e5e",
+    "default": false,
+    "description": "Someone has posted a bounty for this issue on BountySource",
+    "id": 130454031,
+    "name": "bounty",
+    "node_id": "MDU6TGFiZWwxMzA0NTQwMzE=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/bounty"
+  },
+  {
+    "archived_at": null,
+    "color": "e11d21",
+    "default": false,
+    "description": "This change is backwards-incompatible",
+    "id": 185518888,
+    "name": "breaking",
+    "node_id": "MDU6TGFiZWwxODU1MTg4ODg=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/breaking"
+  },
+  {
+    "archived_at": null,
+    "color": "fc2929",
+    "default": true,
+    "description": "ESLint is working incorrectly",
+    "id": 45711350,
+    "name": "bug",
+    "node_id": "MDU6TGFiZWw0NTcxMTM1MA==",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/bug"
+  },
+  {
+    "archived_at": null,
+    "color": "fad8c7",
+    "default": false,
+    "description": "This change relates to ESLint's build process",
+    "id": 72921735,
+    "name": "build",
+    "node_id": "MDU6TGFiZWw3MjkyMTczNQ==",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/build"
+  },
+  {
+    "archived_at": null,
+    "color": "c2e0c6",
+    "default": false,
+    "description": "This change is not user-facing",
+    "id": 360091515,
+    "name": "chore",
+    "node_id": "MDU6TGFiZWwzNjAwOTE1MTU=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/chore"
+  },
+  {
+    "archived_at": null,
+    "color": "eb6420",
+    "default": false,
+    "description": "Relates to ESLint's command-line interface",
+    "id": 65186530,
+    "name": "cli",
+    "node_id": "MDU6TGFiZWw2NTE4NjUzMA==",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/cli"
+  },
+  {
+    "archived_at": null,
+    "color": "0E8A16",
+    "default": false,
+    "description": "",
+    "id": 4420714283,
+    "name": "contributor pool",
+    "node_id": "LA_kwDOAKjKDc8AAAABB36_Kw",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/contributor%20pool"
+  },
+  {
+    "archived_at": null,
+    "color": "c7def8",
+    "default": false,
+    "description": "Relates to ESLint's core APIs and features",
+    "id": 82922548,
+    "name": "core",
+    "node_id": "MDU6TGFiZWw4MjkyMjU0OA==",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/core"
+  },
+  {
+    "archived_at": null,
+    "color": "0366d6",
+    "default": false,
+    "description": "Pull requests that update a dependency file",
+    "id": 4580186229,
+    "name": "dependencies",
+    "node_id": "LA_kwDOAKjKDc8AAAABEQAYdQ",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/dependencies"
+  },
+  {
+    "archived_at": null,
+    "color": "f144f4",
+    "default": false,
+    "description": "This change deprecates an existing feature",
+    "id": 975550519,
+    "name": "deprecation",
+    "node_id": "MDU6TGFiZWw5NzU1NTA1MTk=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/deprecation"
+  },
+  {
+    "archived_at": null,
+    "color": "ededed",
+    "default": false,
+    "description": null,
+    "id": 6917606068,
+    "name": "deps:actions",
+    "node_id": "LA_kwDOAKjKDc8AAAABnFJKtA",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/deps:actions"
+  },
+  {
+    "archived_at": null,
+    "color": "ededed",
+    "default": false,
+    "description": null,
+    "id": 6186429795,
+    "name": "deps:npm",
+    "node_id": "LA_kwDOAKjKDc8AAAABcL1tYw",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/deps:npm"
+  },
+  {
+    "archived_at": null,
+    "color": "e11d21",
+    "default": false,
+    "description": "This pull request should not be merged yet",
+    "id": 261840582,
+    "name": "do not merge",
+    "node_id": "MDU6TGFiZWwyNjE4NDA1ODI=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/do%20not%20merge"
+  },
+  {
+    "archived_at": null,
+    "color": "5319e7",
+    "default": true,
+    "description": "Relates to ESLint's documentation",
+    "id": 64004798,
+    "name": "documentation",
+    "node_id": "MDU6TGFiZWw2NDAwNDc5OA==",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/documentation"
+  },
+  {
+    "archived_at": null,
+    "color": "84b6eb",
+    "default": true,
+    "description": "This change enhances an existing feature of ESLint",
+    "id": 45711352,
+    "name": "enhancement",
+    "node_id": "MDU6TGFiZWw0NTcxMTM1Mg==",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/enhancement"
+  },
+  {
+    "archived_at": null,
+    "color": "5124D2",
+    "default": false,
+    "description": "",
+    "id": 6559828130,
+    "name": "ESLint",
+    "node_id": "LA_kwDOAKjKDc8AAAABhv8Iog",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/ESLint"
+  },
+  {
+    "archived_at": null,
+    "color": "fef2c0",
+    "default": false,
+    "description": "The team will evaluate this issue to decide whether it meets the criteria for inclusion",
+    "id": 255319420,
+    "name": "evaluating",
+    "node_id": "MDU6TGFiZWwyNTUzMTk0MjA=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/evaluating"
+  },
+  {
+    "archived_at": null,
+    "color": "ef97db",
+    "default": false,
+    "description": "This change is related to experimental syntax (stage 3 or below)",
+    "id": 788362560,
+    "name": "experimental syntax",
+    "node_id": "MDU6TGFiZWw3ODgzNjI1NjA=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/experimental%20syntax"
+  },
+  {
+    "archived_at": null,
+    "color": "bfd4f2",
+    "default": false,
+    "description": "This change adds a new feature to ESLint",
+    "id": 253473350,
+    "name": "feature",
+    "node_id": "MDU6TGFiZWwyNTM0NzMzNTA=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/feature"
+  },
+  {
+    "archived_at": null,
+    "color": "1d76db",
+    "default": false,
+    "description": "Relates to the formatters bundled with ESLint",
+    "id": 746664923,
+    "name": "formatter",
+    "node_id": "MDU6TGFiZWw3NDY2NjQ5MjM=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/formatter"
+  },
+  {
+    "archived_at": null,
+    "color": "ededed",
+    "default": false,
+    "description": null,
+    "id": 6578563695,
+    "name": "github actions",
+    "node_id": "LA_kwDOAKjKDc8AAAABiBzqbw",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/github%20actions"
+  },
+  {
+    "archived_at": null,
+    "color": "000000",
+    "default": false,
+    "description": "Pull requests that update GitHub Actions code",
+    "id": 5923455633,
+    "name": "github_actions",
+    "node_id": "LA_kwDOAKjKDc8AAAABYRDCkQ",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/github_actions"
+  },
+  {
+    "archived_at": null,
+    "color": "006b75",
+    "default": true,
+    "description": "Good for people who haven't worked on ESLint before",
+    "id": 78536425,
+    "name": "good first issue",
+    "node_id": "MDU6TGFiZWw3ODUzNjQyNQ==",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/good%20first%20issue"
+  },
+  {
+    "archived_at": null,
+    "color": "ff9a56",
+    "default": false,
+    "description": "Recommended issue for those participating in Hacktoberfest https://hacktoberfest.digitalocean.com/",
+    "id": 1092124783,
+    "name": "Hacktoberfest",
+    "node_id": "MDU6TGFiZWwxMDkyMTI0Nzgz",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/Hacktoberfest"
+  },
+  {
+    "archived_at": null,
+    "color": "8783db",
+    "default": true,
+    "description": "The team would welcome a contribution from the community for this issue",
+    "id": 258830633,
+    "name": "help wanted",
+    "node_id": "MDU6TGFiZWwyNTg4MzA2MzM=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/help%20wanted"
+  },
+  {
+    "archived_at": null,
+    "color": "080016",
+    "default": false,
+    "description": "Relates to the `indent` rule",
+    "id": 517845966,
+    "name": "indent",
+    "node_id": "MDU6TGFiZWw1MTc4NDU5NjY=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/indent"
+  },
+  {
+    "archived_at": null,
+    "color": "666666",
+    "default": false,
+    "description": "Relates to the tools used in the ESLint development process",
+    "id": 72921852,
+    "name": "infrastructure",
+    "node_id": "MDU6TGFiZWw3MjkyMTg1Mg==",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/infrastructure"
+  },
+  {
+    "archived_at": null,
+    "color": "993016",
+    "default": false,
+    "description": "This change is invalid to the context",
+    "id": 2397637464,
+    "name": "Invalid",
+    "node_id": "MDU6TGFiZWwyMzk3NjM3NDY0",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/Invalid"
+  },
+  {
+    "archived_at": null,
+    "color": "f7c6c7",
+    "default": false,
+    "description": "Minor details about this change need to be discussed",
+    "id": 131106307,
+    "name": "needs bikeshedding",
+    "node_id": "MDU6TGFiZWwxMzExMDYzMDc=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/needs%20bikeshedding"
+  },
+  {
+    "archived_at": null,
+    "color": "f7c6c7",
+    "default": false,
+    "description": "Important details about this change need to be discussed",
+    "id": 677842299,
+    "name": "needs design",
+    "node_id": "MDU6TGFiZWw2Nzc4NDIyOTk=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/needs%20design"
+  },
+  {
+    "archived_at": null,
+    "color": "8783db",
+    "default": false,
+    "description": "Not enough information has been provided to triage this issue",
+    "id": 324944690,
+    "name": "needs info",
+    "node_id": "MDU6TGFiZWwzMjQ5NDQ2OTA=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/needs%20info"
+  },
+  {
+    "archived_at": null,
+    "color": "f7c6c7",
+    "default": false,
+    "description": null,
+    "id": 404673622,
+    "name": "needs prototype",
+    "node_id": "MDU6TGFiZWw0MDQ2NzM2MjI=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/needs%20prototype"
+  },
+  {
+    "archived_at": null,
+    "color": "ef97db",
+    "default": false,
+    "description": "This issue is related to new syntax that has reached stage 4",
+    "id": 1717490700,
+    "name": "new syntax",
+    "node_id": "MDU6TGFiZWwxNzE3NDkwNzAw",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/new%20syntax"
+  },
+  {
+    "archived_at": null,
+    "color": "d93f0b",
+    "default": false,
+    "description": "This issue may necessitate a patch release in the next few days",
+    "id": 453468089,
+    "name": "patch candidate",
+    "node_id": "MDU6TGFiZWw0NTM0NjgwODk=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/patch%20candidate"
+  },
+  {
+    "archived_at": null,
+    "color": "c49fe0",
+    "default": false,
+    "description": "A new release just shipped. No enhancements will be merged for a few days in case a patch is needed",
+    "id": 785384388,
+    "name": "patch release pending",
+    "node_id": "MDU6TGFiZWw3ODUzODQzODg=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/patch%20release%20pending"
+  },
+  {
+    "archived_at": null,
+    "color": "d4c5f9",
+    "default": true,
+    "description": "This issue asks a question about ESLint",
+    "id": 246711855,
+    "name": "question",
+    "node_id": "MDU6TGFiZWwyNDY3MTE4NTU=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/question"
+  },
+  {
+    "archived_at": null,
+    "color": "b60205",
+    "default": false,
+    "description": "Something broke",
+    "id": 452388601,
+    "name": "regression",
+    "node_id": "MDU6TGFiZWw0NTIzODg2MDE=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/regression"
+  },
+  {
+    "archived_at": null,
+    "color": "bfdadc",
+    "default": false,
+    "description": "This issue contains information about a scheduled ESLint release",
+    "id": 452374798,
+    "name": "release",
+    "node_id": "MDU6TGFiZWw0NTIzNzQ3OTg=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/release"
+  },
+  {
+    "archived_at": null,
+    "color": "136971",
+    "default": false,
+    "description": "This issue should include a reproducible example",
+    "id": 2786804245,
+    "name": "repro:needed",
+    "node_id": "MDU6TGFiZWwyNzg2ODA0MjQ1",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/repro:needed"
+  },
+  {
+    "archived_at": null,
+    "color": "7A14E9",
+    "default": false,
+    "description": "Issues with a reproducible example",
+    "id": 2786823532,
+    "name": "repro:yes",
+    "node_id": "MDU6TGFiZWwyNzg2ODIzNTMy",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/repro:yes"
+  },
+  {
+    "archived_at": null,
+    "color": "fbca04",
+    "default": false,
+    "description": "Relates to ESLint's core rules",
+    "id": 45798639,
+    "name": "rule",
+    "node_id": "MDU6TGFiZWw0NTc5ODYzOQ==",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/rule"
+  },
+  {
+    "archived_at": null,
+    "color": "e11d21",
+    "default": false,
+    "description": "Relates to security",
+    "id": 992003093,
+    "name": "security",
+    "node_id": "MDU6TGFiZWw5OTIwMDMwOTM=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/security"
+  },
+  {
+    "archived_at": null,
+    "color": "0E8A16",
+    "default": false,
+    "description": "",
+    "id": 7159279685,
+    "name": "sponsor",
+    "node_id": "LA_kwDOAKjKDc8AAAABqrnwRQ",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/sponsor"
+  },
+  {
+    "archived_at": null,
+    "color": "ededed",
+    "default": false,
+    "description": null,
+    "id": 3455102856,
+    "name": "Stale",
+    "node_id": "LA_kwDOAKjKDc7N8K-I",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/Stale"
+  },
+  {
+    "archived_at": null,
+    "color": "cc317c",
+    "default": false,
+    "description": "An ESLint team member will look at this issue soon",
+    "id": 45711354,
+    "name": "triage",
+    "node_id": "MDU6TGFiZWw0NTcxMTM1NA==",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/triage"
+  },
+  {
+    "archived_at": null,
+    "color": "ededed",
+    "default": false,
+    "description": null,
+    "id": 3397041997,
+    "name": "triage:no",
+    "node_id": "LA_kwDOAKjKDc7Ker9N",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/triage:no"
+  },
+  {
+    "archived_at": null,
+    "color": "fbca04",
+    "default": false,
+    "description": "This issue will be discussed by ESLint's TSC at the next meeting",
+    "id": 398061918,
+    "name": "tsc agenda",
+    "node_id": "MDU6TGFiZWwzOTgwNjE5MTg=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/tsc%20agenda"
+  },
+  {
+    "archived_at": null,
+    "color": "0052cc",
+    "default": false,
+    "description": "Issues that require feedback from a TSC member",
+    "id": 6960435129,
+    "name": "tsc waiting",
+    "node_id": "LA_kwDOAKjKDc8AAAABnt_PuQ",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/tsc%20waiting"
+  },
+  {
+    "archived_at": null,
+    "color": "FEF2C0",
+    "default": false,
+    "description": "Related to TypeScript types",
+    "id": 7478667667,
+    "name": "types",
+    "node_id": "LA_kwDOAKjKDc8AAAABvcNpkw",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/types"
+  },
+  {
+    "archived_at": null,
+    "color": "e863da",
+    "default": false,
+    "description": "This change is related to a dependency upgrade",
+    "id": 947241650,
+    "name": "upgrade",
+    "node_id": "MDU6TGFiZWw5NDcyNDE2NTA=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/upgrade"
+  },
+  {
+    "archived_at": null,
+    "color": "fef2c0",
+    "default": false,
+    "description": "Issues/PRs related to the v8.x release line",
+    "id": 7445539777,
+    "name": "v8.x",
+    "node_id": "LA_kwDOAKjKDc8AAAABu8nrwQ",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/v8.x"
+  },
+  {
+    "archived_at": null,
+    "color": "C41D9C",
+    "default": false,
+    "description": "Issues/PRs related to the v9.x release line",
+    "id": 7445540995,
+    "name": "v9.x",
+    "node_id": "LA_kwDOAKjKDc8AAAABu8nwgw",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/v9.x"
+  },
+  {
+    "archived_at": null,
+    "color": "bfdadc",
+    "default": false,
+    "description": "Relates to ESLint's website at eslint.github.io",
+    "id": 72921791,
+    "name": "website",
+    "node_id": "MDU6TGFiZWw3MjkyMTc5MQ==",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/website"
+  },
+  {
+    "archived_at": null,
+    "color": "dddddd",
+    "default": false,
+    "description": "The behavior described in this issue is working correctly",
+    "id": 589339326,
+    "name": "works as intended",
+    "node_id": "MDU6TGFiZWw1ODkzMzkzMjY=",
+    "url": "https://api.github.com/repos/eslint/eslint/labels/works%20as%20intended"
+  }
+]
