@@ -5,18 +5,20 @@ core/types.py), pulls its Neatlogs trace when one is available, and
 clusters failures that share a root cause into a single `FailureCluster`
 instead of reporting one entry per task.
 
-Trace fetching reuses the same best-effort Neatlogs client that
-core.runner sets up (`runner._neatlogs_init`): if the SDK isn't
+Trace fetching reuses the same best-effort Neatlogs init that
+core.runner sets up (`runner._neatlogs_init`, which returns the
+`neatlogs` module itself once `neatlogs.init(api_key=...)` has
+succeeded, matching docs.neatlogs.com/sdk/python): if the SDK isn't
 installed, no API key is configured, or the fetch call fails for any
 reason, this degrades to `None` and the affected failures are grouped
-by error/output pattern alone. Neatlogs doesn't expose a documented
-"fetch trace by id" call anywhere else in this codebase, so this
-assumes a `client.get_trace(trace_id)` method returning an object (or
-dict) with a `steps` sequence describing each agent step's
-name/input/output/error - the same shape runner.py's spans would
-produce. That assumption only matters when a real provider is wired
-up; today (and in tests) it's exercised entirely through monkeypatched
-seams, exactly like runner.py's own Neatlogs calls.
+by error/output pattern alone. The documented SDK surface has no
+"fetch trace/span by id" call, so this assumes a
+`client.get_trace(trace_id)` method returning an object (or dict) with
+a `steps` sequence describing each agent step's name/input/output/error
+- the same shape runner.py's spans would produce. That assumption only
+matters when a real provider is wired up; today (and in tests) it's
+exercised entirely through monkeypatched seams, exactly like runner.py's
+own Neatlogs calls.
 
 `FailureCluster` has no `confidence` field, and this module doesn't add
 one: clusters built from trace data note that in their hypothesis, and

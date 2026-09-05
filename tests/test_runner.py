@@ -96,31 +96,28 @@ def test_trace_id_none_when_neatlogs_not_configured(monkeypatch):
 
 def test_trace_id_populated_when_neatlogs_configured(monkeypatch):
     class FakeSpan:
-        def end(self):
-            pass
-
-    class FakeTrace:
         def __init__(self, trace_id):
             self.id = trace_id
 
-        def start_span(self, name):
-            return FakeSpan()
+        def __enter__(self):
+            return self
 
-        def end(self):
-            pass
+        def __exit__(self, *exc_info):
+            return False
 
-    class FakeTracer:
+    class FakeNeatlogsSDK:
         def __init__(self):
             self._n = 0
 
-        def start_trace(self, name):
-            self._n += 1
-            return FakeTrace(trace_id=f"trace-{self._n}")
-
-    class FakeNeatlogsSDK:
         def init(self, api_key):
             assert api_key == "fake-key"
-            return FakeTracer()
+
+        def trace(self, name, kind):
+            self._n += 1
+            return FakeSpan(trace_id=f"trace-{self._n}")
+
+        def flush(self):
+            pass
 
     monkeypatch.setattr(runner, "_neatlogs_sdk", FakeNeatlogsSDK())
     monkeypatch.setenv("NEATLOGS_API_KEY", "fake-key")
@@ -130,7 +127,9 @@ def test_trace_id_populated_when_neatlogs_configured(monkeypatch):
 
     assert len(results) == 3
     assert all(r.trace_id is not None for r in results)
-    assert {r.trace_id for r in results} == {"trace-1", "trace-2", "trace-3"}
+    # One "WORKFLOW" trace() call per task (the id-bearing one), plus a
+    # nested "AGENT" and "GUARDRAIL" call each - so ids land 3 apart.
+    assert {r.trace_id for r in results} == {"trace-1", "trace-4", "trace-7"}
 
 
 def test_trace_id_none_when_neatlogs_init_raises(monkeypatch):
