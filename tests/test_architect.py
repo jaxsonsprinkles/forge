@@ -1,13 +1,20 @@
-"""Tests for core.architect: validating and scaffolding agent directories."""
+"""Tests for core.architect: validating, scaffolding, and building agent directories."""
 
 from __future__ import annotations
 
+import json
 import shutil
 from pathlib import Path
+from typing import Any, Callable
 
 import pytest
+import yaml
 
-from core.architect import REQUIRED_FILES, scaffold, validate
+from core import architect, llm
+from core.architect import REQUIRED_FILES, build_agent, scaffold, validate
+from core.runner import run_agent
+from core.scorer import score_runs
+from core.types import TaskSpec
 
 REAL_AGENT_DIR = Path("agents/current")
 
@@ -119,3 +126,199 @@ def test_scaffold_rejects_an_invalid_source(tmp_path):
 
     with pytest.raises(FileNotFoundError):
         scaffold(tmp_path / "dest", source=bad_source)
+
+
+# --- build_agent() -----------------------------------------------------
+
+_FAKE_BUILD_RESPONSE = json.dumps(
+    {
+        "prompt_md": "You are a careful assistant that solves one task at a time.",
+        "graph_steps": [
+            {
+                "name": "solve",
+                "type": "llm_call",
+                "instruction": "Produce your best answer to the task input above.",
+                "output_key": "final",
+            }
+        ],
+    }
+)
+
+
+def _fake_build_complete(text: str) -> Callable[..., tuple[str, float, int]]:
+    def fake(messages: list[dict[str, Any]], model: str, **params: Any) -> tuple[str, float, int]:
+        return text, 0.0, 1
+
+    return fake
+
+
+def _dummy_task_spec(**overrides: Any) -> TaskSpec:
+    defaults: dict[str, Any] = {
+        "domain_id": "dummy",
+        "goal": "Answer the question in task_input.",
+        "tools": [],
+        "dataset_path": "unused.jsonl",
+        "scorer_id": "unused:unused",
+    }
+    defaults.update(overrides)
+    return TaskSpec(**defaults)
+
+
+def test_build_agent_writes_fixed_scaffolding_plus_generated_files(tmp_path, monkeypatch):
+    monkeypatch.setattr(llm, "complete", _fake_build_complete(_FAKE_BUILD_RESPONSE))
+
+    agent_dir = build_agent(_dummy_task_spec(), tmp_path / "built")
+
+    result = validate(agent_dir)
+    assert result.ok is True, result.errors
+    for name in REQUIRED_FILES:
+        assert (agent_dir / name).is_file()
+
+    # run.py/memory.py/tools.py are fixed scaffolding: copied byte-for-byte
+    # from the baseline agent, never touched by the model call.
+    for name in ("run.py", "memory.py", "tools.py"):
+        assert (agent_dir / name).read_text() == (REAL_AGENT_DIR / name).read_text()
+
+    # prompt.md and graph.yaml reflect the (mocked) model's response.
+    assert "careful assistant" in (agent_dir / "prompt.md").read_text()
+    graph = yaml.safe_load((agent_dir / "graph.yaml").read_text())
+    assert graph["steps"] == [
+        {
+            "name": "solve",
+            "type": "llm_call",
+            "instruction": "Produce your best answer to the task input above.",
+            "output_key": "final",
+        }
+    ]
+
+
+def test_build_agent_tolerates_a_markdown_code_fence(tmp_path, monkeypatch):
+    fenced = f"```json\n{_FAKE_BUILD_RESPONSE}\n```"
+    monkeypatch.setattr(llm, "complete", _fake_build_complete(fenced))
+
+    agent_dir = build_agent(_dummy_task_spec(), tmp_path / "built")
+
+    assert validate(agent_dir).ok is True
+
+
+def test_build_agent_rejects_invalid_json(tmp_path, monkeypatch):
+    monkeypatch.setattr(llm, "complete", _fake_build_complete("not json at all"))
+
+    with pytest.raises(ValueError, match="not valid JSON"):
+        build_agent(_dummy_task_spec(), tmp_path / "built")
+
+
+def test_build_agent_rejects_missing_prompt_md(tmp_path, monkeypatch):
+    bad_response = json.dumps({"graph_steps": [{"name": "solve", "type": "llm_call"}]})
+    monkeypatch.setattr(llm, "complete", _fake_build_complete(bad_response))
+
+    with pytest.raises(ValueError, match="prompt_md"):
+        build_agent(_dummy_task_spec(), tmp_path / "built")
+
+
+def test_build_agent_rejects_empty_graph_steps(tmp_path, monkeypatch):
+    bad_response = json.dumps({"prompt_md": "hello", "graph_steps": []})
+    monkeypatch.setattr(llm, "complete", _fake_build_complete(bad_response))
+
+    with pytest.raises(ValueError, match="graph_steps"):
+        build_agent(_dummy_task_spec(), tmp_path / "built")
+
+
+def test_build_agent_rejects_a_step_missing_name_or_type(tmp_path, monkeypatch):
+    bad_response = json.dumps({"prompt_md": "hello", "graph_steps": [{"name": "solve"}]})
+    monkeypatch.setattr(llm, "complete", _fake_build_complete(bad_response))
+
+    with pytest.raises(ValueError, match="malformed graph_steps"):
+        build_agent(_dummy_task_spec(), tmp_path / "built")
+
+
+def test_build_agent_makes_exactly_one_model_call(tmp_path, monkeypatch):
+    call_count = {"n": 0}
+
+    def counting_fake(messages: list[dict[str, Any]], model: str, **params: Any) -> tuple[str, float, int]:
+        call_count["n"] += 1
+        return _FAKE_BUILD_RESPONSE, 0.0, 1
+
+    monkeypatch.setattr(llm, "complete", counting_fake)
+
+    build_agent(_dummy_task_spec(), tmp_path / "built")
+
+    assert call_count["n"] == 1
+
+
+def test_build_agent_on_coderepair_scores_nonzero_but_imperfect(tmp_path, monkeypatch):
+    """Integration test: build_agent() on the real coderepair task_spec,
+    then run the built agent through core.runner.run_agent against
+    coderepair's real train split. Both the build call and every per-task
+    run call go through a mocked core.llm.complete() so this stays fast,
+    offline, and deterministic while still exercising build_agent() end to
+    end against a real domain and real scorer.
+    """
+    task_spec = TaskSpec(
+        domain_id="coderepair",
+        goal="Fix a buggy Python function so it passes its hidden tests.",
+        tools=["run_python"],
+        dataset_path="domains/coderepair/dataset.jsonl",
+        scorer_id="domains.coderepair.scorer:score_v1",
+        max_tasks=20,
+    )
+    build_response = json.dumps(
+        {
+            "prompt_md": "You are a careful Python engineer who fixes one buggy function at a time.",
+            "graph_steps": [
+                {
+                    "name": "solve",
+                    "type": "llm_call",
+                    "instruction": (
+                        "Fix the bug in broken_code so it satisfies its hidden tests. Respond with "
+                        "ONLY the corrected Python function source, no commentary."
+                    ),
+                    "output_key": "final",
+                }
+            ],
+        }
+    )
+    monkeypatch.setattr(llm, "complete", _fake_build_complete(build_response))
+    agent_dir = build_agent(task_spec, tmp_path / "built_coderepair")
+    assert validate(agent_dir).ok is True
+
+    # A deliberately weak, deterministic "solver": correctly fixes a known
+    # subset of the train split's functions and echoes the (still-broken)
+    # original source back for the rest - guaranteeing a score strictly
+    # between 0 and 1, the way a real weak first-draft agent would score.
+    correct_fixes = {
+        "is_even": "def is_even(n):\n    return n % 2 == 0\n",
+        "gcd": "def gcd(a, b):\n    while b != 0:\n        a, b = b, a % b\n    return a\n",
+        "capitalize_words": (
+            'def capitalize_words(s):\n    return " ".join(word[0].upper() + word[1:] for word in s.split(" "))\n'
+        ),
+        "is_leap_year": (
+            "def is_leap_year(year):\n    return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)\n"
+        ),
+        "parse_int": (
+            'def parse_int(s):\n    if s.startswith("-"):\n        return -int(s[1:])\n    return int(s)\n'
+        ),
+        "clamp": (
+            "def clamp(value, low, high):\n"
+            "    if value < low:\n"
+            "        return low\n"
+            "    if value > high:\n"
+            "        return high\n"
+            "    return value\n"
+        ),
+    }
+
+    def fake_solve(messages: list[dict[str, Any]], model: str, **params: Any) -> tuple[str, float, int]:
+        user_content = messages[-1]["content"]
+        json_blob = user_content[len("Task input:\n") :].split("\n\n", 1)[0]
+        task_input = json.loads(json_blob)
+        fixed = correct_fixes.get(task_input["function_name"])
+        return fixed if fixed is not None else task_input["broken_code"], 0.0, 1
+
+    monkeypatch.setattr(llm, "complete", fake_solve)
+
+    results = run_agent(str(agent_dir), task_spec, split="train")
+    score = score_runs(results, "train")
+
+    assert score.n == 20
+    assert 0.0 < score.accuracy < 1.0
