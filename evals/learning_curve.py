@@ -34,11 +34,17 @@ module's docstring). Holdout scoring must stay a pure read of "what has
 memory learned so far" with zero side effects - it is never a source of
 new lessons, confidence changes, or even retrieval-count bookkeeping, so
 that a later run's holdout results can never be traced back to something
-holdout itself did. `_peek_retrieve()` below reimplements `retrieve()`'s
-exact ranking (same private helpers, same tie-breaks) without the
-write-back, so holdout tasks still see accumulated memory but the module
-invariant "holdout never calls core.memory.write()" holds by construction,
-not by convention.
+holdout itself did. `core.memory.peek()` is `retrieve()`'s read-only
+twin - identical ranking, no write-back - so holdout tasks still see
+accumulated memory but the module invariant "holdout never calls
+core.memory.write()" holds by construction, not by convention. This
+harness used to carry its own private reimplementation of that ranking
+(`_peek_retrieve()`); it was promoted into `core.memory.peek()` once
+`agents/current/run.py`'s `reflect` step needed the exact same "look but
+don't count as a retrieval" semantics for its own existing-entries lookup
+(see that module's `_handle_reflect` docstring) - two hand-duplicated
+copies of the ranking logic was already one too many, and it let that
+step's lookup durably write during a holdout run.
 
 Reinforcement wiring
 ---------------------
@@ -144,26 +150,6 @@ def _augment_task_input(task_input: dict[str, Any], retrieved: list[MemoryEntry]
     return augmented
 
 
-def _peek_retrieve(task_input: dict[str, Any], domain_id: str, k: int, base_dir: str | Path) -> list[MemoryEntry]:
-    """Read-only equivalent of `core.memory.retrieve()`.
-
-    Same ranking (identical private helpers, identical tie-break order)
-    but never calls `memory.write()` to bump `times_retrieved` - see module
-    docstring's "Holdout must never write" section. This is the only thing
-    standing between holdout scoring and a hidden write path.
-    """
-    active = memory.load_all(domain_id, base_dir, statuses={"active"})
-    input_tokens = memory._task_input_tokens(task_input)
-
-    scored = [
-        (memory._relevance(entry.trigger, input_tokens) * entry.confidence, entry)
-        for entry in active
-    ]
-    scored = [(score, entry) for score, entry in scored if score > 0]
-    scored.sort(key=lambda pair: (-pair[0], -pair[1].confidence, pair[1].id))
-    return [entry for _, entry in scored[:k]]
-
-
 def _run_one_task(
     run_fn: Any,
     scorer_fn: Any,
@@ -177,7 +163,7 @@ def _run_one_task(
 ) -> tuple[RunResult, list[MemoryEntry], dict[str, Any], Any]:
     """Run and score one dataset row, injecting memory first if enabled.
 
-    `read_only=True` (holdout) uses `_peek_retrieve`; `read_only=False`
+    `read_only=True` (holdout) uses `memory.peek()`; `read_only=False`
     (train) uses the real `memory.retrieve()`, which durably bumps
     `times_retrieved`. `memory_mode="off"` skips retrieval entirely in
     either case - no `core.memory` call is made at all, not even a
@@ -190,7 +176,7 @@ def _run_one_task(
     retrieved: list[MemoryEntry] = []
     if memory_mode == "on":
         retrieved = (
-            _peek_retrieve(task_input, domain_id, k, base_dir)
+            memory.peek(task_input, domain_id, k, base_dir)
             if read_only
             else memory.retrieve(task_input, domain_id, k, base_dir=base_dir)
         )

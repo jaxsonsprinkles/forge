@@ -220,6 +220,17 @@ def _handle_reflect(step: dict[str, Any], i: int, ctx: _StepContext) -> int:
     layer - run(task_input) never receives them, by the fixed entrypoint
     contract every agent shares). Never raises: a broken reflect call
     must never fail the task it's reflecting on.
+
+    The `existing` entries below are looked up via `core.memory.peek()`,
+    not `retrieve()`: they're only ever handed to `reflect()` as dedup
+    context, never surfaced into the agent's own prompt (this step never
+    writes them back into `ctx.memory`), so this lookup is never the
+    thing that "exposed" the agent to a lesson. A caller that also
+    retrieves for this same task_input to inject lessons into the prompt
+    (e.g. evals/learning_curve.py's harness) already accounts for the
+    real exposure; using `retrieve()` here too would double-count
+    `times_retrieved` for a single task and, worse, would durably write
+    even during a caller's read-only (holdout) scoring pass.
     """
     domain_id = step.get("domain_id")
     if not domain_id:
@@ -241,7 +252,7 @@ def _handle_reflect(step: dict[str, Any], i: int, ctx: _StepContext) -> int:
     new_entries: list[Any] = []
     with _runner.open_step_span(f"reflect:{step['name']}", "GUARDRAIL"):
         try:
-            existing = _memory.retrieve(ctx.task_input, domain_id=domain_id, k=step.get("k", 5), base_dir=base_dir)
+            existing = _memory.peek(ctx.task_input, domain_id=domain_id, k=step.get("k", 5), base_dir=base_dir)
             new_entries = _reflect.reflect(
                 run_result,
                 ctx.task_input,

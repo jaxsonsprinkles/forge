@@ -247,20 +247,13 @@ def _relevance(trigger: str, input_tokens: set[str]) -> float:
     return len(trigger_tokens & input_tokens) / len(trigger_tokens)
 
 
-def retrieve(
-    task_input: dict,
-    domain_id: str,
-    k: int,
-    base_dir: str | Path = DEFAULT_MEMORY_ROOT,
-) -> list[MemoryEntry]:
-    """Return up to `k` active entries most relevant to `task_input`.
+def _rank(task_input: dict, domain_id: str, k: int, base_dir: str | Path) -> list[MemoryEntry]:
+    """Shared ranking logic behind both `retrieve()` and `peek()`.
 
     Ranked by keyword-overlap relevance of `trigger` to `task_input`,
     weighted by `confidence` (see module docstring). Retired entries are
     never returned. Entries with zero relevance are excluded even if
-    that means returning fewer than `k` results. Each returned entry has
-    its `times_retrieved` counter durably incremented as a side effect
-    of being retrieved.
+    that means returning fewer than `k` results.
     """
     active = load_all(domain_id, base_dir, statuses={"active"})
     input_tokens = _task_input_tokens(task_input)
@@ -271,13 +264,49 @@ def retrieve(
     ]
     scored = [(score, entry) for score, entry in scored if score > 0]
     scored.sort(key=lambda pair: (-pair[0], -pair[1].confidence, pair[1].id))
+    return [entry for _, entry in scored[:k]]
 
+
+def retrieve(
+    task_input: dict,
+    domain_id: str,
+    k: int,
+    base_dir: str | Path = DEFAULT_MEMORY_ROOT,
+) -> list[MemoryEntry]:
+    """Return up to `k` active entries most relevant to `task_input`.
+
+    Same ranking as `peek()` (see `_rank`), but each returned entry has
+    its `times_retrieved` counter durably incremented as a side effect of
+    being retrieved - this is the call that should represent a real,
+    countable exposure of the agent to a lesson. A caller that only needs
+    the ranked entries as read context - without that exposure actually
+    happening - should use `peek()` instead, or `times_retrieved` will be
+    inflated by lookups that were never shown to the agent.
+    """
     bumped = []
-    for _, entry in scored[:k]:
+    for entry in _rank(task_input, domain_id, k, base_dir):
         updated = dataclasses.replace(entry, times_retrieved=entry.times_retrieved + 1)
         write(updated, base_dir)
         bumped.append(updated)
     return bumped
+
+
+def peek(
+    task_input: dict,
+    domain_id: str,
+    k: int,
+    base_dir: str | Path = DEFAULT_MEMORY_ROOT,
+) -> list[MemoryEntry]:
+    """Read-only equivalent of `retrieve()`: identical ranking, but never
+    calls `write()` and never bumps `times_retrieved`.
+
+    For callers that need to look at "what does memory currently say"
+    without that lookup counting as a real retrieval event - e.g. holdout
+    scoring (which must never mutate memory) or a step that only wants
+    existing entries as dedup context for `core.reflect.reflect()` rather
+    than something the agent's own prompt is built from.
+    """
+    return _rank(task_input, domain_id, k, base_dir)
 
 
 def reinforce(
