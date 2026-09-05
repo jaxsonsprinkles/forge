@@ -1,10 +1,598 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Forge Dashboard</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Forge Dashboard</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #171a21;
+    --panel-border: #262b36;
+    --text: #e7e9ee;
+    --muted: #8b93a3;
+    --accent: #5da8ff;
+    --accent-2: #ffb454;
+    --good: #57c785;
+    --bad: #e05c5c;
+    --grid: #2a2f3a;
+    font-size: 15px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.45;
+  }
+  header {
+    padding: 28px clamp(16px, 4vw, 48px) 18px;
+    border-bottom: 1px solid var(--panel-border);
+  }
+  header h1 {
+    margin: 0 0 4px;
+    font-size: 1.6rem;
+    letter-spacing: -0.01em;
+  }
+  header p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+  header code {
+    background: #0006;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.85em;
+  }
+  main {
+    padding: 24px clamp(16px, 4vw, 48px) 64px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  section {
+    margin-bottom: 40px;
+  }
+  section > h2 {
+    font-size: 1.05rem;
+    margin: 0 0 4px;
+  }
+  section > .section-note {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin: 0 0 14px;
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  #status {
+    display: none;
+    margin: 16px clamp(16px, 4vw, 48px) 0;
+    padding: 14px 18px;
+    border-radius: 8px;
+    border: 1px solid #7a5b1f;
+    background: #2a2110;
+    color: #ffd58a;
+    font-size: 0.9rem;
+  }
+  #status.visible { display: block; }
+  #status pre {
+    background: #0006;
+    padding: 10px 12px;
+    border-radius: 6px;
+    overflow-x: auto;
+    color: #fff;
+    font-size: 0.85rem;
+  }
+  .domain-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .domain-card h3 {
+    margin: 0 0 2px;
+    font-size: 0.95rem;
+  }
+  .legend {
+    display: flex;
+    gap: 16px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .swatch { width: 14px; height: 2px; display: inline-block; }
+  .swatch.train { background: var(--accent); }
+  .swatch.holdout { background: var(--accent-2); border-top: 2px dashed var(--accent-2); background: none; height: 0; width: 16px; }
+  svg text { fill: var(--muted); font-size: 10px; }
+  svg .axis-line { stroke: var(--grid); stroke-width: 1; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.86rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--panel-border);
+    vertical-align: top;
+  }
+  th {
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  code.sha { color: var(--accent); font-size: 0.85em; }
+  .mut-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .mut-list li { padding: 6px 8px; border-radius: 6px; background: #0004; }
+  .badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 1px 7px;
+    border-radius: 999px;
+    margin-right: 6px;
+  }
+  .badge.accepted { background: #143d29; color: var(--good); }
+  .badge.rejected { background: #3d1616; color: var(--bad); }
+  .badge.surface { background: #1b2230; color: var(--muted); }
+  .rationale { color: var(--muted); font-size: 0.82rem; }
+  .winner-cell.accepted { color: var(--good); font-weight: 600; }
+  .winner-cell.noop { color: var(--muted); }
+  .empty-note { color: var(--muted); font-style: italic; padding: 12px 0; }
+  footer {
+    padding: 24px clamp(16px, 4vw, 48px) 40px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--panel-border);
+  }
+</style>
 </head>
 <body>
-  <p>Forge dashboard placeholder — not yet implemented.</p>
+
+<header>
+  <h1>Forge Dashboard</h1>
+  <p>
+    Reads <code>ledger/generations.jsonl</code>, one JSON record per completed generation
+    (written by <code>core/loop.py</code> via <code>core/ledger.py</code>). Static HTML/CSS/JS only &mdash; no build step, no framework.
+  </p>
+</header>
+
+<div id="status"></div>
+
+<main id="app" style="display:none">
+
+  <section>
+    <h2>Improvement curves</h2>
+    <p class="section-note">
+      Accuracy of the agent lineage's baseline (<code>scores_before</code>) at each generation, per domain.
+      Train and holdout are plotted as separate series where both are present in the ledger.
+    </p>
+    <div id="domain-charts" class="domain-grid"></div>
+  </section>
+
+  <section>
+    <h2>Cost vs. accuracy, every evaluated variant</h2>
+    <p class="section-note">
+      Simplification: a static page can't list the contents of <code>agents/archive/</code>
+      (no directory index over a plain file server), so this plots every candidate ScoreCard
+      actually recorded in the ledger's <code>results</code> field for each generation &mdash;
+      i.e. every mutation that produced a scoreable candidate, not only the ones gate.py
+      archived as non-dominated. Each point averages a candidate's per-domain ScoreCards.
+      Filled points are that generation's winner; hollow points were not selected; the
+      baseline going into each generation is shown as a square.
+    </p>
+    <div class="panel">
+      <svg id="scatter" width="100%" height="360" viewBox="0 0 900 360" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+  </section>
+
+  <section>
+    <h2>Generations</h2>
+    <p class="section-note">
+      "Accepted" marks the mutation matching that generation's <code>winner_id</code>; everything else
+      is "rejected". gate.py's exact rejection reason (watchlist failure / accuracy floor / no
+      meaningful improvement) is only logged at runtime, not persisted onto the Generation record,
+      so it isn't reproduced verbatim here &mdash; compare a candidate's own scores against the
+      baseline column to see why it likely lost.
+    </p>
+    <div class="panel">
+      <table id="gen-table">
+        <thead>
+          <tr>
+            <th>Gen</th>
+            <th>Parent</th>
+            <th>Baseline (mean acc.)</th>
+            <th>Mutations</th>
+            <th>Winner</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Forge &mdash; a meta-system that builds and improves AI agents automatically. See AGENTS.md.
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var LEDGER_PATH = "../ledger/generations.jsonl";
+  var COLORS = { train: "#5da8ff", holdout: "#ffb454", winner: "#57c785", candidate: "#8b93a3", baseline: "#e7e9ee" };
+
+  function showStatus(html) {
+    var el = document.getElementById("status");
+    el.innerHTML = html;
+    el.classList.add("visible");
+  }
+
+  function showApp() {
+    document.getElementById("app").style.display = "";
+  }
+
+  // --- Loading -------------------------------------------------------
+  //
+  // fetch() of a local file under file:// is blocked by CORS in most
+  // browsers (opaque origin). We try fetch() first (works when the page
+  // is served over http://, e.g. `python3 -m http.server` from the repo
+  // root), then fall back to a synchronous XMLHttpRequest (which some
+  // browsers, e.g. Firefox, still permit for file:// GETs of a sibling
+  // file). If both fail, we show the exact command to serve the repo
+  // instead of silently rendering an empty dashboard.
+
+  function loadViaFetch(path) {
+    return fetch(path).then(function (res) {
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return res.text();
+    });
+  }
+
+  function loadViaXhr(path) {
+    return new Promise(function (resolve, reject) {
+      try {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", path, false); // sync: only reachable as a file:// fallback
+        xhr.send(null);
+        if (xhr.status === 0 || xhr.status === 200) {
+          resolve(xhr.responseText);
+        } else {
+          reject(new Error("XHR status " + xhr.status));
+        }
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
+  function loadLedgerText(path) {
+    return loadViaFetch(path).catch(function () {
+      return loadViaXhr(path);
+    });
+  }
+
+  // --- Parsing ---------------------------------------------------------
+  //
+  // Mirrors core/ledger.py's tolerant reading: one JSON object per line,
+  // a malformed/truncated trailing line is skipped rather than aborting
+  // the whole load.
+
+  function parseJsonl(text) {
+    var generations = [];
+    var lines = text.split("\n");
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i].trim();
+      if (!line) continue;
+      try {
+        generations.push(JSON.parse(line));
+      } catch (err) {
+        console.warn("skipping malformed ledger line " + (i + 1), err);
+      }
+    }
+    return generations;
+  }
+
+  // --- Small helpers -----------------------------------------------------
+
+  function svgEl(tag, attrs) {
+    var el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    return el;
+  }
+
+  function meanAccuracy(cardsByDomain) {
+    var vals = Object.keys(cardsByDomain).map(function (d) { return cardsByDomain[d].accuracy; });
+    return vals.length ? vals.reduce(function (a, b) { return a + b; }, 0) / vals.length : null;
+  }
+
+  function meanCost(cardsByDomain) {
+    var vals = Object.keys(cardsByDomain).map(function (d) { return cardsByDomain[d].cost_per_task; });
+    return vals.length ? vals.reduce(function (a, b) { return a + b; }, 0) / vals.length : null;
+  }
+
+  function shortSha(s) {
+    if (!s) return "—";
+    return s.length > 12 ? s.slice(0, 10) + "…" : s;
+  }
+
+  // --- Improvement curves -------------------------------------------------
+
+  function collectDomains(generations) {
+    var seen = {};
+    generations.forEach(function (g) {
+      Object.keys(g.scores_before || {}).forEach(function (d) { seen[d] = true; });
+    });
+    return Object.keys(seen).sort();
+  }
+
+  function buildSeries(generations, domain, split) {
+    var points = [];
+    generations.forEach(function (g) {
+      var card = (g.scores_before || {})[domain];
+      if (card && card.split === split) {
+        points.push({ x: g.gen_n, y: card.accuracy });
+      }
+    });
+    return points;
+  }
+
+  function lineChart(trainPoints, holdoutPoints) {
+    var w = 320, h = 160, pad = 28;
+    var allPoints = trainPoints.concat(holdoutPoints);
+    var maxGen = Math.max(1, allPoints.reduce(function (m, p) { return Math.max(m, p.x); }, 1));
+    var svg = svgEl("svg", { width: "100%", height: h, viewBox: "0 0 " + w + " " + h });
+
+    // axes
+    svg.appendChild(svgEl("line", { class: "axis-line", x1: pad, y1: h - pad, x2: w - 8, y2: h - pad }));
+    svg.appendChild(svgEl("line", { class: "axis-line", x1: pad, y1: 8, x2: pad, y2: h - pad }));
+    [0, 0.5, 1].forEach(function (frac) {
+      var y = (h - pad) - frac * (h - pad - 8);
+      var label = svgEl("text", { x: 4, y: y + 3 });
+      label.textContent = Math.round(frac * 100) + "%";
+      svg.appendChild(label);
+    });
+
+    function toXY(p) {
+      var x = pad + (maxGen === 1 ? 0 : (p.x - 1) / (maxGen - 1 === 0 ? 1 : maxGen - 1)) * (w - pad - 12);
+      if (maxGen === 1) x = pad;
+      var y = (h - pad) - p.y * (h - pad - 8);
+      return [x, y];
+    }
+
+    function drawSeries(points, color, dashed) {
+      if (points.length === 0) return;
+      var sorted = points.slice().sort(function (a, b) { return a.x - b.x; });
+      var d = sorted.map(toXY).map(function (xy, i) {
+        return (i === 0 ? "M" : "L") + xy[0].toFixed(1) + "," + xy[1].toFixed(1);
+      }).join(" ");
+      var path = svgEl("path", { d: d, fill: "none", stroke: color, "stroke-width": 2 });
+      if (dashed) path.setAttribute("stroke-dasharray", "4,3");
+      svg.appendChild(path);
+      sorted.forEach(function (p) {
+        var xy = toXY(p);
+        svg.appendChild(svgEl("circle", { cx: xy[0], cy: xy[1], r: 2.6, fill: color }));
+      });
+    }
+
+    drawSeries(trainPoints, COLORS.train, false);
+    drawSeries(holdoutPoints, COLORS.holdout, true);
+    return svg;
+  }
+
+  function renderDomainCharts(generations) {
+    var container = document.getElementById("domain-charts");
+    var domains = collectDomains(generations);
+    if (domains.length === 0) {
+      container.innerHTML = '<p class="empty-note">No generations recorded yet.</p>';
+      return;
+    }
+    domains.forEach(function (domain) {
+      var train = buildSeries(generations, domain, "train");
+      var holdout = buildSeries(generations, domain, "holdout");
+
+      var card = document.createElement("div");
+      card.className = "panel domain-card";
+      var h3 = document.createElement("h3");
+      h3.textContent = domain;
+      card.appendChild(h3);
+
+      var legend = document.createElement("div");
+      legend.className = "legend";
+      legend.innerHTML =
+        '<span><span class="swatch train"></span>train</span>' +
+        '<span><span class="swatch holdout"></span>holdout</span>';
+      card.appendChild(legend);
+
+      card.appendChild(lineChart(train, holdout));
+
+      if (holdout.length === 0) {
+        var note = document.createElement("p");
+        note.className = "section-note";
+        note.style.marginTop = "6px";
+        note.textContent = "No holdout evaluations recorded for this domain yet — core/loop.py currently scores only the train split each generation.";
+        card.appendChild(note);
+      }
+
+      container.appendChild(card);
+    });
+  }
+
+  // --- Cost vs accuracy scatter --------------------------------------------
+
+  function renderScatter(generations) {
+    var svg = document.getElementById("scatter");
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+    var points = []; // {x: cost, y: accuracy, kind: 'baseline'|'winner'|'candidate', label}
+    generations.forEach(function (g) {
+      var baseAcc = meanAccuracy(g.scores_before || {});
+      var baseCost = meanCost(g.scores_before || {});
+      if (baseAcc !== null && baseCost !== null) {
+        points.push({ x: baseCost, y: baseAcc, kind: "baseline", label: "gen " + g.gen_n + " baseline" });
+      }
+      Object.keys(g.results || {}).forEach(function (mutId) {
+        var cards = g.results[mutId];
+        var acc = meanAccuracy(cards);
+        var cost = meanCost(cards);
+        if (acc === null || cost === null) return;
+        var isWinner = g.winner_id === mutId;
+        points.push({ x: cost, y: acc, kind: isWinner ? "winner" : "candidate", label: "gen " + g.gen_n + " / " + mutId });
+      });
+    });
+
+    if (points.length === 0) {
+      var msg = svgEl("text", { x: 20, y: 30 });
+      msg.textContent = "No candidate or baseline ScoreCards recorded yet.";
+      svg.appendChild(msg);
+      return;
+    }
+
+    var w = 900, h = 360, padL = 56, padB = 40, padT = 16, padR = 16;
+    var xs = points.map(function (p) { return p.x; });
+    var ys = points.map(function (p) { return p.y; });
+    var xMax = Math.max(0.0001, xs.reduce(function (a, b) { return Math.max(a, b); }, 0)) * 1.1;
+    var yMin = Math.min(0, Math.min.apply(null, ys) - 0.05);
+    var yMax = Math.max(1, Math.max.apply(null, ys) + 0.05);
+
+    function toXY(p) {
+      var x = padL + (p.x / xMax) * (w - padL - padR);
+      var y = (h - padB) - ((p.y - yMin) / (yMax - yMin)) * (h - padB - padT);
+      return [x, y];
+    }
+
+    svg.appendChild(svgEl("line", { class: "axis-line", x1: padL, y1: h - padB, x2: w - padR, y2: h - padB }));
+    svg.appendChild(svgEl("line", { class: "axis-line", x1: padL, y1: padT, x2: padL, y2: h - padB }));
+
+    var xLabel = svgEl("text", { x: w / 2, y: h - 8 });
+    xLabel.textContent = "mean cost per task (USD)";
+    svg.appendChild(xLabel);
+    var yLabel = svgEl("text", { x: 14, y: h / 2, transform: "rotate(-90 14 " + (h / 2) + ")" });
+    yLabel.textContent = "mean accuracy";
+    svg.appendChild(yLabel);
+
+    [0, 0.25, 0.5, 0.75, 1].forEach(function (frac) {
+      var yVal = yMin + frac * (yMax - yMin);
+      var xy = toXY({ x: 0, y: yVal });
+      var t = svgEl("text", { x: 4, y: xy[1] + 3 });
+      t.textContent = yVal.toFixed(2);
+      svg.appendChild(t);
+    });
+    [0, 0.5, 1].forEach(function (frac) {
+      var xVal = frac * xMax;
+      var xy = toXY({ x: xVal, y: yMin });
+      var t = svgEl("text", { x: xy[0] - 12, y: h - padB + 16 });
+      t.textContent = "$" + xVal.toFixed(3);
+      svg.appendChild(t);
+    });
+
+    points.forEach(function (p) {
+      var xy = toXY(p);
+      var el;
+      if (p.kind === "baseline") {
+        el = svgEl("rect", { x: xy[0] - 4, y: xy[1] - 4, width: 8, height: 8, fill: COLORS.baseline });
+      } else if (p.kind === "winner") {
+        el = svgEl("circle", { cx: xy[0], cy: xy[1], r: 5, fill: COLORS.winner });
+      } else {
+        el = svgEl("circle", { cx: xy[0], cy: xy[1], r: 4, fill: "none", stroke: COLORS.candidate, "stroke-width": 1.5 });
+      }
+      var title = svgEl("title", {});
+      title.textContent = p.label + " (acc " + p.y.toFixed(3) + ", cost $" + p.x.toFixed(4) + ")";
+      el.appendChild(title);
+      svg.appendChild(el);
+    });
+  }
+
+  // --- Generation table -----------------------------------------------------
+
+  function renderTable(generations) {
+    var tbody = document.querySelector("#gen-table tbody");
+    tbody.innerHTML = "";
+
+    if (generations.length === 0) {
+      var tr = document.createElement("tr");
+      tr.innerHTML = '<td colspan="5" class="empty-note">No generations recorded yet.</td>';
+      tbody.appendChild(tr);
+      return;
+    }
+
+    generations.slice().sort(function (a, b) { return b.gen_n - a.gen_n; }).forEach(function (g) {
+      var tr = document.createElement("tr");
+
+      var baseAcc = meanAccuracy(g.scores_before || {});
+      var mutHtml;
+      if (!g.mutations || g.mutations.length === 0) {
+        mutHtml = '<span class="rationale">no mutations proposed (no failures observed)</span>';
+      } else {
+        mutHtml = '<ul class="mut-list">' + g.mutations.map(function (m) {
+          var accepted = g.winner_id === m.id;
+          return '<li>' +
+            '<span class="badge ' + (accepted ? "accepted" : "rejected") + '">' + (accepted ? "accepted" : "rejected") + '</span>' +
+            '<span class="badge surface">' + m.surface + '</span>' +
+            '<code class="sha">' + m.id + '</code>' +
+            '<div class="rationale">' + escapeHtml(m.rationale) + '</div>' +
+            '</li>';
+        }).join("") + '</ul>';
+      }
+
+      var winnerHtml = g.winner_id
+        ? '<span class="winner-cell accepted">' + g.winner_id + '</span>'
+        : '<span class="winner-cell noop">no-op (no candidate accepted)</span>';
+
+      tr.innerHTML =
+        '<td>' + g.gen_n + '</td>' +
+        '<td><code class="sha">' + shortSha(g.parent_sha) + '</code></td>' +
+        '<td>' + (baseAcc === null ? "—" : baseAcc.toFixed(3)) + '</td>' +
+        '<td>' + mutHtml + '</td>' +
+        '<td>' + winnerHtml + '</td>';
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  function escapeHtml(s) {
+    var div = document.createElement("div");
+    div.textContent = String(s);
+    return div.innerHTML;
+  }
+
+  // --- Boot -----------------------------------------------------------------
+
+  function render(generations) {
+    generations = generations.slice().sort(function (a, b) { return a.gen_n - b.gen_n; });
+    showApp();
+    renderDomainCharts(generations);
+    renderScatter(generations);
+    renderTable(generations);
+  }
+
+  loadLedgerText(LEDGER_PATH)
+    .then(function (text) {
+      render(parseJsonl(text));
+    })
+    .catch(function (err) {
+      console.error("failed to load " + LEDGER_PATH, err);
+      showStatus(
+        "<strong>Could not load <code>ledger/generations.jsonl</code>.</strong><br>" +
+        "Opening this file directly (<code>file://</code>) is blocked by most browsers' CORS " +
+        "rules for local file access. Serve the repository root over HTTP instead:" +
+        "<pre>cd " + "&lt;repo root&gt;" + "\npython3 -m http.server 8000</pre>" +
+        "then open <code>http://localhost:8000/dashboard/</code>.<br>" +
+        "If the file genuinely doesn't exist yet, run <code>core.loop.run_loop(...)</code> at least once first."
+      );
+      render([]);
+    });
+})();
+</script>
+
 </body>
 </html>
