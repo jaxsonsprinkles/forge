@@ -1,0 +1,1642 @@
+[
+  {
+    "author": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/133520652?v=4",
+      "events_url": "https://api.github.com/users/Kuldeep2822k/events{/privacy}",
+      "followers_url": "https://api.github.com/users/Kuldeep2822k/followers",
+      "following_url": "https://api.github.com/users/Kuldeep2822k/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Kuldeep2822k/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/Kuldeep2822k",
+      "id": 133520652,
+      "login": "Kuldeep2822k",
+      "node_id": "U_kgDOB_VdDA",
+      "organizations_url": "https://api.github.com/users/Kuldeep2822k/orgs",
+      "received_events_url": "https://api.github.com/users/Kuldeep2822k/received_events",
+      "repos_url": "https://api.github.com/users/Kuldeep2822k/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/Kuldeep2822k/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Kuldeep2822k/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/Kuldeep2822k",
+      "user_view_type": "public"
+    },
+    "comments_url": "https://api.github.com/repos/eslint/eslint/commits/677214e7eea83d8bc6e4b79eea871577e1369d5f/comments",
+    "commit": {
+      "author": {
+        "date": "2026-07-27T20:34:38Z",
+        "email": "kuldeep2822k@gmail.com",
+        "name": "kuldeep kumar"
+      },
+      "comment_count": 0,
+      "committer": {
+        "date": "2026-07-27T20:34:38Z",
+        "email": "noreply@github.com",
+        "name": "GitHub"
+      },
+      "message": "fix: handle ASI hazards in no-unused-vars removeVar suggestion (#20935)\n\nCo-authored-by: fnx <966276+DMartens@users.noreply.github.com>",
+      "tree": {
+        "sha": "bf870b83c320c855567d3ec5a0861b8438a2759f",
+        "url": "https://api.github.com/repos/eslint/eslint/git/trees/bf870b83c320c855567d3ec5a0861b8438a2759f"
+      },
+      "url": "https://api.github.com/repos/eslint/eslint/git/commits/677214e7eea83d8bc6e4b79eea871577e1369d5f",
+      "verification": {
+        "payload": "tree bf870b83c320c855567d3ec5a0861b8438a2759f\nparent eddbad60158d8cda86830fbe934a9d2282273b32\nauthor kuldeep kumar <kuldeep2822k@gmail.com> 1785184478 +0530\ncommitter GitHub <noreply@github.com> 1785184478 +0200\n\nfix: handle ASI hazards in no-unused-vars removeVar suggestion (#20935)\n\nCo-authored-by: fnx <966276+DMartens@users.noreply.github.com>",
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJqZ8DeCRC1aQ7uu5UhlAAAFKkQAKS/Z53ZK6XYJ2D8+h6lOheV\nso5++N2f2Pbe4SrCpTSIk15fkY2g6iZhyYcFKieR+opROxqxSbEUCBUHaKfBPNOP\nDrl0dR37J610HVLvzly9g6EHoUXd2mFLaXehnp/t+E46FfptHWbX2DW5aIjNOCY7\nVBzRg7R4SXQddhc6rYg8loqEbskHcZnfwIu1eDgg2Rhwtk5hZBAmB27vFh/4bSfe\n+/RgqmyFLi48GUdKs+UKX5fYZhOW+VZ3WYMniiF19GHCC8tXBk6eLQRKkXkSZHxx\nDe62pqUPbpBvnVm3CWTZHvO86xrkVLVxLdljAIjytseJJEJkaemwaZjrPbMeLRJI\nQ2PktzJ9C/9gXUviVMLCWH1024qPRxIAgOKtLOXbSNR/ZABwpexg5oDwd3XwZur+\naC1ZgKzfXNaMvMLPlvqzQSqpRsIJ0pZyT4sTZIJHz4N1n3k+O6xOWtGQhBoX5+J3\niIeZaWrLnbdJyRekEwNBnC4idW+iz9uVEjy3TPfES+GfHVvjpEBjjnxft5phSUe9\nbF/g/kFbwwlcy2oJRcy2BLsKA2k6XByk75boQ9iSFNZAvFuRgAEws3rdpCAGeZfG\ntyV3CMJ/Lbg/TD0o+LH4P0Lc4fZsooMn4WJ6QSMnqfbehQC8TMuLBRvAPZnJti89\n52u04FvT6GKbYmWMh6OG\n=35De\n-----END PGP SIGNATURE-----\n",
+        "verified": true,
+        "verified_at": "2026-07-27T20:34:38Z"
+      }
+    },
+    "committer": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/web-flow",
+      "id": 19864447,
+      "login": "web-flow",
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/web-flow",
+      "user_view_type": "public"
+    },
+    "html_url": "https://github.com/eslint/eslint/commit/677214e7eea83d8bc6e4b79eea871577e1369d5f",
+    "node_id": "C_kwDOAKjKDdoAKDY3NzIxNGU3ZWVhODNkOGJjNmU0Yjc5ZWVhODcxNTc3ZTEzNjlkNWY",
+    "parents": [
+      {
+        "html_url": "https://github.com/eslint/eslint/commit/eddbad60158d8cda86830fbe934a9d2282273b32",
+        "sha": "eddbad60158d8cda86830fbe934a9d2282273b32",
+        "url": "https://api.github.com/repos/eslint/eslint/commits/eddbad60158d8cda86830fbe934a9d2282273b32"
+      }
+    ],
+    "sha": "677214e7eea83d8bc6e4b79eea871577e1369d5f",
+    "url": "https://api.github.com/repos/eslint/eslint/commits/677214e7eea83d8bc6e4b79eea871577e1369d5f"
+  },
+  {
+    "author": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/186544296?v=4",
+      "events_url": "https://api.github.com/users/xbinaryx/events{/privacy}",
+      "followers_url": "https://api.github.com/users/xbinaryx/followers",
+      "following_url": "https://api.github.com/users/xbinaryx/following{/other_user}",
+      "gists_url": "https://api.github.com/users/xbinaryx/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/xbinaryx",
+      "id": 186544296,
+      "login": "xbinaryx",
+      "node_id": "U_kgDOCx5wqA",
+      "organizations_url": "https://api.github.com/users/xbinaryx/orgs",
+      "received_events_url": "https://api.github.com/users/xbinaryx/received_events",
+      "repos_url": "https://api.github.com/users/xbinaryx/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/xbinaryx/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/xbinaryx/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/xbinaryx",
+      "user_view_type": "public"
+    },
+    "comments_url": "https://api.github.com/repos/eslint/eslint/commits/2099ed12a0a74c3d7f0808514362af2499b4fe2b/comments",
+    "commit": {
+      "author": {
+        "date": "2026-05-06T12:48:04Z",
+        "email": "xbinaryx68@gmail.com",
+        "name": "xbinaryx"
+      },
+      "comment_count": 0,
+      "committer": {
+        "date": "2026-05-06T12:48:04Z",
+        "email": "noreply@github.com",
+        "name": "GitHub"
+      },
+      "message": "refactor: add `meta.defaultOptions` to more rules, enable linting (#20800)\n\n* chore: enable meta.defaultOptions linting\n\n* enable meta.defaultOptions linting\n\n* revert no-param-reassign change\n\n* refactor no-unused-vars\n\n* refactor init-declarations",
+      "tree": {
+        "sha": "03fd6fd7d4bdedd4fe81da27e2c2fbcf576c9065",
+        "url": "https://api.github.com/repos/eslint/eslint/git/trees/03fd6fd7d4bdedd4fe81da27e2c2fbcf576c9065"
+      },
+      "url": "https://api.github.com/repos/eslint/eslint/git/commits/2099ed12a0a74c3d7f0808514362af2499b4fe2b",
+      "verification": {
+        "payload": "tree 03fd6fd7d4bdedd4fe81da27e2c2fbcf576c9065\nparent 3d7b5484407403817aa9071a394d336d8ea96eb5\nauthor xbinaryx <xbinaryx68@gmail.com> 1778071684 +0300\ncommitter GitHub <noreply@github.com> 1778071684 +0200\n\nrefactor: add `meta.defaultOptions` to more rules, enable linting (#20800)\n\n* chore: enable meta.defaultOptions linting\n\n* enable meta.defaultOptions linting\n\n* revert no-param-reassign change\n\n* refactor no-unused-vars\n\n* refactor init-declarations",
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJp+ziECRC1aQ7uu5UhlAAAiaIQAA3hk7ZyKCowJw6kFdkQ8O4K\nJrhXvm257kQBE8N2G750TR8BC5A1uqE7FL3UxaJdbF7et6sSDsifBb50aGXh08ep\n8CWQ7Gtv1csNAGmhgQLwCYsG/MQtQBxc1pc1pyudgL6QefJPSYBr/snOU2qyuWA1\nEIdQqel3UGdVTj3zctfy+nZTufZ+w/2d79g19rebfq+Ed7iOr6PHBby5TjkQpgj4\nqfvmsLjlAdz3qq/MFJNPu5v8AlqGasrtgfemqcrlpYg/2kp3peH+G+ok6X+jGvfV\nzAOEHGcezuGBJGqlqTyZbtofWUFO3amAwikhiLH/7RsmJ0+tEHyen5vV/jNSl7cu\nPYMBJdgeY0J/ozU7+DfTGURMr3RnQeWXDoFtPjQ9pzMt/IYTqhWF3vlanGeMmLIp\nQmZaF246inmjW0ayTfYbfTD73Deo0iFa965VjUH+V6wYcQJ0crzwIA3VmReC8704\nM+TX9An9ynRJf5h/UyK6iUteM87j303Bf55Nf6GUdN6y5hUf/FKVNchgAwPfH9Ib\nMbslzSQNu5hKOzJQilME6zTeV2QJw6wLzVJZRNw1/1v8PdAmxRaxogqiBFt0tqxh\nvWyH/1yt9QlkhTN5rhY/UzOH0FM7/AUIa3toxmAce6vzvpZLoZ+LehujhF0xI0az\ngKOM3866pSL1E9gN7Yv4\n=7O0f\n-----END PGP SIGNATURE-----\n",
+        "verified": true,
+        "verified_at": "2026-05-06T12:48:05Z"
+      }
+    },
+    "committer": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/web-flow",
+      "id": 19864447,
+      "login": "web-flow",
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/web-flow",
+      "user_view_type": "public"
+    },
+    "html_url": "https://github.com/eslint/eslint/commit/2099ed12a0a74c3d7f0808514362af2499b4fe2b",
+    "node_id": "C_kwDOAKjKDdoAKDIwOTllZDEyYTBhNzRjM2Q3ZjA4MDg1MTQzNjJhZjI0OTliNGZlMmI",
+    "parents": [
+      {
+        "html_url": "https://github.com/eslint/eslint/commit/3d7b5484407403817aa9071a394d336d8ea96eb5",
+        "sha": "3d7b5484407403817aa9071a394d336d8ea96eb5",
+        "url": "https://api.github.com/repos/eslint/eslint/commits/3d7b5484407403817aa9071a394d336d8ea96eb5"
+      }
+    ],
+    "sha": "2099ed12a0a74c3d7f0808514362af2499b4fe2b",
+    "url": "https://api.github.com/repos/eslint/eslint/commits/2099ed12a0a74c3d7f0808514362af2499b4fe2b"
+  },
+  {
+    "author": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/44349756?v=4",
+      "events_url": "https://api.github.com/users/mdjermanovic/events{/privacy}",
+      "followers_url": "https://api.github.com/users/mdjermanovic/followers",
+      "following_url": "https://api.github.com/users/mdjermanovic/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mdjermanovic/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/mdjermanovic",
+      "id": 44349756,
+      "login": "mdjermanovic",
+      "node_id": "MDQ6VXNlcjQ0MzQ5NzU2",
+      "organizations_url": "https://api.github.com/users/mdjermanovic/orgs",
+      "received_events_url": "https://api.github.com/users/mdjermanovic/received_events",
+      "repos_url": "https://api.github.com/users/mdjermanovic/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/mdjermanovic/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mdjermanovic/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/mdjermanovic",
+      "user_view_type": "public"
+    },
+    "comments_url": "https://api.github.com/repos/eslint/eslint/commits/6aa1afe6694f3fd7f82116109a5ef2ad18ece074/comments",
+    "commit": {
+      "author": {
+        "date": "2026-02-21T17:14:23Z",
+        "email": "milos.djermanovic@gmail.com",
+        "name": "Milos Djermanovic"
+      },
+      "comment_count": 0,
+      "committer": {
+        "date": "2026-02-21T17:14:23Z",
+        "email": "noreply@github.com",
+        "name": "GitHub"
+      },
+      "message": "chore: update dependency eslint-plugin-jsdoc to ^62.7.0 (#20536)",
+      "tree": {
+        "sha": "32ea76f05679c1dc9be61c6663e47f2e751966c9",
+        "url": "https://api.github.com/repos/eslint/eslint/git/trees/32ea76f05679c1dc9be61c6663e47f2e751966c9"
+      },
+      "url": "https://api.github.com/repos/eslint/eslint/git/commits/6aa1afe6694f3fd7f82116109a5ef2ad18ece074",
+      "verification": {
+        "payload": "tree 32ea76f05679c1dc9be61c6663e47f2e751966c9\nparent 2b723616a4daeacd4605f11b4d087d4a7cae5c74\nauthor Milos Djermanovic <milos.djermanovic@gmail.com> 1771694063 +0100\ncommitter GitHub <noreply@github.com> 1771694063 +0530\n\nchore: update dependency eslint-plugin-jsdoc to ^62.7.0 (#20536)\n\n",
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJpmefvCRC1aQ7uu5UhlAAATRYQAAwkQ6oR9x/A3eIiI+SM2tZ2\n0AWEIt3l7ppgGlznhMgs02cOinjVmMYFdHOcYnQ80sI704a0LVj1xFpJVjVH87SV\n58oQ21RJJsbyNVXuXKVRHQM5Tt9TiD7+D3RSeN1iM5bQtb9r+xSRvERUnx7HrKh/\nekNHE1zVyEtVz/vNbdlopajzubIIGUE4Tto0rXWTVNkLDSwQjmmLYdbY7xI9uiWc\nWSzL3Prkgy3TOWkCrs1p9sXMS4AL9Nl/9rtPG3rU4+lo0YzCgl0lPwzHs7BohbWf\nY7K+pnSoTLXY+3M8KiTv932vyjbUt75L7t0FP+yXJQvMP46ekxS4uJfeAKYqwqve\nvDDql93CC1kadDMsL1wRVoZ+1S+G7Tdi/u/iRaDrX0+KRkv15NZLLyPqt5Yeu2sM\nhI1abrtQtjsU+IdeE6Bd57oGIYU3BEBzkcF24C/DVOOIAXmuicJEL4bO/lhrPo1S\naE+RncqmjjK9nLCe9VBIgLl7sZA8kCrlS8g+n9p6dkp6+E/jAilaYuHYgmOS9shH\n7+R37s6WzWNs0djgI+47hWKE+Pn5Bs2M7Vuh6EhcfYJ5Y+ZwvG5XHdMTuuMAs5dd\nBtOt2lWEB35oNmAvvEO4poqKz2SIhwueDWYUKU19xvxKefKp/JTJUNWpT1FTkKcF\nR3xOwOehlQ0cjOQ40DK+\n=BGEB\n-----END PGP SIGNATURE-----\n",
+        "verified": true,
+        "verified_at": "2026-02-21T17:14:24Z"
+      }
+    },
+    "committer": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/web-flow",
+      "id": 19864447,
+      "login": "web-flow",
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/web-flow",
+      "user_view_type": "public"
+    },
+    "html_url": "https://github.com/eslint/eslint/commit/6aa1afe6694f3fd7f82116109a5ef2ad18ece074",
+    "node_id": "C_kwDOAKjKDdoAKDZhYTFhZmU2Njk0ZjNmZDdmODIxMTYxMDlhNWVmMmFkMThlY2UwNzQ",
+    "parents": [
+      {
+        "html_url": "https://github.com/eslint/eslint/commit/2b723616a4daeacd4605f11b4d087d4a7cae5c74",
+        "sha": "2b723616a4daeacd4605f11b4d087d4a7cae5c74",
+        "url": "https://api.github.com/repos/eslint/eslint/commits/2b723616a4daeacd4605f11b4d087d4a7cae5c74"
+      }
+    ],
+    "sha": "6aa1afe6694f3fd7f82116109a5ef2ad18ece074",
+    "url": "https://api.github.com/repos/eslint/eslint/commits/6aa1afe6694f3fd7f82116109a5ef2ad18ece074"
+  },
+  {
+    "author": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/966276?v=4",
+      "events_url": "https://api.github.com/users/DMartens/events{/privacy}",
+      "followers_url": "https://api.github.com/users/DMartens/followers",
+      "following_url": "https://api.github.com/users/DMartens/following{/other_user}",
+      "gists_url": "https://api.github.com/users/DMartens/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/DMartens",
+      "id": 966276,
+      "login": "DMartens",
+      "node_id": "MDQ6VXNlcjk2NjI3Ng==",
+      "organizations_url": "https://api.github.com/users/DMartens/orgs",
+      "received_events_url": "https://api.github.com/users/DMartens/received_events",
+      "repos_url": "https://api.github.com/users/DMartens/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/DMartens/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/DMartens/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/DMartens",
+      "user_view_type": "public"
+    },
+    "comments_url": "https://api.github.com/repos/eslint/eslint/commits/1245000c5a81954d42f0c7eb670efe450c3bbad5/comments",
+    "commit": {
+      "author": {
+        "date": "2025-07-17T10:42:24Z",
+        "email": "966276+DMartens@users.noreply.github.com",
+        "name": "fnx"
+      },
+      "comment_count": 0,
+      "committer": {
+        "date": "2025-07-17T10:42:24Z",
+        "email": "noreply@github.com",
+        "name": "GitHub"
+      },
+      "message": "feat: support explicit resource management in core rules (#19828)",
+      "tree": {
+        "sha": "ecacaa1dc30f97777a676c057cad3058bd2d8b2e",
+        "url": "https://api.github.com/repos/eslint/eslint/git/trees/ecacaa1dc30f97777a676c057cad3058bd2d8b2e"
+      },
+      "url": "https://api.github.com/repos/eslint/eslint/git/commits/1245000c5a81954d42f0c7eb670efe450c3bbad5",
+      "verification": {
+        "payload": "tree ecacaa1dc30f97777a676c057cad3058bd2d8b2e\nparent e85571730f1360464b7ee00695c678d551f9c643\nauthor fnx <966276+DMartens@users.noreply.github.com> 1752748944 +0200\ncommitter GitHub <noreply@github.com> 1752748944 +0530\n\nfeat: support explicit resource management in core rules (#19828)\n\n",
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJoeNOQCRC1aQ7uu5UhlAAAo48QAApAGZ/WxeszEpxYwwTC2VYT\n+xRbTJFt91MKsprRAg9cq84otcoFN85GB/Ew/lUtMao6d6MYONI2O8XXtipnj+RI\nFDpWd1xbmAMBwGmQ/HvvRSI4bKopkCjdjMy9onpNBws+Z9htDdmyj7MIiggK9F8L\nVFo1pnz0eYRi1//zHiplCyO1vDKgJMoVAhMNHKBzj9RiiElgHZz9k7Ewmcofs3Y/\n3qKbtSbrlp//eNyPo/Fi+xZeBQ7EkbyiHQI0/IiCH7anVvHZ6W9n+w2XN2sMFZDy\nHjM3M0fFaqQg8U68CpruZhqTMbkJCXm4LD8qflm8dT0DPqc+yoijXYf4zsGRBzV9\nlOgjZiNJDcw+EKTDxAON8pCqr8Gy3P+0MWYAj4RXzbMHEyjVW9v40FJmSys/3gtO\nJ+vf7U5F/SWsQD5hoiEt1mxL42T9+GMMIWfxGlcddrxQdL58pEkqHDkSqQL7oZN8\nz7Oxv4ehjdbTg6V/3pUDdAWoUORanWcKhp/rRQx4HtGxwk6ZgxXM7XeNXTWUdpcR\nNuuNQSo6BbFMXWtZEViMAH04ptkYT3aziTTh5Pg1pMf+39PPRbS6NW8QB7DkNg7P\nky4e3uJ95heNJBJjC0AjSsPZb+mnT0aBNtQ+tinADYwkEjRVy//9uII+iAV8hZh2\nEHBR4Vp4tXeYqBXzs7p9\n=1dNE\n-----END PGP SIGNATURE-----\n",
+        "verified": true,
+        "verified_at": "2025-07-17T10:42:25Z"
+      }
+    },
+    "committer": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/web-flow",
+      "id": 19864447,
+      "login": "web-flow",
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/web-flow",
+      "user_view_type": "public"
+    },
+    "html_url": "https://github.com/eslint/eslint/commit/1245000c5a81954d42f0c7eb670efe450c3bbad5",
+    "node_id": "C_kwDOAKjKDdoAKDEyNDUwMDBjNWE4MTk1NGQ0MmYwYzdlYjY3MGVmZTQ1MGMzYmJhZDU",
+    "parents": [
+      {
+        "html_url": "https://github.com/eslint/eslint/commit/e85571730f1360464b7ee00695c678d551f9c643",
+        "sha": "e85571730f1360464b7ee00695c678d551f9c643",
+        "url": "https://api.github.com/repos/eslint/eslint/commits/e85571730f1360464b7ee00695c678d551f9c643"
+      }
+    ],
+    "sha": "1245000c5a81954d42f0c7eb670efe450c3bbad5",
+    "url": "https://api.github.com/repos/eslint/eslint/commits/1245000c5a81954d42f0c7eb670efe450c3bbad5"
+  },
+  {
+    "author": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/136604165?v=4",
+      "events_url": "https://api.github.com/users/leopardracer/events{/privacy}",
+      "followers_url": "https://api.github.com/users/leopardracer/followers",
+      "following_url": "https://api.github.com/users/leopardracer/following{/other_user}",
+      "gists_url": "https://api.github.com/users/leopardracer/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/leopardracer",
+      "id": 136604165,
+      "login": "leopardracer",
+      "node_id": "U_kgDOCCRqBQ",
+      "organizations_url": "https://api.github.com/users/leopardracer/orgs",
+      "received_events_url": "https://api.github.com/users/leopardracer/received_events",
+      "repos_url": "https://api.github.com/users/leopardracer/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/leopardracer/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/leopardracer/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/leopardracer",
+      "user_view_type": "public"
+    },
+    "comments_url": "https://api.github.com/repos/eslint/eslint/commits/20158b09db3430cf00b202ba8c25ce874bbaf00a/comments",
+    "commit": {
+      "author": {
+        "date": "2025-06-19T14:55:36Z",
+        "email": "136604165+leopardracer@users.noreply.github.com",
+        "name": "leopardracer"
+      },
+      "comment_count": 0,
+      "committer": {
+        "date": "2025-06-19T14:55:36Z",
+        "email": "noreply@github.com",
+        "name": "GitHub"
+      },
+      "message": "docs: typo in comment for unused variables handling (#19870)\n\n* Update no-unused-vars.js\n\n* Update no-unused-vars.js",
+      "tree": {
+        "sha": "3a9d7e84510cf44be83a8931e796f96d63acd022",
+        "url": "https://api.github.com/repos/eslint/eslint/git/trees/3a9d7e84510cf44be83a8931e796f96d63acd022"
+      },
+      "url": "https://api.github.com/repos/eslint/eslint/git/commits/20158b09db3430cf00b202ba8c25ce874bbaf00a",
+      "verification": {
+        "payload": "tree 3a9d7e84510cf44be83a8931e796f96d63acd022\nparent ebfb5b46136c4d737c9783333e3057421d1a0bef\nauthor leopardracer <136604165+leopardracer@users.noreply.github.com> 1750344936 +0300\ncommitter GitHub <noreply@github.com> 1750344936 -0400\n\ndocs: typo in comment for unused variables handling (#19870)\n\n* Update no-unused-vars.js\n\n* Update no-unused-vars.js",
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJoVCToCRC1aQ7uu5UhlAAAmWgQAFyj4UaNiB8hPfeHBcEVa3vS\n8vkW8CIXM5vnYNivtB9KUfvw/rP3e8AMWVwmjsuYf8xKx4FWIDV4n0wWlNspRfuz\nwQ6ojr0Ri2/C1xb9qWak7WfP8RKIhSOEfshSoyrQn7WzeHyO52LyB7tFo7zt212C\nQRb/1VJK6o8nzPAkQ9cMfzqEQgntMZDzjneVPEFCrO9WsZ/enqWAaCqb/xGaly3x\nDAuFtWw2hmMBsW5qvmTZJTF6sEivR3fgJVI/BeSc/avk48Z1cHpj6RTfe91uhjNa\nmTXsSo+04jbfxpO7Kp1ygQkm/8LDamyFrAocqdZDmlBQxOZmZW1ClvGxPfCFiare\nIyJASulcdmPlvz/c/IH5qpbatVu1gvfdEvTLmXOmrj666xAuNo5UM3izAo4FP4wj\n2bSKfFaI5EZaIWJt+bseSkFSPED2Qiwu9n+cUaKOLZaUmh2mcUGLtBREs8YCMNGg\nrulVm6SZ3Acm2/tZtgCi+wb9ajNjiplTFGYZPiNPC/ulF0rwsjL0ivneX0fwx1X0\n39oeXM/nokA0KWb7WD8iIkyMlJJVn09wM232WoKDaPrZmHu2DLxY96Vh9DOW/xqN\n2bCgbc62Wv2/khygOlxgaR6pqGSHCZyYbISQ59jy/CEP+BwYYtR1jJVn7b7BMgNd\n4aOyHpMM30v9JhwjCVO9\n=KkVE\n-----END PGP SIGNATURE-----\n",
+        "verified": true,
+        "verified_at": "2025-06-19T14:55:37Z"
+      }
+    },
+    "committer": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/web-flow",
+      "id": 19864447,
+      "login": "web-flow",
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/web-flow",
+      "user_view_type": "public"
+    },
+    "html_url": "https://github.com/eslint/eslint/commit/20158b09db3430cf00b202ba8c25ce874bbaf00a",
+    "node_id": "C_kwDOAKjKDdoAKDIwMTU4YjA5ZGIzNDMwY2YwMGIyMDJiYThjMjVjZTg3NGJiYWYwMGE",
+    "parents": [
+      {
+        "html_url": "https://github.com/eslint/eslint/commit/ebfb5b46136c4d737c9783333e3057421d1a0bef",
+        "sha": "ebfb5b46136c4d737c9783333e3057421d1a0bef",
+        "url": "https://api.github.com/repos/eslint/eslint/commits/ebfb5b46136c4d737c9783333e3057421d1a0bef"
+      }
+    ],
+    "sha": "20158b09db3430cf00b202ba8c25ce874bbaf00a",
+    "url": "https://api.github.com/repos/eslint/eslint/commits/20158b09db3430cf00b202ba8c25ce874bbaf00a"
+  },
+  {
+    "author": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/46647141?v=4",
+      "events_url": "https://api.github.com/users/snitin315/events{/privacy}",
+      "followers_url": "https://api.github.com/users/snitin315/followers",
+      "following_url": "https://api.github.com/users/snitin315/following{/other_user}",
+      "gists_url": "https://api.github.com/users/snitin315/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/snitin315",
+      "id": 46647141,
+      "login": "snitin315",
+      "node_id": "MDQ6VXNlcjQ2NjQ3MTQx",
+      "organizations_url": "https://api.github.com/users/snitin315/orgs",
+      "received_events_url": "https://api.github.com/users/snitin315/received_events",
+      "repos_url": "https://api.github.com/users/snitin315/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/snitin315/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/snitin315/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/snitin315",
+      "user_view_type": "public"
+    },
+    "comments_url": "https://api.github.com/repos/eslint/eslint/commits/46eea6d1cbed41d020cb76841ebba30710b0afd0/comments",
+    "commit": {
+      "author": {
+        "date": "2025-03-28T14:56:35Z",
+        "email": "snitin315@gmail.com",
+        "name": "Nitin Kumar"
+      },
+      "comment_count": 0,
+      "committer": {
+        "date": "2025-03-28T14:56:35Z",
+        "email": "noreply@github.com",
+        "name": "GitHub"
+      },
+      "message": "chore: remove `Rule` & `FormatterFunction` from `shared/types.js` (#19556)\n\n* chore: update RuleMeta types\n\n* chore: update core rule types\n\n* chore: fix types\n\n* chore: apply suggestions from code review\n\n* chore: remove Rule & FormatterFunction",
+      "tree": {
+        "sha": "311def7da673359b09f96340c1a0bf71cd9b9cd6",
+        "url": "https://api.github.com/repos/eslint/eslint/git/trees/311def7da673359b09f96340c1a0bf71cd9b9cd6"
+      },
+      "url": "https://api.github.com/repos/eslint/eslint/git/commits/46eea6d1cbed41d020cb76841ebba30710b0afd0",
+      "verification": {
+        "payload": "tree 311def7da673359b09f96340c1a0bf71cd9b9cd6\nparent fb8cdb842edcc035969e14b7b7e3ee372304f2d7\nauthor Nitin Kumar <snitin315@gmail.com> 1743173795 +0530\ncommitter GitHub <noreply@github.com> 1743173795 -0400\n\nchore: remove `Rule` & `FormatterFunction` from `shared/types.js` (#19556)\n\n* chore: update RuleMeta types\n\n* chore: update core rule types\n\n* chore: fix types\n\n* chore: apply suggestions from code review\n\n* chore: remove Rule & FormatterFunction",
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJn5rijCRC1aQ7uu5UhlAAAEYYQAIQYfU6W9x9XcagYqHC33Fss\nRuwuYfnDGY50h8d6IoPFPUdcTLVTQhLZBCsTNiP5nwiw0Nma+CalXij56ol3HCjK\n+dKsWb0G787LoduJ5HyjhC0OjtcTEHCUeopTO1qu7cYyx13W5hxwbe9s01unXSxR\nUJ48rQomf6h3euimSqIuHd2htecUJDbZEgVlsEmHlqKcf0BqHpE9y9nDvLReFlkP\npQVyjiIU5/o4c7RyLSqETmjFFFH6VJKIghf3LiTDpGr/drNG9C5WKkUGjW5rrkux\n/WqjoGvyCP66pl+wLVyWiVchPhEMeL69jzX5O0WJ+FNscntQnQXymauToDNreIkK\nLBt7O3lup6o+p6YLLsjAirrpuo2SIQYQenW11dtpkZDqsw6imMpjV2s89Hw6PhfR\neX1gmUC9wQnZus/vnSAtuSwz56zvin56uLJhgoo7LF+lNZr5bhD0EN+aXVvS6KN0\nNc1TpZ5JZURio47uu7ZfazuCBcSmhg2spaTxfdOYRfJSdVgfj4Wqjkboj0kAkESp\nkBfjvcSpEiSJdydEKD5TTs/KKlU61bWVBLPNTqtINo5+HFWdYs3RYFNYoFkOqThF\nh2jsDOn8XQ4p5CBTlZRncW5JWaa+/Y3x/Fg6wrEPoojJUT6V32u1OI3a0DdT/VVh\nz0hKeKGI3+enULURd6sx\n=cWW2\n-----END PGP SIGNATURE-----\n",
+        "verified": true,
+        "verified_at": "2025-03-28T14:56:39Z"
+      }
+    },
+    "committer": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/web-flow",
+      "id": 19864447,
+      "login": "web-flow",
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/web-flow",
+      "user_view_type": "public"
+    },
+    "html_url": "https://github.com/eslint/eslint/commit/46eea6d1cbed41d020cb76841ebba30710b0afd0",
+    "node_id": "C_kwDOAKjKDdoAKDQ2ZWVhNmQxY2JlZDQxZDAyMGNiNzY4NDFlYmJhMzA3MTBiMGFmZDA",
+    "parents": [
+      {
+        "html_url": "https://github.com/eslint/eslint/commit/fb8cdb842edcc035969e14b7b7e3ee372304f2d7",
+        "sha": "fb8cdb842edcc035969e14b7b7e3ee372304f2d7",
+        "url": "https://api.github.com/repos/eslint/eslint/commits/fb8cdb842edcc035969e14b7b7e3ee372304f2d7"
+      }
+    ],
+    "sha": "46eea6d1cbed41d020cb76841ebba30710b0afd0",
+    "url": "https://api.github.com/repos/eslint/eslint/commits/46eea6d1cbed41d020cb76841ebba30710b0afd0"
+  },
+  {
+    "author": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/170532330?v=4",
+      "events_url": "https://api.github.com/users/todaymoon/events{/privacy}",
+      "followers_url": "https://api.github.com/users/todaymoon/followers",
+      "following_url": "https://api.github.com/users/todaymoon/following{/other_user}",
+      "gists_url": "https://api.github.com/users/todaymoon/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/todaymoon",
+      "id": 170532330,
+      "login": "todaymoon",
+      "node_id": "U_kgDOCiod6g",
+      "organizations_url": "https://api.github.com/users/todaymoon/orgs",
+      "received_events_url": "https://api.github.com/users/todaymoon/received_events",
+      "repos_url": "https://api.github.com/users/todaymoon/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/todaymoon/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/todaymoon/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/todaymoon",
+      "user_view_type": "public"
+    },
+    "comments_url": "https://api.github.com/repos/eslint/eslint/commits/7790d8305a8cef7cc95c331205d59d6b3c2b4e2e/comments",
+    "commit": {
+      "author": {
+        "date": "2025-03-26T14:41:52Z",
+        "email": "csgcgl@foxmail.com",
+        "name": "todaymoon"
+      },
+      "comment_count": 0,
+      "committer": {
+        "date": "2025-03-26T14:41:52Z",
+        "email": "noreply@github.com",
+        "name": "GitHub"
+      },
+      "message": "chore: fix some typos in comment (#19576)\n\nSigned-off-by: todaymoon <csgcgl@foxmail.com>",
+      "tree": {
+        "sha": "9348e673c008c918ff10bd375c7930a3a2d17e67",
+        "url": "https://api.github.com/repos/eslint/eslint/git/trees/9348e673c008c918ff10bd375c7930a3a2d17e67"
+      },
+      "url": "https://api.github.com/repos/eslint/eslint/git/commits/7790d8305a8cef7cc95c331205d59d6b3c2b4e2e",
+      "verification": {
+        "payload": "tree 9348e673c008c918ff10bd375c7930a3a2d17e67\nparent cd72bcc0c8d81fbf47ff3c8fe05ae48e1d862246\nauthor todaymoon <csgcgl@foxmail.com> 1743000112 +0800\ncommitter GitHub <noreply@github.com> 1743000112 -0400\n\nchore: fix some typos in comment (#19576)\n\nSigned-off-by: todaymoon <csgcgl@foxmail.com>",
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJn5BIwCRC1aQ7uu5UhlAAAsWEQAJQZXhRusiIWtmB+xFP7Ab+F\nDZP+mePh7mXxpYCzn7nUWWMmK+3D+W5eVu4IYHVQtrEydZVosBANjAEu2bW23T6e\noavKzSK7RxnYrtGreyLf8mMxQvD5Cf2atTr+XcSvaaINOMAVQURChPZUnhT/k4F/\n5aEnIwg6//e1lFzwTOX/xBb3tfG7GDemz12dYw7Xwtf2Zs+74TdjByi5/bdMv4nz\nlNPeGfoQg6DYKgRnj3QSUg6Wtp7nfeKFrFpfvK1qwqVTiLKnZSMIPQXTjNRNHllp\nZhShcmRMFvxa9NQKAbLp/3bMIQJBR3zn+eYhUmV3tOJ2RBQ8Pj0rGkGgumrb14r7\noqKLlJb6c0OM2E4HiFjilAPYul3nc6b1WfpU9XNhOsd8p3LmLlYWui4q+HMhfpox\nMjD+TGOvX8+OBLOdwky29e6rplw+j7vvvytaywGibbbY1kekm0vV5JYr8R+bgMfa\nkHiRGWgQpzqhwNTZjlsHZsT9/6p+sMxFFf4BNoGVxO5DzuhPueJQco8BkZnA+jyl\nR5CSS48Bc3WDFcNdTI/utZ7JEkDpJyytsUJL+VjfEDbN4PTL469q/NzCewJrOozq\nsm8jWetc4MOnnf3rZFguWyadr4+JPZcDGdMtniJkruyasmLR4lo00KR9SZEcji4v\nQWjkU0/who1Qn+vwr7vu\n=yE91\n-----END PGP SIGNATURE-----\n",
+        "verified": true,
+        "verified_at": "2025-03-26T14:41:56Z"
+      }
+    },
+    "committer": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/web-flow",
+      "id": 19864447,
+      "login": "web-flow",
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/web-flow",
+      "user_view_type": "public"
+    },
+    "html_url": "https://github.com/eslint/eslint/commit/7790d8305a8cef7cc95c331205d59d6b3c2b4e2e",
+    "node_id": "C_kwDOAKjKDdoAKDc3OTBkODMwNWE4Y2VmN2NjOTVjMzMxMjA1ZDU5ZDZiM2MyYjRlMmU",
+    "parents": [
+      {
+        "html_url": "https://github.com/eslint/eslint/commit/cd72bcc0c8d81fbf47ff3c8fe05ae48e1d862246",
+        "sha": "cd72bcc0c8d81fbf47ff3c8fe05ae48e1d862246",
+        "url": "https://api.github.com/repos/eslint/eslint/commits/cd72bcc0c8d81fbf47ff3c8fe05ae48e1d862246"
+      }
+    ],
+    "sha": "7790d8305a8cef7cc95c331205d59d6b3c2b4e2e",
+    "url": "https://api.github.com/repos/eslint/eslint/commits/7790d8305a8cef7cc95c331205d59d6b3c2b4e2e"
+  },
+  {
+    "author": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/3335181?v=4",
+      "events_url": "https://api.github.com/users/JoshuaKGoldberg/events{/privacy}",
+      "followers_url": "https://api.github.com/users/JoshuaKGoldberg/followers",
+      "following_url": "https://api.github.com/users/JoshuaKGoldberg/following{/other_user}",
+      "gists_url": "https://api.github.com/users/JoshuaKGoldberg/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/JoshuaKGoldberg",
+      "id": 3335181,
+      "login": "JoshuaKGoldberg",
+      "node_id": "MDQ6VXNlcjMzMzUxODE=",
+      "organizations_url": "https://api.github.com/users/JoshuaKGoldberg/orgs",
+      "received_events_url": "https://api.github.com/users/JoshuaKGoldberg/received_events",
+      "repos_url": "https://api.github.com/users/JoshuaKGoldberg/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/JoshuaKGoldberg/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/JoshuaKGoldberg/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/JoshuaKGoldberg",
+      "user_view_type": "public"
+    },
+    "comments_url": "https://api.github.com/repos/eslint/eslint/commits/129882d2fdb4e7f597ed78eeadd86377f3d6b078/comments",
+    "commit": {
+      "author": {
+        "date": "2025-03-19T15:18:08Z",
+        "email": "git@joshuakgoldberg.com",
+        "name": "Josh Goldberg \u2728"
+      },
+      "comment_count": 0,
+      "committer": {
+        "date": "2025-03-19T15:18:08Z",
+        "email": "noreply@github.com",
+        "name": "GitHub"
+      },
+      "message": "chore: formatted files with Prettier via trunk fmt (#19355)\n\n* chore: remove formatting-related lint rules internally\n\n* chore: formatted files with Prettier via trunk fmt\n\n* rm .prettierrc.json\n\n* chore: correct comment directives and formatting\n\n* Apply introduced fmt changes post-merge\n\n* Also disable MD010 and MD030 in preparation for 19355\n\n* Also disable MD013 in preparation for 19355\n\n* Updated tools/update-rule-type-headers.js to print tabs\n\n* Fix introduced issues from the main merge\n\n* Manually format conf/*.json\n\n* Switch conf/*.json files back to two spaces, per prettier config\n\n* chore: empty commit to hopefully unblock GitHub",
+      "tree": {
+        "sha": "fd1a36d9bef4ee3ddb046f6b3f5d8621d9462c4e",
+        "url": "https://api.github.com/repos/eslint/eslint/git/trees/fd1a36d9bef4ee3ddb046f6b3f5d8621d9462c4e"
+      },
+      "url": "https://api.github.com/repos/eslint/eslint/git/commits/129882d2fdb4e7f597ed78eeadd86377f3d6b078",
+      "verification": {
+        "payload": "tree fd1a36d9bef4ee3ddb046f6b3f5d8621d9462c4e\nparent 1738dbc36ce556745c230d3592e7f1aa673a1430\nauthor Josh Goldberg \u2728 <git@joshuakgoldberg.com> 1742397488 -0400\ncommitter GitHub <noreply@github.com> 1742397488 -0400\n\nchore: formatted files with Prettier via trunk fmt (#19355)\n\n* chore: remove formatting-related lint rules internally\n\n* chore: formatted files with Prettier via trunk fmt\n\n* rm .prettierrc.json\n\n* chore: correct comment directives and formatting\n\n* Apply introduced fmt changes post-merge\n\n* Also disable MD010 and MD030 in preparation for 19355\n\n* Also disable MD013 in preparation for 19355\n\n* Updated tools/update-rule-type-headers.js to print tabs\n\n* Fix introduced issues from the main merge\n\n* Manually format conf/*.json\n\n* Switch conf/*.json files back to two spaces, per prettier config\n\n* chore: empty commit to hopefully unblock GitHub",
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJn2uAwCRC1aQ7uu5UhlAAA+1wQAAIDBCchN3VqHG6dFLrBXOJN\nTXacpwW+ilDnkKWevcqgrcv4ecZpBlg5NXfLvXkbN7EKtrXgBH96BG2zaummPZbS\nL+I75Qive4oLAmiyR0bhxFoerVmFqfSD5WBpMFnw7W9wpDokjipOk9XKOY0fB7Tq\nFpeguKL28PxOAOST0OU/B/jofkGRZQbx3/tzF77HGQl3eiESdJhhlKLkOdFy/bcf\nJJ0NB5zxe+TCsX5Q8tsgyNaH7WD8ugcBNSupTZdJuWUzGN0dQzD/6sQM6X/JZKvY\nw1vdXMdNoWY6fVUkFvr76Bxa2gYsNtOYyU8NrJb5stkyB4Hm8jwRX8DgHXUYiTSo\nwdyIzh4PyyDfcvQk/mXBtD53gDJ7QND7QD8gH3dfDT3+yrmovE7MbZyRcT6XinbB\nqjU46UyJzW5mryglMeSCvBwgEe1BLercpCAoGAAkew9SIYbRg7FIkCSFKeWeOjzU\nwdr9J5z1yJzf9VkvPiFBUZfm0kUB/3vDvI53PMbp3hD8zAjekPwTeqZu0G+VkCtd\n+5DcaccQrh5x+vpbr9hY0nJfWsATLqh1nwGkgOA9j9SnloYIiBV8eyAR0N7wKunr\nutNPz/+E+qSl/SEARHUKgntaIPBh7UCvAMRAWbz/5ZqtVlZUz/ac5tLW93eZ3Jnt\nEVXfVuExKWqvhKrzP7ng\n=0HOc\n-----END PGP SIGNATURE-----\n",
+        "verified": true,
+        "verified_at": "2025-03-19T15:18:13Z"
+      }
+    },
+    "committer": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/web-flow",
+      "id": 19864447,
+      "login": "web-flow",
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/web-flow",
+      "user_view_type": "public"
+    },
+    "html_url": "https://github.com/eslint/eslint/commit/129882d2fdb4e7f597ed78eeadd86377f3d6b078",
+    "node_id": "C_kwDOAKjKDdoAKDEyOTg4MmQyZmRiNGU3ZjU5N2VkNzhlZWFkZDg2Mzc3ZjNkNmIwNzg",
+    "parents": [
+      {
+        "html_url": "https://github.com/eslint/eslint/commit/1738dbc36ce556745c230d3592e7f1aa673a1430",
+        "sha": "1738dbc36ce556745c230d3592e7f1aa673a1430",
+        "url": "https://api.github.com/repos/eslint/eslint/commits/1738dbc36ce556745c230d3592e7f1aa673a1430"
+      }
+    ],
+    "sha": "129882d2fdb4e7f597ed78eeadd86377f3d6b078",
+    "url": "https://api.github.com/repos/eslint/eslint/commits/129882d2fdb4e7f597ed78eeadd86377f3d6b078"
+  },
+  {
+    "author": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/86398394?v=4",
+      "events_url": "https://api.github.com/users/Tanujkanti4441/events{/privacy}",
+      "followers_url": "https://api.github.com/users/Tanujkanti4441/followers",
+      "following_url": "https://api.github.com/users/Tanujkanti4441/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Tanujkanti4441/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/Tanujkanti4441",
+      "id": 86398394,
+      "login": "Tanujkanti4441",
+      "node_id": "MDQ6VXNlcjg2Mzk4Mzk0",
+      "organizations_url": "https://api.github.com/users/Tanujkanti4441/orgs",
+      "received_events_url": "https://api.github.com/users/Tanujkanti4441/received_events",
+      "repos_url": "https://api.github.com/users/Tanujkanti4441/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/Tanujkanti4441/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Tanujkanti4441/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/Tanujkanti4441",
+      "user_view_type": "public"
+    },
+    "comments_url": "https://api.github.com/repos/eslint/eslint/commits/eed91d12d4d265bd32905dd1fbf8a6d5dbcdb54a/comments",
+    "commit": {
+      "author": {
+        "date": "2024-12-09T19:45:48Z",
+        "email": "86398394+Tanujkanti4441@users.noreply.github.com",
+        "name": "Tanuj Kanti"
+      },
+      "comment_count": 0,
+      "committer": {
+        "date": "2024-12-09T19:45:48Z",
+        "email": "noreply@github.com",
+        "name": "GitHub"
+      },
+      "message": "feat: add suggestions to `no-unused-vars` (#18352)\n\n* add more fixes for nested patterns\r\n\r\n* add test\r\n\r\n* add more tests\r\n\r\n* resolve merge conflict\r\n\r\n* update code and add more tests\r\n\r\n* apply suggestions\r\n\r\n* apply suggestions\r\n\r\n* fix linting error\r\n\r\n* apply suggestion of replacing semicolon\r\n\r\n* apply suggestions\r\n\r\n* add more tests\r\n\r\n* fix linting error\r\n\r\n* fix linting error\r\n\r\n* fix linting errors\r\n\r\n* merge two identical functions\r\n\r\n* fix linting errors\r\n\r\n* fix linting error\r\n\r\n* apply suggestions on comments\r\n\r\n* skip suggestion for assignment pattern\r\n\r\n* fix typos\r\n\r\n* skip fix for params with default value\r\n\r\n* simplify logic of reassigned variable skip",
+      "tree": {
+        "sha": "92c29b96d5cb17fef3702030a7e586a26478dc0f",
+        "url": "https://api.github.com/repos/eslint/eslint/git/trees/92c29b96d5cb17fef3702030a7e586a26478dc0f"
+      },
+      "url": "https://api.github.com/repos/eslint/eslint/git/commits/eed91d12d4d265bd32905dd1fbf8a6d5dbcdb54a",
+      "verification": {
+        "payload": "tree 92c29b96d5cb17fef3702030a7e586a26478dc0f\nparent 4c4f53b8c961dd6aed6c0cdca303018d805a59fe\nauthor Tanuj Kanti <86398394+Tanujkanti4441@users.noreply.github.com> 1733773548 +0530\ncommitter GitHub <noreply@github.com> 1733773548 +0100\n\nfeat: add suggestions to `no-unused-vars` (#18352)\n\n* add more fixes for nested patterns\r\n\r\n* add test\r\n\r\n* add more tests\r\n\r\n* resolve merge conflict\r\n\r\n* update code and add more tests\r\n\r\n* apply suggestions\r\n\r\n* apply suggestions\r\n\r\n* fix linting error\r\n\r\n* apply suggestion of replacing semicolon\r\n\r\n* apply suggestions\r\n\r\n* add more tests\r\n\r\n* fix linting error\r\n\r\n* fix linting error\r\n\r\n* fix linting errors\r\n\r\n* merge two identical functions\r\n\r\n* fix linting errors\r\n\r\n* fix linting error\r\n\r\n* apply suggestions on comments\r\n\r\n* skip suggestion for assignment pattern\r\n\r\n* fix typos\r\n\r\n* skip fix for params with default value\r\n\r\n* simplify logic of reassigned variable skip",
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJnV0jsCRC1aQ7uu5UhlAAA4ZYQAI8QmDS+1SunFo4Q/hwW5pKC\nafOE4g+DFxWKTD1JQYYIKwD9ez5896vFX9/qLEjPyZ0LKhskakTZW3HyRXr/8/UN\nUtnhpx3hkFTm0ybuNhQ6brCBhPBgrMwdwQoqkGK175esZfzYpAuR+FzVxICwyjRv\nLQZKd9eD/uXjwviY3K7jN4ltIkHxoFWyapyMUkN0vTjmJi90rarQwDSi8nZCGkzW\nuj728AdNdYoMSv4i1UA05L0BqpyNquOXukVDYKVpJbHU7RU+BOGbQ7C6emLgqLET\nRBw/W4fJVvJ0c3fPKq9jawqomqp8ECGOg32HsDpwiZ0JWtpOTVQYGm1zQgij4Aje\neL2XrDc7JpTrCBgm1qopwjyQ+9t+aU2Hf7GXPXHJ2UORmW/Wawcf+UEC1oFbM/dK\nhwbg2PKpJ8STEx8UYJKjrxKHsHNM1CWQhxrMqXMBbrk44/AjNgZQI+i1qXvhMqtw\nfYCS+qAxG/FhyV0pJbbF/n/arbu9k/rqG5VhGKnx7Ou9zBGIi9pu/U5OjsE8xExI\nP8MpaQ5uPxKFXTBAa5fQxWspRhZf38oDVb2gtHzUjE/CvpcxpHaJwBKDJNfq7CB/\nLo4z7cLSuWo4ItsQhLVBYtK9A9TbYPgfhScY5JoBVHQbz6acw1vvrqXoZJN19Ucf\nwP+sP/E2cwYtpDKTuLFj\n=X8gE\n-----END PGP SIGNATURE-----\n",
+        "verified": true,
+        "verified_at": "2024-12-09T19:45:53Z"
+      }
+    },
+    "committer": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/web-flow",
+      "id": 19864447,
+      "login": "web-flow",
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/web-flow",
+      "user_view_type": "public"
+    },
+    "html_url": "https://github.com/eslint/eslint/commit/eed91d12d4d265bd32905dd1fbf8a6d5dbcdb54a",
+    "node_id": "C_kwDOAKjKDdoAKGVlZDkxZDEyZDRkMjY1YmQzMjkwNWRkMWZiZjhhNmQ1ZGJjZGI1NGE",
+    "parents": [
+      {
+        "html_url": "https://github.com/eslint/eslint/commit/4c4f53b8c961dd6aed6c0cdca303018d805a59fe",
+        "sha": "4c4f53b8c961dd6aed6c0cdca303018d805a59fe",
+        "url": "https://api.github.com/repos/eslint/eslint/commits/4c4f53b8c961dd6aed6c0cdca303018d805a59fe"
+      }
+    ],
+    "sha": "eed91d12d4d265bd32905dd1fbf8a6d5dbcdb54a",
+    "url": "https://api.github.com/repos/eslint/eslint/commits/eed91d12d4d265bd32905dd1fbf8a6d5dbcdb54a"
+  },
+  {
+    "author": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/6367844?v=4",
+      "events_url": "https://api.github.com/users/fasttime/events{/privacy}",
+      "followers_url": "https://api.github.com/users/fasttime/followers",
+      "following_url": "https://api.github.com/users/fasttime/following{/other_user}",
+      "gists_url": "https://api.github.com/users/fasttime/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/fasttime",
+      "id": 6367844,
+      "login": "fasttime",
+      "node_id": "MDQ6VXNlcjYzNjc4NDQ=",
+      "organizations_url": "https://api.github.com/users/fasttime/orgs",
+      "received_events_url": "https://api.github.com/users/fasttime/received_events",
+      "repos_url": "https://api.github.com/users/fasttime/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/fasttime/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/fasttime/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/fasttime",
+      "user_view_type": "public"
+    },
+    "comments_url": "https://api.github.com/repos/eslint/eslint/commits/14e9f81ccdb51d2b915b68f442d48ced0a691646/comments",
+    "commit": {
+      "author": {
+        "date": "2024-07-12T20:13:30Z",
+        "email": "github@fasttime.org",
+        "name": "Francesco Trotta"
+      },
+      "comment_count": 0,
+      "committer": {
+        "date": "2024-07-12T20:13:30Z",
+        "email": "noreply@github.com",
+        "name": "GitHub"
+      },
+      "message": "fix: destructuring in catch clause in `no-unused-vars` (#18636)\n\n* fix: destructuring in catch clause in `no-unused-vars`\r\n\r\n* revert changes in `lib/rules/no-unused-vars.js`\r\n\r\n* temporarily use repo branch for eslint-scope\r\n\r\n* Update package.json",
+      "tree": {
+        "sha": "7c893553f8c5567edd4240182936521946ad2c4f",
+        "url": "https://api.github.com/repos/eslint/eslint/git/trees/7c893553f8c5567edd4240182936521946ad2c4f"
+      },
+      "url": "https://api.github.com/repos/eslint/eslint/git/commits/14e9f81ccdb51d2b915b68f442d48ced0a691646",
+      "verification": {
+        "payload": "tree 7c893553f8c5567edd4240182936521946ad2c4f\nparent 7bcda760369c44d0f1131fccaaf1ccfed5af85f1\nauthor Francesco Trotta <github@fasttime.org> 1720815210 +0200\ncommitter GitHub <noreply@github.com> 1720815210 +0200\n\nfix: destructuring in catch clause in `no-unused-vars` (#18636)\n\n* fix: destructuring in catch clause in `no-unused-vars`\r\n\r\n* revert changes in `lib/rules/no-unused-vars.js`\r\n\r\n* temporarily use repo branch for eslint-scope\r\n\r\n* Update package.json",
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJmkY5qCRC1aQ7uu5UhlAAAfhsQADur5LwYKosattOrWW9QsQ1n\nz/zyfKJ4XbXr73jgl2j63ZhQL8OR0uQCpw29ri73F6rulNZ0E+Fs5PRUPn9IAXkm\nrmWoU5foIourEr275N7BdJQZmeXzHaA5J7psoyhlp8ohseQdJZNBj/bsgnxDlHO1\ndihnAOk9nnwTKpx71NjnZaAFii5Gj7pOcFebtIMzhoKjso2VzYf4PpJiv3tvzlz5\nlrLIE425rxS2mC1Ygr9/jH2t/lV3Ehjaawn3C2djG19AxQ872hD6DSZVz/Den3b7\nl5huaEof/oeUlPDgoLb+wWhD0ooS+e2/ZcjTdWw1RXEfnegMB1+F2mHPjpp8Eb/g\nZJsa/VCgj0+lNtJ1dAcHpofDQq5YZuXiznjB0EArBjC4iQeuREokgiVcIJ0JevN6\nTqLoagBehdogRAq/Gf6Jhtz4ObuqTN3HXESkVEv564dZ0hCXmMIH9P+t6sHvQ3gH\nLRQl/rXV/wCYEkx1rk0u1Eo//tpCBZ2+9v9byA4vUm7Jasn4uMB6kUukFfcNMKkL\ni/T6BUqcGyu08gh6r09AR3obrXR26n1arRI+Gx/aO2kZn+V2Tww4u8BEVPzqendr\nZJa4lF+fd7Ir/96hof22wnpSSZ81Vo0gZzSekqnHq3j4v1qbSGIHdBXvd/+DEXOi\nGx/8RmtXm6/0T55gyqHW\n=/ORe\n-----END PGP SIGNATURE-----\n",
+        "verified": true,
+        "verified_at": "2024-11-06T16:52:11Z"
+      }
+    },
+    "committer": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/web-flow",
+      "id": 19864447,
+      "login": "web-flow",
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/web-flow",
+      "user_view_type": "public"
+    },
+    "html_url": "https://github.com/eslint/eslint/commit/14e9f81ccdb51d2b915b68f442d48ced0a691646",
+    "node_id": "C_kwDOAKjKDdoAKDE0ZTlmODFjY2RiNTFkMmI5MTViNjhmNDQyZDQ4Y2VkMGE2OTE2NDY",
+    "parents": [
+      {
+        "html_url": "https://github.com/eslint/eslint/commit/7bcda760369c44d0f1131fccaaf1ccfed5af85f1",
+        "sha": "7bcda760369c44d0f1131fccaaf1ccfed5af85f1",
+        "url": "https://api.github.com/repos/eslint/eslint/commits/7bcda760369c44d0f1131fccaaf1ccfed5af85f1"
+      }
+    ],
+    "sha": "14e9f81ccdb51d2b915b68f442d48ced0a691646",
+    "url": "https://api.github.com/repos/eslint/eslint/commits/14e9f81ccdb51d2b915b68f442d48ced0a691646"
+  },
+  {
+    "author": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/53019676?v=4",
+      "events_url": "https://api.github.com/users/kirkwaiblinger/events{/privacy}",
+      "followers_url": "https://api.github.com/users/kirkwaiblinger/followers",
+      "following_url": "https://api.github.com/users/kirkwaiblinger/following{/other_user}",
+      "gists_url": "https://api.github.com/users/kirkwaiblinger/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/kirkwaiblinger",
+      "id": 53019676,
+      "login": "kirkwaiblinger",
+      "node_id": "MDQ6VXNlcjUzMDE5Njc2",
+      "organizations_url": "https://api.github.com/users/kirkwaiblinger/orgs",
+      "received_events_url": "https://api.github.com/users/kirkwaiblinger/received_events",
+      "repos_url": "https://api.github.com/users/kirkwaiblinger/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/kirkwaiblinger/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/kirkwaiblinger/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/kirkwaiblinger",
+      "user_view_type": "public"
+    },
+    "comments_url": "https://api.github.com/repos/eslint/eslint/commits/21d3766c3f4efd981d3cc294c2c82c8014815e6e/comments",
+    "commit": {
+      "author": {
+        "date": "2024-06-21T07:16:06Z",
+        "email": "kirk.waiblinger@gmail.com",
+        "name": "Kirk Waiblinger"
+      },
+      "comment_count": 0,
+      "committer": {
+        "date": "2024-06-21T07:16:06Z",
+        "email": "noreply@github.com",
+        "name": "GitHub"
+      },
+      "message": "fix: `no-unused-vars` include caught errors pattern in report message (#18609)",
+      "tree": {
+        "sha": "9e94e27ee1d8afea824103d9c25c77a1d2e357a1",
+        "url": "https://api.github.com/repos/eslint/eslint/git/trees/9e94e27ee1d8afea824103d9c25c77a1d2e357a1"
+      },
+      "url": "https://api.github.com/repos/eslint/eslint/git/commits/21d3766c3f4efd981d3cc294c2c82c8014815e6e",
+      "verification": {
+        "payload": "tree 9e94e27ee1d8afea824103d9c25c77a1d2e357a1\nparent 642197346bf02d277c2014144537aa21ab57dc59\nauthor Kirk Waiblinger <kirk.waiblinger@gmail.com> 1718954166 -0600\ncommitter GitHub <noreply@github.com> 1718954166 +0530\n\nfix: `no-unused-vars` include caught errors pattern in report message (#18609)\n\n",
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJmdSi2CRC1aQ7uu5UhlAAALK8QAITtThm9iz9COtDdcFswYbAo\nprSzd5ndZ1k2uX68hDc8bWhK2Aeh+mWmGHqqAxKEdCb7RPuuvPxMSgR4EXRQNxhr\nSNJHtc/10z/WrSnUplMqFjBrnKGYJns5aYtoc9StJ1q0IjNDYLUtBvbTFu/q4GtJ\n0T7toH9T0iC3RQhDMoCRy0NlkaNWCrsG2EC4a960VG3ia/YDZToiLUEt9YrCKios\nqqp2+dq2pN1fOTTi73NnSxUBCobpZuRQms1rZm1FHOe+mdUu82m/ZI8o+sBaoPJ8\n1dN7xnBHOUzgbMSrNiI3CBxqPCJq034MKHSMNmHcGwXHTn8cYKc7yhhbEyZN5w2E\n4jcLtD9pSfS3GI4zE5iZ5A5qW+dq/vVvCthQa/++bm6DUZ4KeR/RurbkP/QlGh00\nOSwFwcsGftexxd65oYMgmOJV+mk1KWK6aap14sa4jOfFCYFubOO/hhKOIc+aEwNe\n6a/PcHbDFW9+ChUgN8S41/a/BHzavVFUxzGEAP/v2PwYOiNsAyPxR9DwT0/bfrie\nA2aGz4tjSggRR0TgPCV2HjrXLeElbVnW/P8xtS6EXQqZqrL349flxbtODr0bN1Ft\nqRG12dA4Vv9b1c/INbq+D2mJ0oPOJ0JwRf5viVQKDZt278i021dAlyxJgADTSw0X\nYAaVMbpget23CSbAIf0J\n=9gDX\n-----END PGP SIGNATURE-----\n",
+        "verified": true,
+        "verified_at": "2024-11-06T16:52:11Z"
+      }
+    },
+    "committer": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/web-flow",
+      "id": 19864447,
+      "login": "web-flow",
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/web-flow",
+      "user_view_type": "public"
+    },
+    "html_url": "https://github.com/eslint/eslint/commit/21d3766c3f4efd981d3cc294c2c82c8014815e6e",
+    "node_id": "C_kwDOAKjKDdoAKDIxZDM3NjZjM2Y0ZWZkOTgxZDNjYzI5NGMyYzgyYzgwMTQ4MTVlNmU",
+    "parents": [
+      {
+        "html_url": "https://github.com/eslint/eslint/commit/642197346bf02d277c2014144537aa21ab57dc59",
+        "sha": "642197346bf02d277c2014144537aa21ab57dc59",
+        "url": "https://api.github.com/repos/eslint/eslint/commits/642197346bf02d277c2014144537aa21ab57dc59"
+      }
+    ],
+    "sha": "21d3766c3f4efd981d3cc294c2c82c8014815e6e",
+    "url": "https://api.github.com/repos/eslint/eslint/commits/21d3766c3f4efd981d3cc294c2c82c8014815e6e"
+  },
+  {
+    "author": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/53019676?v=4",
+      "events_url": "https://api.github.com/users/kirkwaiblinger/events{/privacy}",
+      "followers_url": "https://api.github.com/users/kirkwaiblinger/followers",
+      "following_url": "https://api.github.com/users/kirkwaiblinger/following{/other_user}",
+      "gists_url": "https://api.github.com/users/kirkwaiblinger/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/kirkwaiblinger",
+      "id": 53019676,
+      "login": "kirkwaiblinger",
+      "node_id": "MDQ6VXNlcjUzMDE5Njc2",
+      "organizations_url": "https://api.github.com/users/kirkwaiblinger/orgs",
+      "received_events_url": "https://api.github.com/users/kirkwaiblinger/received_events",
+      "repos_url": "https://api.github.com/users/kirkwaiblinger/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/kirkwaiblinger/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/kirkwaiblinger/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/kirkwaiblinger",
+      "user_view_type": "public"
+    },
+    "comments_url": "https://api.github.com/repos/eslint/eslint/commits/d7a7736937981befc5dfd68ce512f1a6ebf93e68/comments",
+    "commit": {
+      "author": {
+        "date": "2024-06-20T09:05:38Z",
+        "email": "kirk.waiblinger@gmail.com",
+        "name": "Kirk Waiblinger"
+      },
+      "comment_count": 0,
+      "committer": {
+        "date": "2024-06-20T09:05:38Z",
+        "email": "noreply@github.com",
+        "name": "GitHub"
+      },
+      "message": "fix: improve `no-unused-vars` message on unused caught errors (#18608)",
+      "tree": {
+        "sha": "add73004bf63aa108cb03a9201b3f7551b57281a",
+        "url": "https://api.github.com/repos/eslint/eslint/git/trees/add73004bf63aa108cb03a9201b3f7551b57281a"
+      },
+      "url": "https://api.github.com/repos/eslint/eslint/git/commits/d7a7736937981befc5dfd68ce512f1a6ebf93e68",
+      "verification": {
+        "payload": "tree add73004bf63aa108cb03a9201b3f7551b57281a\nparent 0a135395aca72461eb8b4c6f0866290bcf59916e\nauthor Kirk Waiblinger <kirk.waiblinger@gmail.com> 1718874338 -0600\ncommitter GitHub <noreply@github.com> 1718874338 +0530\n\nfix: improve `no-unused-vars` message on unused caught errors (#18608)\n\n",
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJmc/DiCRC1aQ7uu5UhlAAAzoQQAAfLx5phMciMFGwDeZZ/IE26\nEp2cxR4yj1dYR3wJXKJmFx8j9ES2DTi/qnw7vcaGb/YfICz9Tkn67lEvK2HZFnl3\nyo4ESsijLlyeUjc6HCNDpajp8njRq0gxNWhyIGWRIJwf2eajcf3KL1FsrNfdcaO4\nxf/M0bJiYCpXBIEwJ1hKPjxM3laIrWl7anyTALJ7Ue6X1YEdgF33pb7nON0kcl0g\nTVcMhWjuD/T4VlvAJvHkF0g1oocaQjt1YcrH1tJ76G0F3M1hBNXjcUQ+PoJGj9Lo\nQDokLOy+lBZ0lFZC0w+ZiZ8no4JNUVIOzdx0tgj2hByRfrQeGWTYs9NxlkQMywfr\nu6he031YEAQPGZrtGqoJtAUdfsfjGS4R7kmN2ownm7mcMT+9ALyyPNk95NYUA50V\nx/RonBUMWUstGBeBrSFJchlq4iOgy4qnpdVN6C8L+RvBI2meUljOAljql27TWIMR\n40y6SU+iyLtIZd7xZm0q/9ulVXPkd3hL7/zHbGcU5/zwkfXtgFvj2CHkl/7exc4f\nKUN/hKUnWoUYNnpPqYRwQ2N+9rUoJfspa03QJPaoaKpg5Q4+63f+/WAxjUpAXWHK\nW5MOEHigZPNNSYqC2xAliQNOIQu31z2BNnPTqAvnNQ3bWdcekwg6OrZl9kOBy5t3\nwNIJ5eLnN4VCVxYnHRXn\n=queA\n-----END PGP SIGNATURE-----\n",
+        "verified": true,
+        "verified_at": "2024-11-06T16:52:11Z"
+      }
+    },
+    "committer": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/web-flow",
+      "id": 19864447,
+      "login": "web-flow",
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/web-flow",
+      "user_view_type": "public"
+    },
+    "html_url": "https://github.com/eslint/eslint/commit/d7a7736937981befc5dfd68ce512f1a6ebf93e68",
+    "node_id": "C_kwDOAKjKDdoAKGQ3YTc3MzY5Mzc5ODFiZWZjNWRmZDY4Y2U1MTJmMWE2ZWJmOTNlNjg",
+    "parents": [
+      {
+        "html_url": "https://github.com/eslint/eslint/commit/0a135395aca72461eb8b4c6f0866290bcf59916e",
+        "sha": "0a135395aca72461eb8b4c6f0866290bcf59916e",
+        "url": "https://api.github.com/repos/eslint/eslint/commits/0a135395aca72461eb8b4c6f0866290bcf59916e"
+      }
+    ],
+    "sha": "d7a7736937981befc5dfd68ce512f1a6ebf93e68",
+    "url": "https://api.github.com/repos/eslint/eslint/commits/d7a7736937981befc5dfd68ce512f1a6ebf93e68"
+  },
+  {
+    "author": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/32177944?v=4",
+      "events_url": "https://api.github.com/users/Pearce-Ropion/events{/privacy}",
+      "followers_url": "https://api.github.com/users/Pearce-Ropion/followers",
+      "following_url": "https://api.github.com/users/Pearce-Ropion/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Pearce-Ropion/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/Pearce-Ropion",
+      "id": 32177944,
+      "login": "Pearce-Ropion",
+      "node_id": "MDQ6VXNlcjMyMTc3OTQ0",
+      "organizations_url": "https://api.github.com/users/Pearce-Ropion/orgs",
+      "received_events_url": "https://api.github.com/users/Pearce-Ropion/received_events",
+      "repos_url": "https://api.github.com/users/Pearce-Ropion/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/Pearce-Ropion/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Pearce-Ropion/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/Pearce-Ropion",
+      "user_view_type": "public"
+    },
+    "comments_url": "https://api.github.com/repos/eslint/eslint/commits/97ce45bcdaf2320efd59bb7974e0c8e073aab672/comments",
+    "commit": {
+      "author": {
+        "date": "2024-04-02T14:58:28Z",
+        "email": "32177944+Pearce-Ropion@users.noreply.github.com",
+        "name": "Pearce Ropion"
+      },
+      "comment_count": 0,
+      "committer": {
+        "date": "2024-04-02T14:58:28Z",
+        "email": "noreply@github.com",
+        "name": "GitHub"
+      },
+      "message": "feat: Add `reportUsedIgnorePattern` option to `no-unused-vars` rule (#17662)\n\n* Add `reportUsedIgnorePattern` option to `no-unused-vars` rule\r\n\r\nAddress comments\r\n\r\nFix tests\r\n\r\nReport on all variables except for initializers\r\n\r\nReport only on declarations\r\n\r\nMatch message formatting with other rule messages\r\n\r\nMove variable.eslintUsed into isUsedVariable function\r\n\r\nRefactor report messages for consistency\r\n\r\nFix tests\r\n\r\n* Report when ignored variable use used.\r\n\r\n* Fix docs and jsdocs\r\n\r\n* Full revert jsdoc update\r\n\r\n* Refactor message data handlers\r\n\r\n* Fix english\r\n\r\n* english is hard\r\n\r\n* Fix auto prettier",
+      "tree": {
+        "sha": "ab41478cb883e91349af5d86c5c5151358d601d3",
+        "url": "https://api.github.com/repos/eslint/eslint/git/trees/ab41478cb883e91349af5d86c5c5151358d601d3"
+      },
+      "url": "https://api.github.com/repos/eslint/eslint/git/commits/97ce45bcdaf2320efd59bb7974e0c8e073aab672",
+      "verification": {
+        "payload": "tree ab41478cb883e91349af5d86c5c5151358d601d3\nparent 651ec9122d0bd8dd08082098bd1e1a24892983f2\nauthor Pearce Ropion <32177944+Pearce-Ropion@users.noreply.github.com> 1712069908 -0700\ncommitter GitHub <noreply@github.com> 1712069908 +0200\n\nfeat: Add `reportUsedIgnorePattern` option to `no-unused-vars` rule (#17662)\n\n* Add `reportUsedIgnorePattern` option to `no-unused-vars` rule\r\n\r\nAddress comments\r\n\r\nFix tests\r\n\r\nReport on all variables except for initializers\r\n\r\nReport only on declarations\r\n\r\nMatch message formatting with other rule messages\r\n\r\nMove variable.eslintUsed into isUsedVariable function\r\n\r\nRefactor report messages for consistency\r\n\r\nFix tests\r\n\r\n* Report when ignored variable use used.\r\n\r\n* Fix docs and jsdocs\r\n\r\n* Full revert jsdoc update\r\n\r\n* Refactor message data handlers\r\n\r\n* Fix english\r\n\r\n* english is hard\r\n\r\n* Fix auto prettier",
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJmDB0UCRC1aQ7uu5UhlAAANJgQAAASOygGpIWFgjmuUY+Se0b3\ni1c86guxZV3OvzX+zH1U/aOnY/+4MDOZRLjRAQxaQIQvCx5lV/HTAMNSCObIyInB\nVsJf7PpPTYAKEnElFaWtYh9ys2I/z8cdBTUvmN9H0F+qBQ3zPS7gRkhg0q3LzgpJ\nok+KnMRbSuURKKt27MA273WtSNdJmo+vIPu1C6fu/KVcYO+P3cD5GzVIDZ8k/d0+\nFq2duMUsRrXIcmzK48ZchIpVtv4Z4Pfin7yCBRwNSE+wNi+twdd11CvueJFyoi8b\nieno4jg9pSAYyzZFKSBpAV+lVd7W0T/w9AMM0MAlclLZm3ezK6pVARN2HbaSiMo3\nRnu3MdiopjnDWfIS2+uxzQavu6WdYwXH8xgJORpOrF97Y3Yiu6YxtPj1neu00CIb\n0R/PaOnq4eRvTtavaURy3m+jmohZeUg60jR7T02rrOfHnS7xNMCHfAV0sPLMSAOA\nv8QTt9H2VsjYXCWlrUmBq3ULvDrbPPLiGMaGMcOUbR79ewFhZGHu+mVHy7Sdr1/H\nuInNCYanCTnh8GIEs6q8vvd1gx7MCM/eBvAyul6jvar4/n/uydoeMuATb7WvYChh\nLk8e87S1RTyoPtA73uPNWwY5tvmsM272U1D2EcX57pWR2ORibKMXUeW3FhiU77/A\nkmbiOGgEH8egByVzIGId\n=nFFY\n-----END PGP SIGNATURE-----\n",
+        "verified": true,
+        "verified_at": "2024-11-12T16:29:13Z"
+      }
+    },
+    "committer": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/web-flow",
+      "id": 19864447,
+      "login": "web-flow",
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/web-flow",
+      "user_view_type": "public"
+    },
+    "html_url": "https://github.com/eslint/eslint/commit/97ce45bcdaf2320efd59bb7974e0c8e073aab672",
+    "node_id": "C_kwDOAKjKDdoAKDk3Y2U0NWJjZGFmMjMyMGVmZDU5YmI3OTc0ZTBjOGUwNzNhYWI2NzI",
+    "parents": [
+      {
+        "html_url": "https://github.com/eslint/eslint/commit/651ec9122d0bd8dd08082098bd1e1a24892983f2",
+        "sha": "651ec9122d0bd8dd08082098bd1e1a24892983f2",
+        "url": "https://api.github.com/repos/eslint/eslint/commits/651ec9122d0bd8dd08082098bd1e1a24892983f2"
+      }
+    ],
+    "sha": "97ce45bcdaf2320efd59bb7974e0c8e073aab672",
+    "url": "https://api.github.com/repos/eslint/eslint/commits/97ce45bcdaf2320efd59bb7974e0c8e073aab672"
+  },
+  {
+    "author": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/86398394?v=4",
+      "events_url": "https://api.github.com/users/Tanujkanti4441/events{/privacy}",
+      "followers_url": "https://api.github.com/users/Tanujkanti4441/followers",
+      "following_url": "https://api.github.com/users/Tanujkanti4441/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Tanujkanti4441/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/Tanujkanti4441",
+      "id": 86398394,
+      "login": "Tanujkanti4441",
+      "node_id": "MDQ6VXNlcjg2Mzk4Mzk0",
+      "organizations_url": "https://api.github.com/users/Tanujkanti4441/orgs",
+      "received_events_url": "https://api.github.com/users/Tanujkanti4441/received_events",
+      "repos_url": "https://api.github.com/users/Tanujkanti4441/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/Tanujkanti4441/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Tanujkanti4441/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/Tanujkanti4441",
+      "user_view_type": "public"
+    },
+    "comments_url": "https://api.github.com/repos/eslint/eslint/commits/1c173dc1f3d36a28cb2543e93675c2fbdb6fa9f1/comments",
+    "commit": {
+      "author": {
+        "date": "2024-03-07T12:35:22Z",
+        "email": "86398394+Tanujkanti4441@users.noreply.github.com",
+        "name": "Tanuj Kanti"
+      },
+      "comment_count": 0,
+      "committer": {
+        "date": "2024-03-07T12:35:22Z",
+        "email": "noreply@github.com",
+        "name": "GitHub"
+      },
+      "message": "feat: add `ignoreClassWithStaticInitBlock` option to `no-unused-vars` (#18170)\n\n* feat: add option to ignore SIB-classes\r\n\r\n* add docs and tests\r\n\r\n* add test\r\n\r\n* update docs",
+      "tree": {
+        "sha": "143808986d9d84d0f67e71dcc900fc4e9532c2c3",
+        "url": "https://api.github.com/repos/eslint/eslint/git/trees/143808986d9d84d0f67e71dcc900fc4e9532c2c3"
+      },
+      "url": "https://api.github.com/repos/eslint/eslint/git/commits/1c173dc1f3d36a28cb2543e93675c2fbdb6fa9f1",
+      "verification": {
+        "payload": "tree 143808986d9d84d0f67e71dcc900fc4e9532c2c3\nparent d961eeb855b6dd9118a78165e358e454eb1d090d\nauthor Tanuj Kanti <86398394+Tanujkanti4441@users.noreply.github.com> 1709814922 +0530\ncommitter GitHub <noreply@github.com> 1709814922 +0100\n\nfeat: add `ignoreClassWithStaticInitBlock` option to `no-unused-vars` (#18170)\n\n* feat: add option to ignore SIB-classes\r\n\r\n* add docs and tests\r\n\r\n* add test\r\n\r\n* update docs",
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJl6bSKCRC1aQ7uu5UhlAAAD5UQAAxfWV5Y1mOlzcKQ10bQyL5h\nhUVIdx81VJvXDScGpttSLyKhNgI88b37A+N31ebcQWTmx57U/HdMEXCQAQ6kT8R+\nwKOFEY/vHcbW7cudS2pCPAJVOD3JfgoxwPzJAlaggByX3yOmtjx3siCfv48AcsLV\neAPgS0szMy+2gk1xlvukBieM4Y7G8zyzYRDLfP8szytrdFuyl1PBj1Vg1CehTtKd\n0xF73F98YWmlyjq8sW+0avxS3DnzqTmJONxKzK3ADKsu/fXq7rpTsg9jCNwd3jZ0\naGj7bb3YmgQyoOmJKgBbglMRJvTfUzP2LwQP8Qe4lfh3n/NUYDscbrMVHqorl6/e\nyCYcfnfDN9o39/R39+iTzAUdaWBVm489PtjGVdazP0w8Mn9qtndOHQ44PPbPZRjA\nJK0nDhr0wMrg5Crz8DudbjX/P25rUAzlkisH4GhR06ObEvC3A5HUvlEdnMXVlru6\nRiZ/rIHNotkhTlwmzrsP1zIdgTDqNPoe/+Qob+5Car85HoggnUhQPn1zLlLjpGSe\nz4TFVoZ9E/LXwKmCjLd8r++0lW6tZMq9bDWJgnhlKbwovCvcib+lzZvxFZ0KWIU3\nwJczxyZ3EOzOALsBTLTYXPLRqdREjZWhQBFUIdwmupmYVjNEngINQt8ay0CGt/q4\nyRmot96EgfehiJkJg5Mn\n=LH66\n-----END PGP SIGNATURE-----\n",
+        "verified": true,
+        "verified_at": "2024-11-12T16:29:13Z"
+      }
+    },
+    "committer": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/web-flow",
+      "id": 19864447,
+      "login": "web-flow",
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/web-flow",
+      "user_view_type": "public"
+    },
+    "html_url": "https://github.com/eslint/eslint/commit/1c173dc1f3d36a28cb2543e93675c2fbdb6fa9f1",
+    "node_id": "C_kwDOAKjKDdoAKDFjMTczZGMxZjNkMzZhMjhjYjI1NDNlOTM2NzVjMmZiZGI2ZmE5ZjE",
+    "parents": [
+      {
+        "html_url": "https://github.com/eslint/eslint/commit/d961eeb855b6dd9118a78165e358e454eb1d090d",
+        "sha": "d961eeb855b6dd9118a78165e358e454eb1d090d",
+        "url": "https://api.github.com/repos/eslint/eslint/commits/d961eeb855b6dd9118a78165e358e454eb1d090d"
+      }
+    ],
+    "sha": "1c173dc1f3d36a28cb2543e93675c2fbdb6fa9f1",
+    "url": "https://api.github.com/repos/eslint/eslint/commits/1c173dc1f3d36a28cb2543e93675c2fbdb6fa9f1"
+  },
+  {
+    "author": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/3335181?v=4",
+      "events_url": "https://api.github.com/users/JoshuaKGoldberg/events{/privacy}",
+      "followers_url": "https://api.github.com/users/JoshuaKGoldberg/followers",
+      "following_url": "https://api.github.com/users/JoshuaKGoldberg/following{/other_user}",
+      "gists_url": "https://api.github.com/users/JoshuaKGoldberg/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/JoshuaKGoldberg",
+      "id": 3335181,
+      "login": "JoshuaKGoldberg",
+      "node_id": "MDQ6VXNlcjMzMzUxODE=",
+      "organizations_url": "https://api.github.com/users/JoshuaKGoldberg/orgs",
+      "received_events_url": "https://api.github.com/users/JoshuaKGoldberg/received_events",
+      "repos_url": "https://api.github.com/users/JoshuaKGoldberg/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/JoshuaKGoldberg/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/JoshuaKGoldberg/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/JoshuaKGoldberg",
+      "user_view_type": "public"
+    },
+    "comments_url": "https://api.github.com/repos/eslint/eslint/commits/1a945890105d307541dcbff15f6438c19b476ade/comments",
+    "commit": {
+      "author": {
+        "date": "2024-02-01T07:44:53Z",
+        "email": "git@joshuakgoldberg.com",
+        "name": "Josh Goldberg \u2728"
+      },
+      "comment_count": 0,
+      "committer": {
+        "date": "2024-02-01T07:44:53Z",
+        "email": "noreply@github.com",
+        "name": "GitHub"
+      },
+      "message": "feat!: `no-unused-vars` default caughtErrors to 'all' (#18043)\n\n* feat!: `no-unused-vars` default caughtErrors to 'all'\r\n\r\n* docs: update no-unused-vars.md\r\n\r\n* docs: mention caughtErrors in migrate-to-9.0.0.md\r\n\r\n* chore: typo fix in docs/src/use/migrate-to-9.0.0.md\r\n\r\nCo-authored-by: Milos Djermanovic <milos.djermanovic@gmail.com>\r\n\r\n* chore: fix formatting in no-unused-vars.md\r\n\r\n* fix: 'are'/'were' in docs/src/use/migrate-to-9.0.0.md\r\n\r\nCo-authored-by: Amaresh  S M  <amareshsm13@gmail.com>\r\n\r\n---------\r\n\r\nCo-authored-by: Milos Djermanovic <milos.djermanovic@gmail.com>\r\nCo-authored-by: Amaresh  S M <amareshsm13@gmail.com>",
+      "tree": {
+        "sha": "ecfb6b18d98f4cc28969c2ac01e9fb94611049a6",
+        "url": "https://api.github.com/repos/eslint/eslint/git/trees/ecfb6b18d98f4cc28969c2ac01e9fb94611049a6"
+      },
+      "url": "https://api.github.com/repos/eslint/eslint/git/commits/1a945890105d307541dcbff15f6438c19b476ade",
+      "verification": {
+        "payload": "tree ecfb6b18d98f4cc28969c2ac01e9fb94611049a6\nparent 857e242584227181ecb8af79fc6bc236b9975228\nauthor Josh Goldberg \u2728 <git@joshuakgoldberg.com> 1706773493 -0500\ncommitter GitHub <noreply@github.com> 1706773493 +0530\n\nfeat!: `no-unused-vars` default caughtErrors to 'all' (#18043)\n\n* feat!: `no-unused-vars` default caughtErrors to 'all'\r\n\r\n* docs: update no-unused-vars.md\r\n\r\n* docs: mention caughtErrors in migrate-to-9.0.0.md\r\n\r\n* chore: typo fix in docs/src/use/migrate-to-9.0.0.md\r\n\r\nCo-authored-by: Milos Djermanovic <milos.djermanovic@gmail.com>\r\n\r\n* chore: fix formatting in no-unused-vars.md\r\n\r\n* fix: 'are'/'were' in docs/src/use/migrate-to-9.0.0.md\r\n\r\nCo-authored-by: Amaresh  S M  <amareshsm13@gmail.com>\r\n\r\n---------\r\n\r\nCo-authored-by: Milos Djermanovic <milos.djermanovic@gmail.com>\r\nCo-authored-by: Amaresh  S M <amareshsm13@gmail.com>",
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJlu0v1CRC1aQ7uu5UhlAAA5+gQAIakX0zmZI9orsoDG6u+v1zQ\nbw91b1Gd9ByG7r5pFQ34/8EfQnYKbEvkjxVViiDrILJw1d2RFfgVRbkX5iI9MsRE\n/Fcv0uHsA4E5XDIMSNrW88NDV82qBwWDOOiIzQMzgt52q3jKtu7sID1vXkqju+fB\n7q9SS75rdqhxpbYGme24vjG9qZa/Vygb7X6Ydw6q5n6qbtPzDYWyST2RKn6slXwb\no1x1N+VEyT+QVLH9L6HoZpIZXhChO9QLGguN9gVITPc/yTtwabKF9FPuP8eTg4jd\n7eSKLuf+W63E8m3Piu9g7YjEzVR1c2D6L6vz4ZKkUAeIpyu/dxhHuMNK3mS9xIl1\n4SHJtlfAUKrVoTI/zTMg9HDDIOypqrdpbsiew8Tox/KfiZpc6p89DpDNpRQhx2Hl\nTzQbUslFxqWS6nrlgPoe4czkd/rfXRFAVtJDAWFoB23NKID/FmaEhijw0PA9tnas\najsWoVp09Q/+ummrQvSyvWG749bstklv7ZH1qVXqkx1T59s7y1LDDKS25ptpIMIv\nwerxscTenphb9sn4+WQykwZ5r+Kz9mXGY679XlI+Eo9QJvsKgyxQqrdzHVNm6E1O\nemkRouXtvS+IYGc5p8SlYeB4Kj+9QZvAhk4FyhZHzJwyNuUKHPwO+6BuDDN2aTXl\nBYT5Vria1Dx9hg8tRUzn\n=uBAJ\n-----END PGP SIGNATURE-----\n",
+        "verified": true,
+        "verified_at": "2024-11-12T16:29:13Z"
+      }
+    },
+    "committer": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/web-flow",
+      "id": 19864447,
+      "login": "web-flow",
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/web-flow",
+      "user_view_type": "public"
+    },
+    "html_url": "https://github.com/eslint/eslint/commit/1a945890105d307541dcbff15f6438c19b476ade",
+    "node_id": "C_kwDOAKjKDdoAKDFhOTQ1ODkwMTA1ZDMwNzU0MWRjYmZmMTVmNjQzOGMxOWI0NzZhZGU",
+    "parents": [
+      {
+        "html_url": "https://github.com/eslint/eslint/commit/857e242584227181ecb8af79fc6bc236b9975228",
+        "sha": "857e242584227181ecb8af79fc6bc236b9975228",
+        "url": "https://api.github.com/repos/eslint/eslint/commits/857e242584227181ecb8af79fc6bc236b9975228"
+      }
+    ],
+    "sha": "1a945890105d307541dcbff15f6438c19b476ade",
+    "url": "https://api.github.com/repos/eslint/eslint/commits/1a945890105d307541dcbff15f6438c19b476ade"
+  },
+  {
+    "author": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/86398394?v=4",
+      "events_url": "https://api.github.com/users/Tanujkanti4441/events{/privacy}",
+      "followers_url": "https://api.github.com/users/Tanujkanti4441/followers",
+      "following_url": "https://api.github.com/users/Tanujkanti4441/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Tanujkanti4441/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/Tanujkanti4441",
+      "id": 86398394,
+      "login": "Tanujkanti4441",
+      "node_id": "MDQ6VXNlcjg2Mzk4Mzk0",
+      "organizations_url": "https://api.github.com/users/Tanujkanti4441/orgs",
+      "received_events_url": "https://api.github.com/users/Tanujkanti4441/received_events",
+      "repos_url": "https://api.github.com/users/Tanujkanti4441/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/Tanujkanti4441/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Tanujkanti4441/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/Tanujkanti4441",
+      "user_view_type": "public"
+    },
+    "comments_url": "https://api.github.com/repos/eslint/eslint/commits/3ee0f6ca5d756da647e4e76bf3daa82a5905a792/comments",
+    "commit": {
+      "author": {
+        "date": "2024-01-04T13:14:02Z",
+        "email": "86398394+Tanujkanti4441@users.noreply.github.com",
+        "name": "Tanuj Kanti"
+      },
+      "comment_count": 0,
+      "committer": {
+        "date": "2024-01-04T13:14:02Z",
+        "email": "noreply@github.com",
+        "name": "GitHub"
+      },
+      "message": "fix!: no-unused-vars `varsIgnorePattern` behavior with catch arguments (#17932)\n\n* feat: fix varsIgnorePattern behavior\r\n\r\n* update docs and catchClause ignore error message\r\n\r\n* update docs and tests\r\n\r\n* docs: add entry to v9 migrate page\r\n\r\n* update migrate guide wordings",
+      "tree": {
+        "sha": "d504ef1644ec0b054a11a08e183378dd3a66beb9",
+        "url": "https://api.github.com/repos/eslint/eslint/git/trees/d504ef1644ec0b054a11a08e183378dd3a66beb9"
+      },
+      "url": "https://api.github.com/repos/eslint/eslint/git/commits/3ee0f6ca5d756da647e4e76bf3daa82a5905a792",
+      "verification": {
+        "payload": "tree d504ef1644ec0b054a11a08e183378dd3a66beb9\nparent 4926f33b96faf07a64aceec5f1f4882f4faaf4b5\nauthor Tanuj Kanti <86398394+Tanujkanti4441@users.noreply.github.com> 1704374042 +0530\ncommitter GitHub <noreply@github.com> 1704374042 +0100\n\nfix!: no-unused-vars `varsIgnorePattern` behavior with catch arguments (#17932)\n\n* feat: fix varsIgnorePattern behavior\r\n\r\n* update docs and catchClause ignore error message\r\n\r\n* update docs and tests\r\n\r\n* docs: add entry to v9 migrate page\r\n\r\n* update migrate guide wordings",
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJllq8aCRBK7hj4Ov3rIwAALv4IABCbJfJGDpmAWmd44yQckNLg\nFPDvMqXSqfU+y1rLhwN+EDENbq8cW/b2R08WJ94atmnHILUIZ7DJtQrEkb4h/39z\n2pgHOYfiFz3NnFLlpFv07x1JsxKnRwz1MkUvhccR2DD6TZvrXuCB80SfKSnz53cc\nFu1nqMatqpCXcLiR7yDGshVrM+o/1ZjCezFUoHb+Lpmu2fNCRGJ4UShsR1d+X7c3\nMxeBypFJKZOgLNdBUz7aI21Pl/xWtkkt99AYgBpK0RDULRTrwAl84hHwRpCQY3Y+\n2jK2c6UffgQ697MFQ0hWkIuF/dilScORvoJELhEbTo2ZE4S2T3LwoDCbVLS1qWs=\n=l6QW\n-----END PGP SIGNATURE-----\n",
+        "verified": true,
+        "verified_at": "2024-01-16T19:59:59Z"
+      }
+    },
+    "committer": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/web-flow",
+      "id": 19864447,
+      "login": "web-flow",
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/web-flow",
+      "user_view_type": "public"
+    },
+    "html_url": "https://github.com/eslint/eslint/commit/3ee0f6ca5d756da647e4e76bf3daa82a5905a792",
+    "node_id": "C_kwDOAKjKDdoAKDNlZTBmNmNhNWQ3NTZkYTY0N2U0ZTc2YmYzZGFhODJhNTkwNWE3OTI",
+    "parents": [
+      {
+        "html_url": "https://github.com/eslint/eslint/commit/4926f33b96faf07a64aceec5f1f4882f4faaf4b5",
+        "sha": "4926f33b96faf07a64aceec5f1f4882f4faaf4b5",
+        "url": "https://api.github.com/repos/eslint/eslint/commits/4926f33b96faf07a64aceec5f1f4882f4faaf4b5"
+      }
+    ],
+    "sha": "3ee0f6ca5d756da647e4e76bf3daa82a5905a792",
+    "url": "https://api.github.com/repos/eslint/eslint/commits/3ee0f6ca5d756da647e4e76bf3daa82a5905a792"
+  },
+  {
+    "author": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/44349756?v=4",
+      "events_url": "https://api.github.com/users/mdjermanovic/events{/privacy}",
+      "followers_url": "https://api.github.com/users/mdjermanovic/followers",
+      "following_url": "https://api.github.com/users/mdjermanovic/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mdjermanovic/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/mdjermanovic",
+      "id": 44349756,
+      "login": "mdjermanovic",
+      "node_id": "MDQ6VXNlcjQ0MzQ5NzU2",
+      "organizations_url": "https://api.github.com/users/mdjermanovic/orgs",
+      "received_events_url": "https://api.github.com/users/mdjermanovic/received_events",
+      "repos_url": "https://api.github.com/users/mdjermanovic/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/mdjermanovic/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mdjermanovic/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/mdjermanovic",
+      "user_view_type": "public"
+    },
+    "comments_url": "https://api.github.com/repos/eslint/eslint/commits/df200e147705eb62f94b99c170554327259c65d4/comments",
+    "commit": {
+      "author": {
+        "date": "2024-01-04T03:10:51Z",
+        "email": "milos.djermanovic@gmail.com",
+        "name": "Milos Djermanovic"
+      },
+      "comment_count": 0,
+      "committer": {
+        "date": "2024-01-04T03:10:51Z",
+        "email": "noreply@github.com",
+        "name": "GitHub"
+      },
+      "message": "refactor: use `Array.prototype.at()` to get last elements (#17949)",
+      "tree": {
+        "sha": "b380a4b950249c3e5cfb3fcfebc7ee50ac0d9dd1",
+        "url": "https://api.github.com/repos/eslint/eslint/git/trees/b380a4b950249c3e5cfb3fcfebc7ee50ac0d9dd1"
+      },
+      "url": "https://api.github.com/repos/eslint/eslint/git/commits/df200e147705eb62f94b99c170554327259c65d4",
+      "verification": {
+        "payload": "tree b380a4b950249c3e5cfb3fcfebc7ee50ac0d9dd1\nparent 51f8bc836bf0b13dad3a897ae84259bcdaed2431\nauthor Milos Djermanovic <milos.djermanovic@gmail.com> 1704337851 +0100\ncommitter GitHub <noreply@github.com> 1704337851 +0530\n\nrefactor: use `Array.prototype.at()` to get last elements (#17949)\n\n",
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJlliG7CRBK7hj4Ov3rIwAAFq0IACwjXkACSUdf5j5zX8kUE/Y7\ncksON1EvVBhMDXn1VtT23vhSlqNgXFxvXN13FPc6kfWzK47ROFAMcw1s9e9oOSmu\nYnQVaSAcoXaI8aN9ynWkYPnif3PthIi/qfKF2I5b6zxND4tMiswBMA/lMmZhrlCt\nLRCg2qOsw+4CvjnIv0jCRZzxg46kxedLt8hsSxMdmXjGnWPQR+cEbB4XOgFgVEOK\n7LL1e5NW7uGTtI6kWxchLul+0VDh4pvZbZuK8dH6y+x2wARvp5FAgusyCDNgvXB+\nfbHwntxJ3Saj6juXKSayFh7wNqBWLEmcNe7Q0IfNY+RjJIfAUs9rMMXWhR1xrZA=\n=9QIP\n-----END PGP SIGNATURE-----\n",
+        "verified": true,
+        "verified_at": "2024-11-12T16:29:13Z"
+      }
+    },
+    "committer": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/web-flow",
+      "id": 19864447,
+      "login": "web-flow",
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/web-flow",
+      "user_view_type": "public"
+    },
+    "html_url": "https://github.com/eslint/eslint/commit/df200e147705eb62f94b99c170554327259c65d4",
+    "node_id": "C_kwDOAKjKDdoAKGRmMjAwZTE0NzcwNWViNjJmOTRiOTljMTcwNTU0MzI3MjU5YzY1ZDQ",
+    "parents": [
+      {
+        "html_url": "https://github.com/eslint/eslint/commit/51f8bc836bf0b13dad3a897ae84259bcdaed2431",
+        "sha": "51f8bc836bf0b13dad3a897ae84259bcdaed2431",
+        "url": "https://api.github.com/repos/eslint/eslint/commits/51f8bc836bf0b13dad3a897ae84259bcdaed2431"
+      }
+    ],
+    "sha": "df200e147705eb62f94b99c170554327259c65d4",
+    "url": "https://api.github.com/repos/eslint/eslint/commits/df200e147705eb62f94b99c170554327259c65d4"
+  },
+  {
+    "author": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/42909374?v=4",
+      "events_url": "https://api.github.com/users/gweesin/events{/privacy}",
+      "followers_url": "https://api.github.com/users/gweesin/followers",
+      "following_url": "https://api.github.com/users/gweesin/following{/other_user}",
+      "gists_url": "https://api.github.com/users/gweesin/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/gweesin",
+      "id": 42909374,
+      "login": "gweesin",
+      "node_id": "MDQ6VXNlcjQyOTA5Mzc0",
+      "organizations_url": "https://api.github.com/users/gweesin/orgs",
+      "received_events_url": "https://api.github.com/users/gweesin/received_events",
+      "repos_url": "https://api.github.com/users/gweesin/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/gweesin/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/gweesin/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/gweesin",
+      "user_view_type": "public"
+    },
+    "comments_url": "https://api.github.com/repos/eslint/eslint/commits/a36bcb67f26be42c794797d0cc9948b9cfd4ff71/comments",
+    "commit": {
+      "author": {
+        "date": "2023-06-30T10:37:14Z",
+        "email": "42909374+gweesin@users.noreply.github.com",
+        "name": "Gweesin Chan"
+      },
+      "comment_count": 0,
+      "committer": {
+        "date": "2023-06-30T10:37:14Z",
+        "email": "noreply@github.com",
+        "name": "GitHub"
+      },
+      "message": "fix: no-unused-vars false positive with logical assignment operators (#17320)\n\n* fix: no-unused-vars should be corrected in logical assignment operator\r\n\r\nFixes #17299\r\n\r\n* refactor: use astUtils.isLogicalAssignmentOperator check exception",
+      "tree": {
+        "sha": "fb33c28aea2ed0a5cc110e67564423a6ef42f931",
+        "url": "https://api.github.com/repos/eslint/eslint/git/trees/fb33c28aea2ed0a5cc110e67564423a6ef42f931"
+      },
+      "url": "https://api.github.com/repos/eslint/eslint/git/commits/a36bcb67f26be42c794797d0cc9948b9cfd4ff71",
+      "verification": {
+        "payload": "tree fb33c28aea2ed0a5cc110e67564423a6ef42f931\nparent c8b1f4d61a256727755d561bf53f889b6cd712e0\nauthor Gweesin Chan <42909374+gweesin@users.noreply.github.com> 1688121434 +0800\ncommitter GitHub <noreply@github.com> 1688121434 +0200\n\nfix: no-unused-vars false positive with logical assignment operators (#17320)\n\n* fix: no-unused-vars should be corrected in logical assignment operator\r\n\r\nFixes #17299\r\n\r\n* refactor: use astUtils.isLogicalAssignmentOperator check exception\r\n",
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJknrBaCRBK7hj4Ov3rIwAAlQIIAFLRZ7WH3cZEtVk6MEJ+1Lnc\nbLdtAA2HZ8RaeF38YaPMEyPUPzKyCjR4Gg90X35gFeyj57pdcS+83i+vER6aPGTW\ntPv5Iz9pnsHiBjIKM7XXoz/ubRh9PksWFon/lj5NkvpT0x0svPCDHqZM92qtVDAu\nlTkhRMDtZkfpt1sc7YCRGifZLKgRaGYLS+9Q4c6ICHkCs12XsRXgjYWCDa65fIjS\n1Yj6mTMvQRHkLlVN1xeEOOrHwTQxZRjYdSXNmIMedWDLzDEf5F2WgEQpSUGddaCi\n9pkIh1CZ2IqIhoUKrYZbU69GXfFz4Omp206OMWiQ+Q+aX1R9IOjVBukdD8ns8tQ=\n=RQab\n-----END PGP SIGNATURE-----\n",
+        "verified": true,
+        "verified_at": "2024-01-16T19:59:59Z"
+      }
+    },
+    "committer": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/web-flow",
+      "id": 19864447,
+      "login": "web-flow",
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/web-flow",
+      "user_view_type": "public"
+    },
+    "html_url": "https://github.com/eslint/eslint/commit/a36bcb67f26be42c794797d0cc9948b9cfd4ff71",
+    "node_id": "C_kwDOAKjKDdoAKGEzNmJjYjY3ZjI2YmU0MmM3OTQ3OTdkMGNjOTk0OGI5Y2ZkNGZmNzE",
+    "parents": [
+      {
+        "html_url": "https://github.com/eslint/eslint/commit/c8b1f4d61a256727755d561bf53f889b6cd712e0",
+        "sha": "c8b1f4d61a256727755d561bf53f889b6cd712e0",
+        "url": "https://api.github.com/repos/eslint/eslint/commits/c8b1f4d61a256727755d561bf53f889b6cd712e0"
+      }
+    ],
+    "sha": "a36bcb67f26be42c794797d0cc9948b9cfd4ff71",
+    "url": "https://api.github.com/repos/eslint/eslint/commits/a36bcb67f26be42c794797d0cc9948b9cfd4ff71"
+  },
+  {
+    "author": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/46647141?v=4",
+      "events_url": "https://api.github.com/users/snitin315/events{/privacy}",
+      "followers_url": "https://api.github.com/users/snitin315/followers",
+      "following_url": "https://api.github.com/users/snitin315/following{/other_user}",
+      "gists_url": "https://api.github.com/users/snitin315/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/snitin315",
+      "id": 46647141,
+      "login": "snitin315",
+      "node_id": "MDQ6VXNlcjQ2NjQ3MTQx",
+      "organizations_url": "https://api.github.com/users/snitin315/orgs",
+      "received_events_url": "https://api.github.com/users/snitin315/received_events",
+      "repos_url": "https://api.github.com/users/snitin315/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/snitin315/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/snitin315/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/snitin315",
+      "user_view_type": "public"
+    },
+    "comments_url": "https://api.github.com/repos/eslint/eslint/commits/e52b98bf25d882da4efd5559ce5974b6697cf701/comments",
+    "commit": {
+      "author": {
+        "date": "2023-05-03T09:18:13Z",
+        "email": "snitin315@gmail.com",
+        "name": "Nitin Kumar"
+      },
+      "comment_count": 0,
+      "committer": {
+        "date": "2023-05-03T09:18:13Z",
+        "email": "noreply@github.com",
+        "name": "GitHub"
+      },
+      "message": "feat: add `sourceCode` property to the rule context (#17107)\n\n* feat: add `sourceCode` to the rule context\r\n\r\n* docs: mark `context#getSourceCode()` as deprecated\r\n\r\n* reafctor: prefer to use context.sourceCode and add tests for getSourceCode()\r\n\r\n* docs: add deprecation note for context.getScope()\r\n\r\n* docs: update docs/src/extend/custom-rules.md\r\n\r\nCo-authored-by: Milos Djermanovic <milos.djermanovic@gmail.com>\r\n\r\n---------\r\n\r\nCo-authored-by: Milos Djermanovic <milos.djermanovic@gmail.com>",
+      "tree": {
+        "sha": "4d6cc0c9a68c69d67397663b4bedb0009ed73be9",
+        "url": "https://api.github.com/repos/eslint/eslint/git/trees/4d6cc0c9a68c69d67397663b4bedb0009ed73be9"
+      },
+      "url": "https://api.github.com/repos/eslint/eslint/git/commits/e52b98bf25d882da4efd5559ce5974b6697cf701",
+      "verification": {
+        "payload": "tree 4d6cc0c9a68c69d67397663b4bedb0009ed73be9\nparent e980bf38cf441f2eb29c458b93df77dc0111b391\nauthor Nitin Kumar <snitin315@gmail.com> 1683105493 +0530\ncommitter GitHub <noreply@github.com> 1683105493 +0200\n\nfeat: add `sourceCode` property to the rule context (#17107)\n\n* feat: add `sourceCode` to the rule context\r\n\r\n* docs: mark `context#getSourceCode()` as deprecated\r\n\r\n* reafctor: prefer to use context.sourceCode and add tests for getSourceCode()\r\n\r\n* docs: add deprecation note for context.getScope()\r\n\r\n* docs: update docs/src/extend/custom-rules.md\r\n\r\nCo-authored-by: Milos Djermanovic <milos.djermanovic@gmail.com>\r\n\r\n---------\r\n\r\nCo-authored-by: Milos Djermanovic <milos.djermanovic@gmail.com>",
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJkUibVCRBK7hj4Ov3rIwAAmlcIAIgvENzSDlARiafJ0kp8j9ut\n6srWGEkAKtGDVTnj8X7MnaBQXcbabz2BhTqNRDoREHu7rPPgld9EbbFCAgd7EXhj\nf3vzfXNyrlAeVVsvHJdK5ECWYsZTGY7zH58xLCqtgFc+7KYbvTaavuS3QU0rlYcX\nTIOoKT/qYznPeHPBycWHX+be2bGM1GRbAa3YBWPy/7bZWo/5bKvMjhbpZYhMiqvt\nI/Q5WljeCk/wzbvfbpOREHLdsljfkp+3rnDKTJsWw+wUkMeOZQhtbRSsNOlqLAv/\njxauwBoadTgImN2hqHcPRxR7HFR9oNx9uRAGR06EBb5K2i7IjQ1LvAiMytEtMqk=\n=AP4J\n-----END PGP SIGNATURE-----\n",
+        "verified": true,
+        "verified_at": "2024-11-12T12:30:37Z"
+      }
+    },
+    "committer": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/web-flow",
+      "id": 19864447,
+      "login": "web-flow",
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/web-flow",
+      "user_view_type": "public"
+    },
+    "html_url": "https://github.com/eslint/eslint/commit/e52b98bf25d882da4efd5559ce5974b6697cf701",
+    "node_id": "C_kwDOAKjKDdoAKGU1MmI5OGJmMjVkODgyZGE0ZWZkNTU1OWNlNTk3NGI2Njk3Y2Y3MDE",
+    "parents": [
+      {
+        "html_url": "https://github.com/eslint/eslint/commit/e980bf38cf441f2eb29c458b93df77dc0111b391",
+        "sha": "e980bf38cf441f2eb29c458b93df77dc0111b391",
+        "url": "https://api.github.com/repos/eslint/eslint/commits/e980bf38cf441f2eb29c458b93df77dc0111b391"
+      }
+    ],
+    "sha": "e52b98bf25d882da4efd5559ce5974b6697cf701",
+    "url": "https://api.github.com/repos/eslint/eslint/commits/e52b98bf25d882da4efd5559ce5974b6697cf701"
+  },
+  {
+    "author": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/44349756?v=4",
+      "events_url": "https://api.github.com/users/mdjermanovic/events{/privacy}",
+      "followers_url": "https://api.github.com/users/mdjermanovic/followers",
+      "following_url": "https://api.github.com/users/mdjermanovic/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mdjermanovic/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/mdjermanovic",
+      "id": 44349756,
+      "login": "mdjermanovic",
+      "node_id": "MDQ6VXNlcjQ0MzQ5NzU2",
+      "organizations_url": "https://api.github.com/users/mdjermanovic/orgs",
+      "received_events_url": "https://api.github.com/users/mdjermanovic/received_events",
+      "repos_url": "https://api.github.com/users/mdjermanovic/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/mdjermanovic/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mdjermanovic/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/mdjermanovic",
+      "user_view_type": "public"
+    },
+    "comments_url": "https://api.github.com/repos/eslint/eslint/commits/9094d79fb42c0ebb6100426a3f2f851e8d42a0ee/comments",
+    "commit": {
+      "author": {
+        "date": "2023-04-29T18:02:53Z",
+        "email": "milos.djermanovic@gmail.com",
+        "name": "Milos Djermanovic"
+      },
+      "comment_count": 0,
+      "committer": {
+        "date": "2023-04-29T18:02:53Z",
+        "email": "noreply@github.com",
+        "name": "GitHub"
+      },
+      "message": "chore: add `latest/` to `meta.docs.url` in all core rules (#17136)",
+      "tree": {
+        "sha": "5f9d7b9dba00009488be8a3b27dc51f02cfc25c4",
+        "url": "https://api.github.com/repos/eslint/eslint/git/trees/5f9d7b9dba00009488be8a3b27dc51f02cfc25c4"
+      },
+      "url": "https://api.github.com/repos/eslint/eslint/git/commits/9094d79fb42c0ebb6100426a3f2f851e8d42a0ee",
+      "verification": {
+        "payload": "tree 5f9d7b9dba00009488be8a3b27dc51f02cfc25c4\nparent 1468f5b640cfa6fdd8a5ec895337f692def2780b\nauthor Milos Djermanovic <milos.djermanovic@gmail.com> 1682791373 +0200\ncommitter GitHub <noreply@github.com> 1682791373 +0800\n\nchore: add `latest/` to `meta.docs.url` in all core rules (#17136)\n\n",
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJkTVvNCRBK7hj4Ov3rIwAA4V8IAAYy3wJkJISQmyCL0gTHMvUe\ne7NoeFHMhnuAslTmunHiv8TDSoGklXdYxQ6OMTcZsCVJdKRhSXFdxeJH3ZBIpkO9\nJJ4KDpaZPfdCn2QOJsRGFJcFfX2wcmNQQxxjWg4RlnjMtZgBZBSm3KNheEjJg2Fi\nX3LSxvGh5kTjCs61jwUehvIbTuyQ0OiMEYvU+TkBmSkU9dX/AZsMB/kNj+en/bbl\n0Jh0PCbf3KnAM/wespBh5T1Q4KnZr0dfUWWhhfJbRiGLaNB8soaHrYQ/8VMX2z4M\nfiYBBf0bFCQ5dJ29D2TbbdU9aVdo9Z1pCpCA5F6C+EKE6Ek7NH526NjENdtuQmw=\n=3E3o\n-----END PGP SIGNATURE-----\n",
+        "verified": true,
+        "verified_at": "2024-01-16T19:59:59Z"
+      }
+    },
+    "committer": {
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/web-flow",
+      "id": 19864447,
+      "login": "web-flow",
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "type": "User",
+      "url": "https://api.github.com/users/web-flow",
+      "user_view_type": "public"
+    },
+    "html_url": "https://github.com/eslint/eslint/commit/9094d79fb42c0ebb6100426a3f2f851e8d42a0ee",
+    "node_id": "C_kwDOAKjKDdoAKDkwOTRkNzlmYjQyYzBlYmI2MTAwNDI2YTNmMmY4NTFlOGQ0MmEwZWU",
+    "parents": [
+      {
+        "html_url": "https://github.com/eslint/eslint/commit/1468f5b640cfa6fdd8a5ec895337f692def2780b",
+        "sha": "1468f5b640cfa6fdd8a5ec895337f692def2780b",
+        "url": "https://api.github.com/repos/eslint/eslint/commits/1468f5b640cfa6fdd8a5ec895337f692def2780b"
+      }
+    ],
+    "sha": "9094d79fb42c0ebb6100426a3f2f851e8d42a0ee",
+    "url": "https://api.github.com/repos/eslint/eslint/commits/9094d79fb42c0ebb6100426a3f2f851e8d42a0ee"
+  }
+]
