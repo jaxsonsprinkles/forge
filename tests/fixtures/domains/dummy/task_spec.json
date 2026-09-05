@@ -1,0 +1,7 @@
+{
+    "goal": "add two numbers",
+    "tools": [],
+    "dataset_path": "tests/fixtures/dataset.jsonl",
+    "scorer_id": "tests.fixtures.scorer:score_exact",
+    "max_tasks": 20
+}
