@@ -17,14 +17,24 @@ configured, or any call into it fails, tracing silently degrades to
 Tracing follows the documented SDK surface at docs.neatlogs.com/sdk/python:
 `neatlogs.init(api_key=...)` to configure the client, and
 `with neatlogs.trace(name=..., kind=...) as span:` context managers for
-spans (kinds are the documented WORKFLOW/AGENT/.../GUARDRAIL values). The
-docs don't expose a way to read a trace/span id back off that context
-manager, so `_neatlogs_trace_id` best-effort-probes common attribute names
-and degrades to `None` if none are present.
+spans (kinds are the documented WORKFLOW/AGENT/LLM/TOOL/.../GUARDRAIL
+values). `_neatlogs_trace_id` best-effort-probes common attribute names
+(`trace_id`, `id`) first, then falls back to the OpenTelemetry span
+context (`span.get_span_context().trace_id`) the real SDK's spans expose,
+and degrades to `None` if none of those are present.
+
+Only `run_agent()` opens the outer per-task/per-run spans (WORKFLOW,
+outer AGENT, GUARDRAIL). The `agents/current/run.py` graph interpreter
+opens one span per graph step (LLM for `llm_call`, TOOL for `tool_call`)
+via `open_step_span()` below, so tool calls and model calls are visible
+as their own spans within a task's trace rather than collapsed into a
+single "agent_run" span - without threading the SDK through the fixed
+`run(task_input) -> dict` entrypoint contract shared by every agent.
 """
 
 from __future__ import annotations
 
+import contextvars
 import importlib
 import importlib.util
 import json
@@ -156,11 +166,51 @@ def _neatlogs_span(sdk: Any | None, name: str, kind: str) -> _NoopSpan | _SafeSp
 
 
 def _neatlogs_trace_id(span: Any | None) -> str | None:
-    """Best-effort trace id extraction; the documented span only exposes
-    `set_attribute`, so this probes common id attribute names instead."""
+    """Best-effort trace id extraction.
+
+    Probes common id attribute names first (what a fake/test SDK is
+    likely to expose), then falls back to the OpenTelemetry span context
+    the real neatlogs SDK's spans expose (`get_span_context().trace_id`,
+    a 128-bit int formatted as hex) - covering both cases without
+    depending on either.
+    """
     if span is None:
         return None
-    return getattr(span, "trace_id", None) or getattr(span, "id", None)
+
+    direct = getattr(span, "trace_id", None) or getattr(span, "id", None)
+    if direct:
+        return direct
+
+    get_span_context = getattr(span, "get_span_context", None)
+    if callable(get_span_context):
+        try:
+            context = get_span_context()
+        except Exception:
+            return None
+        trace_id_int = getattr(context, "trace_id", None)
+        if trace_id_int:
+            return format(trace_id_int, "032x")
+
+    return None
+
+
+_active_sdk: contextvars.ContextVar[Any | None] = contextvars.ContextVar("_active_sdk", default=None)
+
+
+def open_step_span(name: str, kind: str) -> _NoopSpan | _SafeSpan:
+    """Best-effort span for one graph step, for use by an agent's own step
+    interpreter (e.g. `agents/current/run.py`) while it runs inside
+    `run_agent()`'s "agent_run" span.
+
+    Reads the in-flight run's neatlogs SDK (or lack thereof) off a
+    contextvar set for the duration of the `run_fn(task_input)` call, so
+    an agent can open one span per step without the SDK needing to be
+    threaded through the fixed `run(task_input) -> dict` entrypoint
+    contract every agent implements. Outside of a `run_agent()` call (e.g.
+    a unit test that calls `run_fn` directly) this degrades to a no-op
+    span, exactly like tracing being unconfigured.
+    """
+    return _neatlogs_span(_active_sdk.get(), name, kind)
 
 
 def _neatlogs_flush(sdk: Any | None) -> None:
@@ -203,7 +253,11 @@ def run_agent(agent_path: str, task_spec: TaskSpec, split: str) -> list[RunResul
                 trace_id = _neatlogs_trace_id(trace)
 
                 with _neatlogs_span(sdk, "agent_run", "AGENT"):
-                    output = run_fn(task_input)
+                    token = _active_sdk.set(sdk)
+                    try:
+                        output = run_fn(task_input)
+                    finally:
+                        _active_sdk.reset(token)
 
                 with _neatlogs_span(sdk, "score", "GUARDRAIL"):
                     passed = bool(scorer_fn(output, expected))

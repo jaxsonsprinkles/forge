@@ -132,6 +132,81 @@ def test_trace_id_populated_when_neatlogs_configured(monkeypatch):
     assert {r.trace_id for r in results} == {"trace-1", "trace-4", "trace-7"}
 
 
+def test_agent_current_opens_a_span_per_graph_step(monkeypatch):
+    """Proves the trace_id/per-step-span code path is real, not just
+    documented: with a fake SDK standing in for a configured Neatlogs key,
+    running the actual agents/current graph interpreter (not the minimal
+    good_agent fixture) must produce a non-null trace_id AND open a
+    separate LLM-kind span per llm_call step, instead of collapsing the
+    whole task into one "agent_run" span.
+    """
+
+    def fake_complete(messages, model, **params):
+        return "final answer", 0.0, 1
+
+    monkeypatch.setattr(llm, "complete", fake_complete)
+
+    class FakeSpan:
+        def __init__(self, trace_id):
+            self.id = trace_id
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc_info):
+            return False
+
+    class FakeNeatlogsSDK:
+        def __init__(self):
+            self.calls: list[tuple[str, str]] = []
+
+        def init(self, api_key):
+            assert api_key == "fake-key"
+
+        def trace(self, name, kind):
+            self.calls.append((name, kind))
+            return FakeSpan(trace_id=f"trace-{len(self.calls)}")
+
+        def flush(self):
+            pass
+
+    fake_sdk = FakeNeatlogsSDK()
+    monkeypatch.setattr(runner, "_neatlogs_sdk", fake_sdk)
+    monkeypatch.setenv("NEATLOGS_API_KEY", "fake-key")
+
+    task_spec = _task_spec(max_tasks=1)
+    results = run_agent("agents/current", task_spec, split="train")
+
+    assert len(results) == 1
+    assert results[0].trace_id is not None
+
+    kinds = [kind for _, kind in fake_sdk.calls]
+    # Baseline graph.yaml has two llm_call steps (solve, finalize) and one
+    # verify step (check_draft) - each must be its own span, not folded
+    # into the single outer "agent_run" AGENT span.
+    assert kinds.count("LLM") == 2
+    assert "GUARDRAIL" in kinds
+    assert kinds.count("AGENT") == 1
+
+
+def test_neatlogs_trace_id_falls_back_to_otel_span_context():
+    """The real neatlogs SDK's spans don't expose a top-level trace_id/id
+    attribute (unlike the FakeSpan test doubles above) - they're
+    OpenTelemetry spans, so the id lives on `get_span_context().trace_id`.
+    Without this fallback, _neatlogs_trace_id would silently return None
+    for every real, correctly-configured run.
+    """
+
+    class FakeSpanContext:
+        trace_id = 0x1234ABCD1234ABCD1234ABCD1234ABCD
+
+    class FakeOtelSpan:
+        def get_span_context(self):
+            return FakeSpanContext()
+
+    assert runner._neatlogs_trace_id(FakeOtelSpan()) == format(FakeSpanContext.trace_id, "032x")
+
+
 def test_trace_id_none_when_neatlogs_init_raises(monkeypatch):
     class ExplodingNeatlogsSDK:
         def init(self, api_key):
