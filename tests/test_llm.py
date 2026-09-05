@@ -1,94 +1,145 @@
-from dataclasses import dataclass, field
-from typing import Any
+import pytest
 
-from core.llm import complete, estimate_cost_usd
-
-
-@dataclass
-class _FakeBlock:
-    type: str
-    text: str = ""
+from core import llm
+from core.llm import SpendCeilingExceeded, complete, estimate_cost_usd
 
 
-@dataclass
-class _FakeUsage:
-    input_tokens: int
-    output_tokens: int
+@pytest.fixture(autouse=True)
+def _reset_spend_tracker():
+    llm.reset_spend_tracker()
+    yield
+    llm.reset_spend_tracker()
 
 
-@dataclass
-class _FakeResponse:
-    content: list[_FakeBlock]
-    usage: _FakeUsage
-    stop_reason: str = "end_turn"
+def _fake_seam(reply: str, input_tokens: int = 10, output_tokens: int = 5, calls: list | None = None):
+    """Build a fake `_invoke_provider` seam that records how many times it's called."""
+    call_log = calls if calls is not None else []
 
-    def to_dict(self) -> dict[str, Any]:
-        return {"stop_reason": self.stop_reason}
+    def _seam(model, messages, params, config):
+        call_log.append((model, messages, params))
+        return reply, input_tokens, output_tokens
 
-
-class _FakeMessages:
-    def __init__(self, reply: str) -> None:
-        self.reply = reply
-        self.call_count = 0
-
-    def create(self, **kwargs: Any) -> _FakeResponse:
-        self.call_count += 1
-        return _FakeResponse(
-            content=[_FakeBlock(type="text", text=self.reply)],
-            usage=_FakeUsage(input_tokens=10, output_tokens=5),
-        )
+    return _seam, call_log
 
 
-class _FakeClient:
-    def __init__(self, reply: str = "hello") -> None:
-        self.messages = _FakeMessages(reply)
+def test_complete_calls_seam_on_first_call(tmp_path, monkeypatch):
+    seam, calls = _fake_seam("hi there")
+    monkeypatch.setattr(llm, "_invoke_provider", seam)
 
-
-def test_complete_calls_provider_on_first_call(tmp_path):
-    client = _FakeClient(reply="hi there")
-    response = complete(
-        model="claude-opus-5",
+    text, cost_usd, latency_ms = complete(
         messages=[{"role": "user", "content": "hi"}],
+        model="claude-opus-5",
         cache_dir=tmp_path,
-        client=client,
     )
-    assert response.content == "hi there"
-    assert response.cached is False
-    assert client.messages.call_count == 1
+
+    assert text == "hi there"
+    assert cost_usd > 0
+    assert latency_ms >= 0
+    assert len(calls) == 1
 
 
-def test_complete_caches_identical_calls(tmp_path):
-    client = _FakeClient(reply="hi there")
+def test_complete_caches_identical_calls(tmp_path, monkeypatch):
+    seam, calls = _fake_seam("hi there")
+    monkeypatch.setattr(llm, "_invoke_provider", seam)
+
     args = dict(
-        model="claude-opus-5",
         messages=[{"role": "user", "content": "hi"}],
+        model="claude-opus-5",
         cache_dir=tmp_path,
-        client=client,
     )
     first = complete(**args)
     second = complete(**args)
 
-    assert first.cached is False
-    assert second.cached is True
-    assert second.content == first.content
-    # The provider must be hit exactly once; the second call is served from disk.
-    assert client.messages.call_count == 1
+    assert first == second
+    # The seam must be hit exactly once; the second call is served from disk.
+    assert len(calls) == 1
 
 
-def test_complete_distinguishes_different_params(tmp_path):
-    client = _FakeClient(reply="hi there")
+def test_complete_distinguishes_different_params(tmp_path, monkeypatch):
+    seam, calls = _fake_seam("hi there")
+    monkeypatch.setattr(llm, "_invoke_provider", seam)
     messages = [{"role": "user", "content": "hi"}]
 
-    complete(model="claude-opus-5", messages=messages, cache_dir=tmp_path, client=client, max_tokens=100)
-    complete(model="claude-opus-5", messages=messages, cache_dir=tmp_path, client=client, max_tokens=200)
+    complete(messages=messages, model="claude-opus-5", cache_dir=tmp_path, max_tokens=100)
+    complete(messages=messages, model="claude-opus-5", cache_dir=tmp_path, max_tokens=200)
 
-    assert client.messages.call_count == 2
+    assert len(calls) == 2
+
+
+def test_complete_distinguishes_different_messages(tmp_path, monkeypatch):
+    seam, calls = _fake_seam("hi there")
+    monkeypatch.setattr(llm, "_invoke_provider", seam)
+
+    complete(messages=[{"role": "user", "content": "hi"}], model="claude-opus-5", cache_dir=tmp_path)
+    complete(messages=[{"role": "user", "content": "bye"}], model="claude-opus-5", cache_dir=tmp_path)
+
+    assert len(calls) == 2
 
 
 def test_estimate_cost_usd_known_model():
-    cost = estimate_cost_usd("claude-opus-5", input_tokens=1_000_000, output_tokens=0)
-    assert cost == 5.00
+    assert estimate_cost_usd("claude-opus-5", input_tokens=1_000_000, output_tokens=0) == 5.00
 
 
 def test_estimate_cost_usd_unknown_model_is_free():
     assert estimate_cost_usd("some-unknown-model", input_tokens=1000, output_tokens=1000) == 0.0
+
+
+def test_spend_ceiling_raises_before_calling_seam(tmp_path, monkeypatch):
+    seam, calls = _fake_seam("hi there")
+    monkeypatch.setattr(llm, "_invoke_provider", seam)
+    monkeypatch.setenv("FORGE_MAX_SPEND_USD", "0.0000001")
+
+    with pytest.raises(SpendCeilingExceeded):
+        complete(
+            messages=[{"role": "user", "content": "hi"}],
+            model="claude-opus-5",
+            cache_dir=tmp_path,
+        )
+
+    # The ceiling check happens before the provider is ever invoked.
+    assert len(calls) == 0
+
+
+def test_spend_ceiling_allows_calls_under_the_limit(tmp_path, monkeypatch):
+    seam, calls = _fake_seam("hi there")
+    monkeypatch.setattr(llm, "_invoke_provider", seam)
+    monkeypatch.setenv("FORGE_MAX_SPEND_USD", "1000")
+
+    complete(messages=[{"role": "user", "content": "hi"}], model="claude-opus-5", cache_dir=tmp_path)
+
+    assert len(calls) == 1
+
+
+def test_spend_ceiling_accumulates_across_calls(tmp_path, monkeypatch):
+    seam, calls = _fake_seam("hi there")
+    monkeypatch.setattr(llm, "_invoke_provider", seam)
+
+    # Same-length messages so their precall cost estimates are identical.
+    messages1 = [{"role": "user", "content": "hi"}]
+    messages2 = [{"role": "user", "content": "yo"}]
+    ceiling = llm._estimate_precall_cost_usd("claude-opus-5", messages1, {})
+    monkeypatch.setenv("FORGE_MAX_SPEND_USD", str(ceiling))
+
+    # First call: projected spend == ceiling exactly, so it's allowed.
+    complete(messages=messages1, model="claude-opus-5", cache_dir=tmp_path)
+    # Second call: prior call's real cost pushes projected spend over the ceiling.
+    with pytest.raises(SpendCeilingExceeded):
+        complete(messages=messages2, model="claude-opus-5", cache_dir=tmp_path)
+
+    # First call went through; second was blocked before hitting the seam.
+    assert len(calls) == 1
+
+
+def test_cache_hit_does_not_touch_spend_ceiling(tmp_path, monkeypatch):
+    seam, calls = _fake_seam("hi there")
+    monkeypatch.setattr(llm, "_invoke_provider", seam)
+
+    args = dict(messages=[{"role": "user", "content": "hi"}], model="claude-opus-5", cache_dir=tmp_path)
+    complete(**args)
+
+    # Now set an impossibly low ceiling; a cache hit must still succeed since it's free.
+    monkeypatch.setenv("FORGE_MAX_SPEND_USD", "0")
+    text, cost_usd, latency_ms = complete(**args)
+
+    assert text == "hi there"
+    assert len(calls) == 1
