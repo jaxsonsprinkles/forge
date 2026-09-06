@@ -7,8 +7,11 @@ tools.py, memory.py, graph.yaml, run.py) and calls its `run(task_input: dict)
 addressed by `task_spec.scorer_id` in `"module.path:function_name"` form
 (resolved via `importlib`), e.g. `"domains.coderepair.scorer:score_v1"`.
 
-Every task is wrapped so no single task's crash can kill the run: exceptions
-are caught and recorded on `RunResult.error`, never re-raised.
+Every task is wrapped so no single agent bug can kill the run: exceptions
+are caught and recorded on `RunResult.error`, never re-raised - except
+`core.llm.InfraError` (bad credentials, no credit balance, a persistent
+rate limit), which is let through, since it means every remaining task
+would fail the same infra-level way rather than on its own merits.
 
 Neatlogs tracing is best-effort. If the SDK isn't installed, no API key is
 configured, or any call into it fails, tracing silently degrades to
@@ -225,9 +228,12 @@ def _neatlogs_flush(sdk: Any | None) -> None:
 def run_agent(agent_path: str, task_spec: TaskSpec, split: str) -> list[RunResult]:
     """Run the agent at `agent_path` over `task_spec`'s dataset split.
 
-    Never raises on a per-task basis: any exception raised while running or
-    scoring a task is caught and recorded on that task's `RunResult.error`,
-    so one broken task never aborts the rest of the run.
+    Never raises on a per-task basis for an agent bug: any other exception
+    raised while running or scoring a task is caught and recorded on that
+    task's `RunResult.error`, so one broken task never aborts the rest of
+    the run. `core.llm.InfraError` is the one exception this does *not*
+    catch - it propagates out of `run_agent()` and aborts the run, since
+    an infra failure means every remaining task would fail the same way.
     """
     run_fn = _load_agent_run_fn(agent_path)
     scorer_fn = _load_scorer(task_spec.scorer_id)
@@ -261,6 +267,13 @@ def run_agent(agent_path: str, task_spec: TaskSpec, split: str) -> list[RunResul
 
                 with _neatlogs_span(sdk, "score", "GUARDRAIL"):
                     passed = bool(scorer_fn(output, expected))
+        except llm.InfraError:
+            # An infra failure (bad credentials, no credit, persistent rate
+            # limiting) won't resolve itself on the next task - let it
+            # propagate and abort the run instead of recording it as a
+            # per-task failure, which would just produce many more
+            # meaningless zero-cost failure records.
+            raise
         except Exception as exc:  # noqa: BLE001 - a task's crash must never kill the run
             error = f"{type(exc).__name__}: {exc}"
         finally:
