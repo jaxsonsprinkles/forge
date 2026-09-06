@@ -42,6 +42,37 @@ class SpendCeilingExceeded(Exception):
     """Raised when a call would push cumulative spend past FORGE_MAX_SPEND_USD."""
 
 
+class InfraError(Exception):
+    """Raised for infrastructure-level failures - bad credentials, an
+    exhausted credit balance, or a rate limit - rather than an agent bug.
+
+    These conditions won't resolve themselves on the next task, so callers
+    (`core/runner.py`, `evals/learning_curve.py`) must let this propagate
+    instead of recording it as a per-task `RunResult.error`: continuing a
+    run under one of these conditions just produces many more meaningless
+    zero-cost failure records instead of surfacing the real problem.
+    """
+
+
+def _is_credit_balance_error(exc: "anthropic.BadRequestError") -> bool:
+    """Whether a 400 from the API is actually a credit-balance error.
+
+    Anthropic reports an exhausted credit balance as a 400
+    `invalid_request_error` (the same status code as a real malformed-
+    request bug), distinguishable only by message text - there is no
+    dedicated exception type or status code for it.
+    """
+    body = getattr(exc, "body", None)
+    message = ""
+    if isinstance(body, dict):
+        error = body.get("error")
+        if isinstance(error, dict):
+            message = str(error.get("message", ""))
+    if not message:
+        message = str(exc)
+    return "credit balance" in message.lower()
+
+
 @dataclass
 class ProviderConfig:
     """Provider credentials/config, read from the environment."""
@@ -119,12 +150,21 @@ def _invoke_provider(
     if system_parts:
         call_params["system"] = "\n\n".join(system_parts)
 
-    response = client.messages.create(
-        model=model,
-        max_tokens=max_tokens,
-        messages=chat_messages,
-        **call_params,
-    )
+    try:
+        response = client.messages.create(
+            model=model,
+            max_tokens=max_tokens,
+            messages=chat_messages,
+            **call_params,
+        )
+    except anthropic.AuthenticationError as exc:
+        raise InfraError(f"Anthropic authentication failed: {exc}") from exc
+    except anthropic.RateLimitError as exc:
+        raise InfraError(f"Anthropic rate limit exceeded: {exc}") from exc
+    except anthropic.BadRequestError as exc:
+        if _is_credit_balance_error(exc):
+            raise InfraError(f"Anthropic credit balance exhausted: {exc}") from exc
+        raise
 
     text = "".join(block.text for block in response.content if block.type == "text")
     return text, response.usage.input_tokens, response.usage.output_tokens
