@@ -134,6 +134,7 @@ from __future__ import annotations
 
 import argparse
 import dataclasses
+import fcntl
 import inspect
 import json
 import logging
@@ -157,6 +158,12 @@ logger = logging.getLogger(__name__)
 DEFAULT_OUTPUT_DIR = Path("ledger/learning_curves")
 DEFAULT_MEMORY_SCRATCH_ROOT = Path("memory/_learning_curve")
 
+
+class ConcurrentRunError(Exception):
+    """Raised when a second run_learning_curve() call targets a domain+arm
+    scratch dir another run already holds the lock for (see
+    `_domain_arm_lock`)."""
+
 # Env vars agents/current/run.py's `_handle_recall` reads to let a caller
 # control a native `recall` step from outside graph.yaml/task_input - see
 # that function's docstring and this module's docstring above.
@@ -171,6 +178,52 @@ def _memory_base_dir_for(domain_id: str, memory_mode: str, override: str | Path 
     if override is not None:
         return Path(override)
     return DEFAULT_MEMORY_SCRATCH_ROOT / f"{domain_id}_memory_{memory_mode}"
+
+
+@contextmanager
+def _domain_arm_lock(base_dir: str | Path, domain_id: str) -> Iterator[None]:
+    """Refuse to start a second concurrent run against the same domain+arm
+    scratch dir.
+
+    Two learning-curve runs racing on the same
+    `memory/_learning_curve/{domain}_memory_{mode}/` store would reset,
+    read, and write the same memory files at the same time - there's no
+    safe way to interleave that, so the second one must refuse to start
+    rather than silently corrupt or double-count the first one's results.
+
+    Implemented as an `fcntl.flock(LOCK_EX | LOCK_NB)` on a `.lock` file
+    that lives in `base_dir` itself (a sibling of the `domain_id`
+    subdirectory `_reset_memory_store` wipes, so a reset never deletes the
+    lock out from under its own holder). This is simpler than a pid-file
+    (no staleness check needed: the OS releases the lock the instant the
+    holding process exits or crashes, for any reason) and, unlike a
+    plain "does this pid-file exist" check, `flock` is held per
+    open-file-description rather than per-process - which is what makes it
+    possible to exercise "a second run refuses to start" in a single-
+    process test: a second `open()` + `flock()` on the same file, even
+    from the very same process, is refused exactly like a second real
+    process would be. POSIX-only, which matches this project's target
+    platforms.
+    """
+    lock_dir = Path(base_dir)
+    lock_dir.mkdir(parents=True, exist_ok=True)
+    lock_path = lock_dir / f".{domain_id}.lock"
+    fd = open(lock_path, "w")
+    try:
+        try:
+            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError as exc:
+            raise ConcurrentRunError(
+                f"Another learning-curve run already holds the lock at "
+                f"{lock_path} for domain {domain_id!r} - refusing to start "
+                f"a second concurrent run against the same memory store."
+            ) from exc
+        try:
+            yield
+        finally:
+            fcntl.flock(fd, fcntl.LOCK_UN)
+    finally:
+        fd.close()
 
 
 def _reset_memory_store(domain_id: str, base_dir: str | Path) -> None:
@@ -263,6 +316,13 @@ def _run_one_task(
         with _memory_env(memory_mode, base_dir, k, read_only):
             output = run_fn(task_input, _trace=trace) if trace is not None else run_fn(task_input)
         passed = bool(scorer_fn(output, expected))
+    except llm.InfraError:
+        # An infra failure (bad credentials, no credit, persistent rate
+        # limiting) means every remaining task would fail the same
+        # infra-level way - let it propagate and abort the pass instead of
+        # recording it as a per-task failure. See run_learning_curve()'s
+        # caller, which aborts the whole run without writing this pass.
+        raise
     except Exception as exc:  # noqa: BLE001 - one task's crash must never kill the pass
         error = f"{type(exc).__name__}: {exc}"
     finally:
@@ -439,68 +499,70 @@ def run_learning_curve(
     holdout_tasks = _load_dataset(task_spec.dataset_path, "holdout", task_spec.max_tasks)
 
     base_dir = _memory_base_dir_for(domain, memory_mode, memory_base_dir)
-    if reset_memory:
-        _reset_memory_store(domain, base_dir)
 
-    if seed_memory > 0 and memory_mode == "on":
-        _run_train_pass(
-            run_fn,
-            scorer_fn,
-            train_tasks[:seed_memory],
-            domain_id=domain,
-            memory_mode=memory_mode,
-            k=k,
-            base_dir=base_dir,
-            gen_n=gen_start - 1,
-            reflect_model=reflect_model,
-        )
+    with _domain_arm_lock(base_dir, domain):
+        if reset_memory:
+            _reset_memory_store(domain, base_dir)
 
-    output_path = Path(output_dir) / f"{domain}_memory_{memory_mode}.jsonl"
-    _truncate_output(output_path)
+        if seed_memory > 0 and memory_mode == "on":
+            _run_train_pass(
+                run_fn,
+                scorer_fn,
+                train_tasks[:seed_memory],
+                domain_id=domain,
+                memory_mode=memory_mode,
+                k=k,
+                base_dir=base_dir,
+                gen_n=gen_start - 1,
+                reflect_model=reflect_model,
+            )
 
-    records: list[dict[str, Any]] = []
-    for pass_idx in range(passes):
-        gen_n = gen_start + pass_idx
+        output_path = Path(output_dir) / f"{domain}_memory_{memory_mode}.jsonl"
+        _truncate_output(output_path)
 
-        avg_retrieved = _run_train_pass(
-            run_fn,
-            scorer_fn,
-            train_tasks,
-            domain_id=domain,
-            memory_mode=memory_mode,
-            k=k,
-            base_dir=base_dir,
-            gen_n=gen_n,
-            reflect_model=reflect_model,
-        )
+        records: list[dict[str, Any]] = []
+        for pass_idx in range(passes):
+            gen_n = gen_start + pass_idx
 
-        holdout_results = _run_holdout_pass(
-            run_fn,
-            scorer_fn,
-            holdout_tasks,
-            domain_id=domain,
-            memory_mode=memory_mode,
-            k=k,
-            base_dir=base_dir,
-        )
-        holdout_scorecard = score_runs(holdout_results, "holdout")
+            avg_retrieved = _run_train_pass(
+                run_fn,
+                scorer_fn,
+                train_tasks,
+                domain_id=domain,
+                memory_mode=memory_mode,
+                k=k,
+                base_dir=base_dir,
+                gen_n=gen_n,
+                reflect_model=reflect_model,
+            )
 
-        memory_entry_count = (
-            len(memory.load_all(domain, base_dir, statuses=None)) if memory_mode == "on" else 0
-        )
+            holdout_results = _run_holdout_pass(
+                run_fn,
+                scorer_fn,
+                holdout_tasks,
+                domain_id=domain,
+                memory_mode=memory_mode,
+                k=k,
+                base_dir=base_dir,
+            )
+            holdout_scorecard = score_runs(holdout_results, "holdout")
 
-        record = {
-            "pass": pass_idx,
-            "domain": domain,
-            "memory_mode": memory_mode,
-            "holdout_scorecard": dataclasses.asdict(holdout_scorecard),
-            "memory_entry_count": memory_entry_count,
-            "avg_entries_retrieved": avg_retrieved,
-            "cost_per_task": holdout_scorecard.cost_per_task,
-            "p50_latency_ms": holdout_scorecard.p50_latency_ms,
-        }
-        _append_record(record, output_path)
-        records.append(record)
+            memory_entry_count = (
+                len(memory.load_all(domain, base_dir, statuses=None)) if memory_mode == "on" else 0
+            )
+
+            record = {
+                "pass": pass_idx,
+                "domain": domain,
+                "memory_mode": memory_mode,
+                "holdout_scorecard": dataclasses.asdict(holdout_scorecard),
+                "memory_entry_count": memory_entry_count,
+                "avg_entries_retrieved": avg_retrieved,
+                "cost_per_task": holdout_scorecard.cost_per_task,
+                "p50_latency_ms": holdout_scorecard.p50_latency_ms,
+            }
+            _append_record(record, output_path)
+            records.append(record)
 
     return records
 
@@ -547,20 +609,28 @@ def main(argv: list[str] | None = None) -> int:
     logging.basicConfig(level=logging.WARNING, stream=sys.stderr)
     args = build_arg_parser().parse_args(argv)
 
-    records = run_learning_curve(
-        domain=args.domain,
-        passes=args.passes,
-        memory_mode=args.memory,
-        agent_path=args.agent,
-        domains_root=args.domains_root,
-        k=args.k,
-        memory_base_dir=args.memory_base_dir,
-        reset_memory=not args.resume,
-        reflect_model=args.reflect_model,
-        gen_start=args.gen_start,
-        output_dir=args.output_dir,
-        seed_memory=args.seed_memory,
-    )
+    try:
+        records = run_learning_curve(
+            domain=args.domain,
+            passes=args.passes,
+            memory_mode=args.memory,
+            agent_path=args.agent,
+            domains_root=args.domains_root,
+            k=args.k,
+            memory_base_dir=args.memory_base_dir,
+            reset_memory=not args.resume,
+            reflect_model=args.reflect_model,
+            gen_start=args.gen_start,
+            output_dir=args.output_dir,
+            seed_memory=args.seed_memory,
+        )
+    except llm.InfraError as exc:
+        print(f"Aborting learning curve: infrastructure error - {exc}", file=sys.stderr)
+        return 1
+    except ConcurrentRunError as exc:
+        print(f"Aborting learning curve: {exc}", file=sys.stderr)
+        return 1
+
     for record in records:
         print(json.dumps(record))
     return 0

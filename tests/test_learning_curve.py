@@ -434,6 +434,173 @@ def test_memory_off_control_arm_is_deterministic_across_independent_runs(tmp_pat
     assert all(sc["accuracy"] == scorecards_a[0]["accuracy"] for sc in scorecards_a)
 
 
+def test_infra_error_aborts_pass_and_writes_no_ledger_record(tmp_path, monkeypatch):
+    """A mocked infra failure (auth/credit/rate-limit, surfaced as
+    core.llm.InfraError from core/llm.py) must abort the whole run on the
+    first task rather than being recorded as a per-task failure, and must
+    leave the pass's ledger output empty - no partial or zero-cost record
+    for the aborted pass."""
+    calls: list[dict] = []
+
+    def raising_run_fn(task_input):
+        calls.append(task_input)
+        raise llm.InfraError("credit balance exhausted")
+
+    monkeypatch.setattr(learning_curve, "_load_agent_run_fn", lambda agent_path: raising_run_fn)
+
+    output_dir = tmp_path / "out"
+    with pytest.raises(llm.InfraError):
+        learning_curve.run_learning_curve(
+            DOMAIN,
+            passes=3,
+            memory_mode="off",
+            agent_path=GOOD_AGENT,
+            domains_root=FIXTURES_DOMAINS_ROOT,
+            memory_base_dir=tmp_path / "mem",
+            output_dir=output_dir,
+        )
+
+    assert len(calls) == 1, "must abort on the first task, never reaching the rest of the pass"
+
+    output_path = output_dir / f"{DOMAIN}_memory_off.jsonl"
+    # The output file is truncated up front; the point is nothing was ever
+    # appended to it for the aborted pass.
+    assert not output_path.exists() or output_path.read_text() == ""
+
+
+def test_normal_agent_exception_still_recorded_during_a_pass(tmp_path, monkeypatch):
+    """Regression guard: InfraError propagation must not accidentally
+    swallow a normal agent exception the other way - a plain exception
+    from run_fn must still be caught per-task and recorded on that task's
+    RunResult.error, with the pass completing and writing its record."""
+
+    def failing_run_fn(task_input):
+        raise ValueError("not an infra error")
+
+    monkeypatch.setattr(learning_curve, "_load_agent_run_fn", lambda agent_path: failing_run_fn)
+
+    output_dir = tmp_path / "out"
+    records = learning_curve.run_learning_curve(
+        DOMAIN,
+        passes=1,
+        memory_mode="off",
+        agent_path=GOOD_AGENT,
+        domains_root=FIXTURES_DOMAINS_ROOT,
+        memory_base_dir=tmp_path / "mem",
+        output_dir=output_dir,
+    )
+
+    assert len(records) == 1
+    assert records[0]["holdout_scorecard"]["reliability"] == 0.0
+    output_path = output_dir / f"{DOMAIN}_memory_off.jsonl"
+    assert len(output_path.read_text().strip().splitlines()) == 1
+
+
+def test_cli_main_exits_non_zero_on_infra_error(tmp_path, monkeypatch, capsys):
+    def raising_run_fn(task_input):
+        raise llm.InfraError("credit balance exhausted")
+
+    monkeypatch.setattr(learning_curve, "_load_agent_run_fn", lambda agent_path: raising_run_fn)
+
+    exit_code = learning_curve.main(
+        [
+            "--domain",
+            DOMAIN,
+            "--passes",
+            "1",
+            "--memory",
+            "off",
+            "--agent",
+            GOOD_AGENT,
+            "--domains-root",
+            FIXTURES_DOMAINS_ROOT,
+            "--memory-base-dir",
+            str(tmp_path / "mem"),
+            "--output-dir",
+            str(tmp_path / "out"),
+        ]
+    )
+
+    assert exit_code != 0
+    assert "credit balance exhausted" in capsys.readouterr().err
+
+
+def test_concurrent_run_on_same_domain_arm_refuses_to_start(tmp_path):
+    """Two concurrent learning-curve runs against the same domain+arm
+    scratch dir must not both proceed - the second must refuse to start
+    immediately with a clear error, rather than racing the first to
+    reset/read/write the same memory store."""
+    base_dir = tmp_path / "mem"
+
+    with learning_curve._domain_arm_lock(base_dir, DOMAIN):
+        with pytest.raises(learning_curve.ConcurrentRunError):
+            learning_curve.run_learning_curve(
+                DOMAIN,
+                passes=1,
+                memory_mode="off",
+                agent_path=GOOD_AGENT,
+                domains_root=FIXTURES_DOMAINS_ROOT,
+                memory_base_dir=base_dir,
+                output_dir=tmp_path / "out",
+            )
+
+
+def test_cli_main_exits_non_zero_on_concurrent_run(tmp_path, capsys):
+    base_dir = tmp_path / "mem"
+
+    with learning_curve._domain_arm_lock(base_dir, DOMAIN):
+        exit_code = learning_curve.main(
+            [
+                "--domain",
+                DOMAIN,
+                "--passes",
+                "1",
+                "--memory",
+                "off",
+                "--agent",
+                GOOD_AGENT,
+                "--domains-root",
+                FIXTURES_DOMAINS_ROOT,
+                "--memory-base-dir",
+                str(base_dir),
+                "--output-dir",
+                str(tmp_path / "out"),
+            ]
+        )
+
+    assert exit_code != 0
+    assert "second concurrent run" in capsys.readouterr().err.lower()
+
+
+def test_lock_is_released_after_a_successful_run(tmp_path, monkeypatch):
+    """A completed run must release its lock, so a later (non-concurrent)
+    run against the same domain+arm scratch dir is free to proceed."""
+    monkeypatch.setattr(llm, "complete", _fake_reflect_complete())
+    base_dir = tmp_path / "mem"
+
+    learning_curve.run_learning_curve(
+        DOMAIN,
+        passes=1,
+        memory_mode="off",
+        agent_path=GOOD_AGENT,
+        domains_root=FIXTURES_DOMAINS_ROOT,
+        memory_base_dir=base_dir,
+        output_dir=tmp_path / "out1",
+    )
+
+    # Must not raise ConcurrentRunError - the previous run's lock was released.
+    records = learning_curve.run_learning_curve(
+        DOMAIN,
+        passes=1,
+        memory_mode="off",
+        agent_path=GOOD_AGENT,
+        domains_root=FIXTURES_DOMAINS_ROOT,
+        memory_base_dir=base_dir,
+        output_dir=tmp_path / "out2",
+    )
+    assert len(records) == 1
+
+
 def test_cli_main_writes_same_records_it_prints(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr(llm, "complete", _fake_reflect_complete())
     output_dir = tmp_path / "out"

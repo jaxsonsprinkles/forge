@@ -207,6 +207,41 @@ def test_neatlogs_trace_id_falls_back_to_otel_span_context():
     assert runner._neatlogs_trace_id(FakeOtelSpan()) == format(FakeSpanContext.trace_id, "032x")
 
 
+def test_run_agent_infra_error_aborts_after_first_task(monkeypatch):
+    """A mocked infra failure (auth/credit/rate-limit, surfaced as
+    core.llm.InfraError) must abort the run immediately rather than being
+    recorded as a per-task failure - continuing would just produce more
+    meaningless zero-cost failure records for every remaining task."""
+    calls: list[dict] = []
+
+    def raising_run_fn(task_input):
+        calls.append(task_input)
+        raise llm.InfraError("credit balance exhausted")
+
+    monkeypatch.setattr(runner, "_load_agent_run_fn", lambda agent_path: raising_run_fn)
+
+    task_spec = _task_spec()
+    with pytest.raises(llm.InfraError):
+        run_agent(GOOD_AGENT, task_spec, split="train")
+
+    # Aborted after the first task, never reaching the other two.
+    assert len(calls) == 1
+
+
+def test_run_agent_normal_exception_still_recorded_as_task_failure(monkeypatch):
+    """Regression guard: adding InfraError-propagation must not accidentally
+    swallow (or otherwise mis-handle) a normal agent exception the other
+    way - broken_agent's plain RuntimeError must still be caught per-task
+    and recorded on RunResult.error, exactly as before."""
+    task_spec = _task_spec()
+
+    results = run_agent(BROKEN_AGENT, task_spec, split="train")
+
+    assert len(results) == 3
+    assert all(r.passed is False for r in results)
+    assert all(r.error is not None and "RuntimeError" in r.error for r in results)
+
+
 def test_trace_id_none_when_neatlogs_init_raises(monkeypatch):
     class ExplodingNeatlogsSDK:
         def init(self, api_key):

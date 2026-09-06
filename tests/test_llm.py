@@ -1,7 +1,9 @@
+import anthropic
+import httpx2
 import pytest
 
 from core import llm
-from core.llm import SpendCeilingExceeded, complete, estimate_cost_usd
+from core.llm import InfraError, SpendCeilingExceeded, complete, estimate_cost_usd
 
 
 @pytest.fixture(autouse=True)
@@ -9,6 +11,47 @@ def _reset_spend_tracker():
     llm.reset_spend_tracker()
     yield
     llm.reset_spend_tracker()
+
+
+def _api_error_response(status_code: int, error_type: str, message: str) -> httpx2.Response:
+    request = httpx2.Request("POST", "https://api.anthropic.com/v1/messages")
+    return httpx2.Response(
+        status_code,
+        request=request,
+        json={"error": {"type": error_type, "message": message}},
+    )
+
+
+def _auth_error(message: str = "invalid x-api-key") -> anthropic.AuthenticationError:
+    response = _api_error_response(401, "authentication_error", message)
+    return anthropic.AuthenticationError(message, response=response, body=response.json())
+
+
+def _rate_limit_error(message: str = "rate limit exceeded") -> anthropic.RateLimitError:
+    response = _api_error_response(429, "rate_limit_error", message)
+    return anthropic.RateLimitError(message, response=response, body=response.json())
+
+
+def _bad_request_error(message: str) -> anthropic.BadRequestError:
+    response = _api_error_response(400, "invalid_request_error", message)
+    return anthropic.BadRequestError(message, response=response, body=response.json())
+
+
+class _RaisingMessages:
+    def __init__(self, exc: Exception):
+        self._exc = exc
+
+    def create(self, **kwargs):
+        raise self._exc
+
+
+class _RaisingClient:
+    def __init__(self, exc: Exception):
+        self.messages = _RaisingMessages(exc)
+
+
+def _fake_client_raising(exc: Exception):
+    return lambda **kwargs: _RaisingClient(exc)
 
 
 def _fake_seam(reply: str, input_tokens: int = 10, output_tokens: int = 5, calls: list | None = None):
@@ -143,3 +186,51 @@ def test_cache_hit_does_not_touch_spend_ceiling(tmp_path, monkeypatch):
 
     assert text == "hi there"
     assert len(calls) == 1
+
+
+# --- InfraError: auth/credit/rate-limit failures must abort, not fail one call ---
+#
+# These tests exercise the real `_invoke_provider` (not the `_fake_seam`
+# monkeypatch used above), since that's exactly where the anthropic SDK
+# exceptions get caught and re-raised as InfraError. `anthropic.Anthropic`
+# is monkeypatched to a fake client whose `.messages.create()` raises a
+# real SDK exception instance - no network access involved.
+
+
+def test_authentication_error_raises_infra_error(tmp_path, monkeypatch):
+    monkeypatch.setattr(llm.anthropic, "Anthropic", _fake_client_raising(_auth_error()))
+
+    with pytest.raises(InfraError, match="authentication"):
+        complete(messages=[{"role": "user", "content": "hi"}], model="claude-opus-5", cache_dir=tmp_path)
+
+
+def test_rate_limit_error_raises_infra_error(tmp_path, monkeypatch):
+    monkeypatch.setattr(llm.anthropic, "Anthropic", _fake_client_raising(_rate_limit_error()))
+
+    with pytest.raises(InfraError, match="rate limit"):
+        complete(messages=[{"role": "user", "content": "hi"}], model="claude-opus-5", cache_dir=tmp_path)
+
+
+def test_credit_balance_bad_request_raises_infra_error(tmp_path, monkeypatch):
+    exc = _bad_request_error(
+        "Your credit balance is too low to access the Anthropic API. "
+        "Please go to Plans & Billing to upgrade or purchase credits."
+    )
+    monkeypatch.setattr(llm.anthropic, "Anthropic", _fake_client_raising(exc))
+
+    with pytest.raises(InfraError, match="credit"):
+        complete(messages=[{"role": "user", "content": "hi"}], model="claude-opus-5", cache_dir=tmp_path)
+
+
+def test_non_credit_bad_request_error_propagates_unchanged(tmp_path, monkeypatch):
+    """A real bad-request-shape bug (malformed params, not a credit issue)
+    must NOT be reclassified as an InfraError - it's an agent/caller bug,
+    not an infra failure, so it should surface as the original SDK
+    exception."""
+    exc = _bad_request_error("messages: at least one message is required")
+    monkeypatch.setattr(llm.anthropic, "Anthropic", _fake_client_raising(exc))
+
+    with pytest.raises(anthropic.BadRequestError) as excinfo:
+        complete(messages=[{"role": "user", "content": "hi"}], model="claude-opus-5", cache_dir=tmp_path)
+
+    assert not isinstance(excinfo.value, InfraError)
