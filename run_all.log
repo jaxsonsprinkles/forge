@@ -1,0 +1,30 @@
++ export PYTHONPATH=.
++ PYTHONPATH=.
++ export FORGE_MAX_SPEND_USD=60
++ FORGE_MAX_SPEND_USD=60
++ rm -rf ledger/llm_cache
++ rm -rf memory/github_triage
++ python evals/learning_curve.py --domain github_triage --passes 6 --memory on
+WARNING:__main__:reinforce(): entry 'mem-92dc5fa7c7bd2c2e' for domain 'github_triage' no longer exists
+WARNING:__main__:reinforce(): entry 'mem-a530a42299b5a730' for domain 'github_triage' no longer exists
+WARNING:__main__:reinforce(): entry 'mem-a8264e7eb5ae8711' for domain 'github_triage' no longer exists
+WARNING:__main__:reinforce(): entry 'mem-b7e8bc8a041fcfe5' for domain 'github_triage' no longer exists
+WARNING:__main__:reinforce(): entry 'mem-002c17bb78fd55e5' for domain 'github_triage' no longer exists
+WARNING:__main__:reinforce(): entry 'mem-8e015fe4edeab4c2' for domain 'github_triage' no longer exists
+WARNING:__main__:reinforce(): entry 'mem-a632378601ed5a45' for domain 'github_triage' no longer exists
+WARNING:__main__:reinforce(): entry 'mem-0b491decad6bc859' for domain 'github_triage' no longer exists
+WARNING:__main__:reinforce(): entry 'mem-ba6eda3b6ac23f7e' for domain 'github_triage' no longer exists
+WARNING:__main__:reinforce(): entry 'mem-4f6c425354419476' for domain 'github_triage' no longer exists
+Aborting learning curve: infrastructure error - Anthropic credit balance exhausted: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CemQqGDNhGsNp3QWPfszb'}
++ rm -rf memory/github_triage
++ python evals/learning_curve.py --domain github_triage --passes 6 --memory off
+Aborting learning curve: infrastructure error - Anthropic credit balance exhausted: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CemQqNH1DNKwsaNkgiZMk'}
++ rm -rf memory/coderepair
++ python evals/learning_curve.py --domain coderepair --passes 6 --memory on
+Aborting learning curve: infrastructure error - Anthropic credit balance exhausted: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CemQqRUF6wTVhETBohuYM'}
++ rm -rf memory/coderepair
++ python evals/learning_curve.py --domain coderepair --passes 6 --memory off
+Aborting learning curve: infrastructure error - Anthropic credit balance exhausted: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CemQqVETZhkpCHURChhwr'}
+++ date
++ echo 'DONE Sat Sep  5 21:39:41 CDT 2026'
+DONE Sat Sep  5 21:39:41 CDT 2026
