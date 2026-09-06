@@ -53,7 +53,7 @@ def test_graph_yaml_parses_with_expected_step_shape():
     for step in graph["steps"]:
         assert "name" in step
         assert "type" in step
-        assert step["type"] in {"llm_call", "tool_call", "verify"}
+        assert step["type"] in {"llm_call", "tool_call", "verify", "recall", "reflect"}
 
 
 def test_run_happy_path_returns_final_llm_output(monkeypatch):
@@ -251,5 +251,154 @@ def test_reflect_step_dedup_lookup_never_bumps_times_retrieved(tmp_path, monkeyp
     # The entry was relevant enough to be looked up (proving the lookup
     # actually ran and matched), but that lookup must never have counted
     # as a real retrieval.
+    reloaded = memory.get_entry("mem-1", "demo", base_dir=base_dir)
+    assert reloaded.times_retrieved == 0
+
+
+def _recall_then_solve_graph(base_dir: Path, domain_id: str = "demo") -> str:
+    return (
+        "steps:\n"
+        "  - name: recall_step\n"
+        "    type: recall\n"
+        f"    domain_id: {domain_id}\n"
+        f"    base_dir: {base_dir}\n"
+        "    k: 5\n"
+        "    output_key: lessons\n"
+        "  - name: solve\n"
+        "    type: llm_call\n"
+        "    input_keys: [lessons]\n"
+        "    output_key: draft\n"
+    )
+
+
+def test_recall_step_injects_lesson_text_into_llm_prompt_when_store_has_entries(tmp_path, monkeypatch):
+    """Acceptance: with entries in the store, a recall step's output must
+    actually reach the model - as readable lesson text, never a raw
+    MemoryEntry/dataclass repr."""
+    agent_dir = architect.scaffold(tmp_path / "agent", source=AGENT_DIR)
+    base_dir = tmp_path / "mem"
+    (agent_dir / "graph.yaml").write_text(_recall_then_solve_graph(base_dir))
+
+    entry = MemoryEntry(
+        id="mem-1",
+        domain_id="demo",
+        scope="rule",
+        content="always label perf issues as perf, not performance",
+        trigger="question anything",
+        evidence_task_ids=[],
+        source_run_id="seed",
+        created_gen=0,
+        confidence=0.8,
+    )
+    memory.write(entry, base_dir=base_dir)
+
+    fake, calls = _recording_fake_complete(["draft text"])
+    monkeypatch.setattr(llm, "complete", fake)
+    run_fn = _load_agent_run_fn(str(agent_dir))
+
+    run_fn({"question": "anything"})
+
+    user_message = calls[0][-1]["content"]
+    assert "always label perf issues as perf, not performance" in user_message
+    assert "MemoryEntry" not in user_message
+
+
+def test_recall_step_completes_normally_with_empty_store(tmp_path, monkeypatch):
+    """Acceptance: an empty store must never raise - the recall step still
+    produces an (empty) lessons block and the run completes."""
+    agent_dir = architect.scaffold(tmp_path / "agent", source=AGENT_DIR)
+    base_dir = tmp_path / "mem"  # never written to - store starts empty
+    (agent_dir / "graph.yaml").write_text(_recall_then_solve_graph(base_dir))
+
+    monkeypatch.setattr(llm, "complete", _fake_complete(["draft text"]))
+    run_fn = _load_agent_run_fn(str(agent_dir))
+
+    result = run_fn({"question": "anything"})
+
+    assert result == "draft text"
+
+
+def test_recall_step_populates_trace_kwarg_with_retrieved_entry_ids(tmp_path, monkeypatch):
+    """run(task_input) never sees scoring, so a caller that wants to
+    reinforce with the real pass/fail outcome (evals/learning_curve.py)
+    needs the retrieved ids handed back out via the optional _trace kwarg."""
+    agent_dir = architect.scaffold(tmp_path / "agent", source=AGENT_DIR)
+    base_dir = tmp_path / "mem"
+    (agent_dir / "graph.yaml").write_text(_recall_then_solve_graph(base_dir))
+
+    entry = MemoryEntry(
+        id="mem-1",
+        domain_id="demo",
+        scope="rule",
+        content="c",
+        trigger="question anything",
+        evidence_task_ids=[],
+        source_run_id="seed",
+        created_gen=0,
+        confidence=0.8,
+    )
+    memory.write(entry, base_dir=base_dir)
+    monkeypatch.setattr(llm, "complete", _fake_complete(["unused"]))
+    run_fn = _load_agent_run_fn(str(agent_dir))
+
+    trace: dict = {}
+    run_fn({"question": "anything"}, _trace=trace)
+
+    assert trace["recall"] == [{"domain_id": "demo", "base_dir": str(base_dir), "entry_ids": ["mem-1"]}]
+
+
+def test_recall_step_skips_retrieval_entirely_when_memory_mode_env_is_off(tmp_path, monkeypatch):
+    agent_dir = architect.scaffold(tmp_path / "agent", source=AGENT_DIR)
+    base_dir = tmp_path / "mem"
+    (agent_dir / "graph.yaml").write_text(_recall_then_solve_graph(base_dir))
+
+    entry = MemoryEntry(
+        id="mem-1",
+        domain_id="demo",
+        scope="rule",
+        content="c",
+        trigger="question anything",
+        evidence_task_ids=[],
+        source_run_id="seed",
+        created_gen=0,
+        confidence=0.8,
+    )
+    memory.write(entry, base_dir=base_dir)
+
+    monkeypatch.setenv("FORGE_MEMORY_MODE", "off")
+    monkeypatch.setattr(memory, "retrieve", lambda *a, **k: (_ for _ in ()).throw(AssertionError("must not be called")))
+    monkeypatch.setattr(llm, "complete", _fake_complete(["unused"]))
+    run_fn = _load_agent_run_fn(str(agent_dir))
+
+    trace: dict = {}
+    run_fn({"question": "anything"}, _trace=trace)
+
+    assert trace["recall"] == []
+
+
+def test_recall_step_uses_peek_and_never_bumps_times_retrieved_when_read_only(tmp_path, monkeypatch):
+    agent_dir = architect.scaffold(tmp_path / "agent", source=AGENT_DIR)
+    base_dir = tmp_path / "mem"
+    (agent_dir / "graph.yaml").write_text(_recall_then_solve_graph(base_dir))
+
+    entry = MemoryEntry(
+        id="mem-1",
+        domain_id="demo",
+        scope="rule",
+        content="c",
+        trigger="question anything",
+        evidence_task_ids=[],
+        source_run_id="seed",
+        created_gen=0,
+        confidence=0.8,
+    )
+    memory.write(entry, base_dir=base_dir)
+
+    monkeypatch.setenv("FORGE_MEMORY_READ_ONLY", "1")
+    monkeypatch.setattr(llm, "complete", _fake_complete(["unused"]))
+    run_fn = _load_agent_run_fn(str(agent_dir))
+
+    run_fn({"question": "anything"})
+
     reloaded = memory.get_entry("mem-1", "demo", base_dir=base_dir)
     assert reloaded.times_retrieved == 0
