@@ -292,10 +292,15 @@ def _format_lessons(entries: list[Any]) -> str:
     """Render retrieved memory entries as plain text for a later llm_call's
     prompt - one lesson per line, never a raw dataclass repr. Empty input
     still returns a (non-empty) block saying so, never an exception - a
-    fresh/empty memory store must never break a run."""
+    fresh/empty memory store must never break a run.
+
+    The "Learned rules:" header makes a raw prompt dump immediately
+    greppable for whether recall surfaced anything, without having to
+    know this function's bullet format ahead of time."""
     if not entries:
         return "No lessons learned yet for this kind of task."
-    return "\n".join(f"- {entry.content} (applies when: {entry.trigger})" for entry in entries)
+    bullets = "\n".join(f"- {entry.content} (applies when: {entry.trigger})" for entry in entries)
+    return f"Learned rules:\n{bullets}"
 
 
 def _handle_recall(step: dict[str, Any], i: int, ctx: _StepContext) -> int:
