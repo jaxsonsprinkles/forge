@@ -1,8 +1,15 @@
-# Baseline general-purpose agent graph: fetch, solve, verify, finalize.
+# Baseline general-purpose agent graph: recall, fetch, solve, verify, finalize.
 #
 # core/proposer.py's "orchestration" mutations edit this file - add,
 # remove, or reorder steps. See README.md in this directory for the
 # step-type vocabulary run.py's interpreter supports.
+#
+# recall_lessons's domain_id is hardcoded to github_triage for the same
+# reason the fetch_* tool_call steps below are - this baseline agent
+# currently has no per-domain variant (see tools.py's docstring), so its
+# one shipped graph.yaml is wired for the one domain it's actually
+# exercised against. It runs first (before any fetch_* step) since it
+# only needs task_input, never fetched issue data.
 #
 # The four fetch_* tool_call steps below are github_triage-specific
 # (see tools.py) - they read `repo`/`issue_number` straight out of
@@ -11,6 +18,12 @@
 # (see tools.py's docstring) instead of raising, so they cost nothing
 # functionally elsewhere in the graph.
 steps:
+  - name: recall_lessons
+    type: recall
+    domain_id: github_triage
+    k: 5
+    output_key: lessons
+
   - name: fetch_issue
     type: tool_call
     tool: github_get_issue
@@ -41,7 +54,7 @@ steps:
       Produce your best attempt at the final answer to the task input
       above, in the exact format requested (see your system
       instructions).
-    input_keys: [issue, repo_labels, similar_issues, reporter_activity]
+    input_keys: [lessons, issue, repo_labels, similar_issues, reporter_activity]
     output_key: draft
 
   - name: check_draft
@@ -58,5 +71,5 @@ steps:
       below. Review it once more against the task input and any fetched
       context above, correct any mistakes, and respond with ONLY the
       final answer in the exact format requested - no extra commentary.
-    input_keys: [draft, issue, repo_labels, similar_issues, reporter_activity]
+    input_keys: [lessons, draft, issue, repo_labels, similar_issues, reporter_activity]
     output_key: final

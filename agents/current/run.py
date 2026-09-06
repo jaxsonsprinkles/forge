@@ -19,6 +19,19 @@ task's trace shows every model/tool call individually instead of one
 span for the whole run. Tracing is entirely optional here: outside of a
 core.runner.run_agent() call (e.g. a test that calls run() directly)
 open_step_span degrades to a no-op, same as tracing being unconfigured.
+
+The `recall` step (see `_handle_recall`) is the inner learning loop's
+read path: it calls `core.memory.retrieve()` and exposes the result to
+later `llm_call` steps as plain text under `output_key`, the same way
+any other step's output flows through the scratchpad. `run()` accepts an
+optional `_trace` dict that a `recall` step populates with what it
+retrieved (domain_id/base_dir/entry ids) - `run(task_input) -> dict` is
+a fixed entrypoint that never sees scoring, so a caller that wants to
+call `core.memory.reinforce()` with the real pass/fail outcome (e.g.
+evals/learning_curve.py) needs those ids handed back out explicitly.
+`_handle_recall` also reads three env vars a caller can use to control
+retrieval from outside graph.yaml/task_input - see that function's
+docstring.
 """
 
 from __future__ import annotations
@@ -187,6 +200,7 @@ class _StepContext:
         self.step_index_by_name = step_index_by_name
         self.retry_counts: dict[str, int] = {}
         self.last_output_key: str | None = None
+        self.recall_records: list[dict[str, Any]] = []
 
 
 def _handle_llm_call(step: dict[str, Any], i: int, ctx: _StepContext) -> int:
@@ -274,6 +288,75 @@ def _handle_reflect(step: dict[str, Any], i: int, ctx: _StepContext) -> int:
     return i + 1
 
 
+def _format_lessons(entries: list[Any]) -> str:
+    """Render retrieved memory entries as plain text for a later llm_call's
+    prompt - one lesson per line, never a raw dataclass repr. Empty input
+    still returns a (non-empty) block saying so, never an exception - a
+    fresh/empty memory store must never break a run."""
+    if not entries:
+        return "No lessons learned yet for this kind of task."
+    return "\n".join(f"- {entry.content} (applies when: {entry.trigger})" for entry in entries)
+
+
+def _handle_recall(step: dict[str, Any], i: int, ctx: _StepContext) -> int:
+    """Retrieve relevant memory lessons via core.memory.retrieve() and
+    expose them to later llm_call steps as plain text under output_key -
+    the inner learning loop's read path (see the `reflect` step/
+    _handle_reflect for the write path).
+
+    Three env vars let a caller (e.g. evals/learning_curve.py) control
+    this step from outside graph.yaml/task_input, the same way
+    FORGE_GEN_N controls the reflect step below:
+      FORGE_MEMORY_MODE ("on"/"off", default "on"): "off" skips retrieval
+        entirely - core.memory.retrieve()/peek() is never called - so a
+        caller's memory-off control arm stays memory-blind by
+        construction, not just by convention.
+      FORGE_MEMORY_BASE_DIR: overrides this step's `base_dir` field, so a
+        caller can redirect reads to its own scratch store without
+        touching graph.yaml.
+      FORGE_MEMORY_READ_ONLY ("1" to enable): uses core.memory.peek()
+        instead of retrieve(), so a read-only pass (e.g. holdout scoring)
+        never durably bumps times_retrieved.
+      FORGE_MEMORY_K: overrides this step's `k` field.
+
+    Records what was retrieved (domain_id, base_dir, entry ids) onto
+    ctx.recall_records, which run() surfaces via its optional `_trace`
+    argument - see this module's docstring for why a caller needs that
+    to reinforce with the real pass/fail outcome.
+
+    Never raises: a broken memory store must never fail the task it
+    would have helped.
+    """
+    output_key = step.get("output_key", step["name"])
+    domain_id = step.get("domain_id")
+    mode = os.environ.get("FORGE_MEMORY_MODE", "on")
+
+    if not domain_id or mode == "off":
+        memory_mod.record(ctx.memory, output_key, _format_lessons([]))
+        ctx.last_output_key = output_key
+        return i + 1
+
+    base_dir = os.environ.get("FORGE_MEMORY_BASE_DIR") or step.get("base_dir", _memory.DEFAULT_MEMORY_ROOT)
+    k = int(os.environ.get("FORGE_MEMORY_K", step.get("k", 5)))
+    read_only = os.environ.get("FORGE_MEMORY_READ_ONLY") == "1"
+
+    entries: list[Any] = []
+    with _runner.open_step_span(f"recall:{step['name']}", "RETRIEVER"):
+        try:
+            fetch = _memory.peek if read_only else _memory.retrieve
+            entries = fetch(ctx.task_input, domain_id, k=k, base_dir=base_dir)
+        except Exception:  # noqa: BLE001 - a broken memory store must never crash a run
+            logger.warning("recall step %r failed", step["name"], exc_info=True)
+            entries = []
+
+    ctx.recall_records.append(
+        {"domain_id": domain_id, "base_dir": str(base_dir), "entry_ids": [entry.id for entry in entries]}
+    )
+    memory_mod.record(ctx.memory, output_key, _format_lessons(entries))
+    ctx.last_output_key = output_key
+    return i + 1
+
+
 # Step-type dispatch table: type name -> handler(step, i, ctx) -> next index.
 # This is the interpreter's one extension point. graph.yaml can list any
 # number of steps in any order/shape (see run() below, which never
@@ -285,6 +368,7 @@ _STEP_HANDLERS: dict[str, Callable[[dict[str, Any], int, _StepContext], int]] = 
     "tool_call": _handle_tool_call,
     "verify": _handle_verify,
     "reflect": _handle_reflect,
+    "recall": _handle_recall,
 }
 
 
@@ -307,7 +391,7 @@ def _finalize_output(memory: dict[str, Any], output_key: str | None) -> Any:
     return value
 
 
-def run(task_input: dict) -> Any:
+def run(task_input: dict, _trace: dict | None = None) -> Any:
     """Drive this agent's graph.yaml step order to answer one task.
 
     See README.md for the full contract. Nominally returns a dict per
@@ -322,6 +406,16 @@ def run(task_input: dict) -> Any:
     returns - so graph.yaml mutations (core/proposer.py's orchestration
     surface) can insert, split, reorder, or remove steps freely without
     ever requiring a change here.
+
+    `_trace`, if given, is populated with a `"recall"` key: a list of
+    every `recall` step's retrieval (`domain_id`/`base_dir`/`entry_ids`).
+    This is the only way a caller can learn which memory entries were
+    shown to the model, since `run(task_input) -> dict` is a fixed
+    entrypoint that never receives the scorer's verdict - a caller that
+    wants to call `core.memory.reinforce()` with the real pass/fail
+    outcome (e.g. evals/learning_curve.py) needs this to know which
+    entries to reinforce. Safe to omit entirely: unset by default, and
+    never read by anything in this file besides `_handle_recall`.
     """
     steps = _load_graph()
     ctx = _StepContext(
@@ -341,5 +435,8 @@ def run(task_input: dict) -> Any:
         if handler is None:
             raise ValueError(f"graph.yaml step {step.get('name')!r} has unknown type {step.get('type')!r}")
         i = handler(step, i, ctx)
+
+    if _trace is not None:
+        _trace["recall"] = ctx.recall_records
 
     return _finalize_output(ctx.memory, ctx.last_output_key)
