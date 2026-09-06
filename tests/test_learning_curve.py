@@ -17,6 +17,7 @@ import pytest
 
 from core import architect, llm, memory, reflect
 from core.memory import MemoryEntry
+from core.runner import _load_agent_run_fn
 from evals import learning_curve
 
 FIXTURES_DOMAINS_ROOT = str(Path(__file__).parent / "fixtures" / "domains")
@@ -62,6 +63,21 @@ def _fake_reflect_complete():
         return json.dumps(payload), 0.0, 5
 
     return fake
+
+
+def _recording_fake_complete(
+    replies: list[str],
+) -> tuple[Any, list[list[dict[str, Any]]]]:
+    """Like the fixtures above, but also records every call's `messages`
+    list - so a test can assert on what context (e.g. recalled lessons) a
+    step actually received."""
+    calls: list[list[dict[str, Any]]] = []
+
+    def fake(messages: list[dict[str, Any]], model: str, **params: Any) -> tuple[str, float, int]:
+        calls.append(messages)
+        return replies[len(calls) - 1], 0.0, 1
+
+    return fake, calls
 
 
 def _fail_if_called(name: str):
@@ -110,12 +126,35 @@ def test_memory_off_never_calls_reflect_or_write(tmp_path, monkeypatch):
     assert all(r["avg_entries_retrieved"] == 0.0 for r in records)
 
 
+def _recall_then_solve_graph(base_dir: Path, domain_id: str) -> str:
+    return (
+        "steps:\n"
+        "  - name: recall_step\n"
+        "    type: recall\n"
+        f"    domain_id: {domain_id}\n"
+        "    output_key: lessons\n"
+        "  - name: solve\n"
+        "    type: llm_call\n"
+        "    input_keys: [lessons]\n"
+        "    output_key: draft\n"
+    )
+
+
 def test_holdout_never_writes_memory_even_when_it_retrieves(tmp_path, monkeypatch):
-    """Holdout is read-only: it must retrieve accumulated memory (so the
-    curve reflects what's been learned) but never call memory.write(),
-    not even via retrieve()'s own times_retrieved side effect."""
+    """Holdout is read-only: a native recall step must still retrieve
+    accumulated memory (so the curve reflects what's been learned - and
+    the lesson text must actually reach the model's prompt) but never
+    call memory.write(), not even via retrieve()'s own times_retrieved
+    side effect. Recall now lives inside run() (see agents/current/
+    run.py's _handle_recall), reached only via the FORGE_MEMORY_* env
+    vars this harness sets - not via task_input - so this test drives it
+    through the real _run_holdout_pass entrypoint instead of a hand-rolled
+    run_fn."""
     base_dir = tmp_path / "mem"
     domain_id = DOMAIN
+
+    agent_dir = architect.scaffold(tmp_path / "agent", source=BASELINE_AGENT)
+    (agent_dir / "graph.yaml").write_text(_recall_then_solve_graph(base_dir, domain_id))
 
     # Seed memory directly (not via retrieve/reflect) with an entry whose
     # trigger matches holdout task t4's input ({"a": 5, "b": 5}).
@@ -132,19 +171,9 @@ def test_holdout_never_writes_memory_even_when_it_retrieves(tmp_path, monkeypatc
     )
     memory.write(seeded, base_dir=base_dir)
 
-    received_inputs: list[dict[str, Any]] = []
-
-    def recording_run_fn(task_input: dict[str, Any]) -> dict[str, Any]:
-        received_inputs.append(task_input)
-        return {"answer": task_input["a"] + task_input["b"]}
-
-    def score_exact(output: Any, expected: Any) -> bool:
-        return output == expected
-
-    holdout_tasks = [
-        {"task_id": "t4", "input": {"a": 5, "b": 5}, "expected": {"answer": 10}},
-        {"task_id": "t5", "input": {"a": 7, "b": 1}, "expected": {"answer": 8}},
-    ]
+    fake, calls = _recording_fake_complete(["draft text"])
+    monkeypatch.setattr(llm, "complete", fake)
+    run_fn = _load_agent_run_fn(str(agent_dir))
 
     write_calls = {"n": 0}
     real_write = memory.write
@@ -155,9 +184,13 @@ def test_holdout_never_writes_memory_even_when_it_retrieves(tmp_path, monkeypatc
 
     monkeypatch.setattr(memory, "write", counting_write)
 
+    holdout_tasks = [
+        {"task_id": "t4", "input": {"a": 5, "b": 5}, "expected": {"answer": 10}},
+    ]
+
     results = learning_curve._run_holdout_pass(
-        recording_run_fn,
-        score_exact,
+        run_fn,
+        lambda output, expected: output == expected,
         holdout_tasks,
         domain_id=domain_id,
         memory_mode="on",
@@ -166,47 +199,35 @@ def test_holdout_never_writes_memory_even_when_it_retrieves(tmp_path, monkeypatc
     )
 
     assert write_calls["n"] == 0, "holdout scoring must never call core.memory.write()"
-    assert results[0].passed is True
+    assert results[0].error is None
 
-    # The seeded lesson was still injected into the task whose input matched it.
-    assert learning_curve._MEMORY_CONTEXT_KEY in received_inputs[0]
-    assert received_inputs[0][learning_curve._MEMORY_CONTEXT_KEY][0]["content"] == seeded.content
+    # The seeded lesson still reached the model's own prompt.
+    user_message = calls[0][-1]["content"]
+    assert seeded.content in user_message
     # times_retrieved was never bumped, since that would require a write.
     reloaded = memory.get_entry("mem-seeded", domain_id, base_dir=base_dir)
     assert reloaded.times_retrieved == 0
 
 
-def test_reflect_step_lookup_does_not_double_count_times_retrieved(tmp_path, monkeypatch):
-    """Regression test for the reflect-step double-retrieval bug.
+def test_native_recall_avoids_double_counting_times_retrieved(tmp_path, monkeypatch):
+    """Regression test for the double-retrieval bug class (TASK 11/PR #24
+    fixed one instance of it for the `reflect` step's dedup lookup; the
+    CRITICAL CONFLICT this milestone flagged was a second instance: this
+    harness's own retrieve() call for injection, alongside a native
+    `recall` step's own retrieve() call, would double-bump
+    `times_retrieved` for one real exposure.
 
-    This harness's own `_run_one_task` already calls `memory.retrieve()`
-    once per train task to inject lessons into `task_input` (see module
-    docstring's "Injecting memory" section). If the agent's own graph.yaml
-    also has a `reflect` step pointed at the same memory store, that step
-    used to call `core.memory.retrieve()` again purely to get dedup context
-    for `core.reflect.reflect()` - a second, independent bump of
-    `times_retrieved` for the very same task, even though the agent was
-    only ever exposed to the lesson once (via this harness's own
-    injection). `agents/current/run.py`'s reflect step must use
-    `core.memory.peek()` for that lookup instead, so a lesson retrieved
-    for N train tasks ends up with `times_retrieved == N`, not `2N`.
+    This harness no longer retrieves/injects itself at all (see module
+    docstring) - retrieval happens exactly once, inside the run, via the
+    agent's own `recall` step. So a lesson retrieved for N train tasks
+    must end up with `times_retrieved == N`, never `2N`, by construction:
+    there is only one call site left that can bump it.
     """
     base_dir = tmp_path / "mem"
     domain_id = DOMAIN
 
     agent_dir = architect.scaffold(tmp_path / "agent", source=BASELINE_AGENT)
-    (agent_dir / "graph.yaml").write_text(
-        "steps:\n"
-        "  - name: solve\n"
-        "    type: llm_call\n"
-        "    output_key: draft\n"
-        "  - name: reflect_step\n"
-        "    type: reflect\n"
-        f"    domain_id: {domain_id}\n"
-        "    input_key: draft\n"
-        f"    base_dir: {base_dir}\n"
-        "    k: 5\n"
-    )
+    (agent_dir / "graph.yaml").write_text(_recall_then_solve_graph(base_dir, domain_id))
 
     seeded = MemoryEntry(
         id="mem-seeded",
@@ -241,12 +262,117 @@ def test_reflect_step_lookup_does_not_double_count_times_retrieved(tmp_path, mon
     )
 
     # 3 train tasks (t1-t3) each bump times_retrieved exactly once, via
-    # this harness's own real memory.retrieve() call. Holdout (t4, t5)
-    # never bumps at all: this harness's own call uses memory.peek() for
-    # holdout, and the graph's reflect step now also uses peek() for its
-    # dedup lookup regardless of train/holdout.
+    # the graph's own recall step. Holdout (t4, t5) never bumps at all:
+    # this harness sets FORGE_MEMORY_READ_ONLY for holdout, which makes
+    # the same recall step use peek() instead.
     reloaded = memory.get_entry("mem-seeded", domain_id, base_dir=base_dir)
     assert reloaded.times_retrieved == 3
+
+
+def test_reinforce_called_once_per_retrieved_entry_per_train_task(tmp_path, monkeypatch):
+    """Acceptance: core.memory.reinforce() must be called exactly once per
+    (train task, retrieved entry) pair, with the real pass/fail outcome -
+    not the reflect step's local non-empty-output proxy."""
+    base_dir = tmp_path / "mem"
+    domain_id = DOMAIN
+
+    agent_dir = architect.scaffold(tmp_path / "agent", source=BASELINE_AGENT)
+    (agent_dir / "graph.yaml").write_text(_recall_then_solve_graph(base_dir, domain_id))
+
+    seeded = MemoryEntry(
+        id="mem-seeded",
+        domain_id=domain_id,
+        scope="rule",
+        content="always add both operands directly",
+        trigger="a b 1 2 3",
+        evidence_task_ids=[],
+        source_run_id="seed",
+        created_gen=0,
+        confidence=0.9,
+    )
+    memory.write(seeded, base_dir=base_dir)
+
+    def fake_complete(messages: list[dict[str, Any]], model: str, **params: Any) -> tuple[str, float, int]:
+        system = messages[0]["content"]
+        if "reflection step" in system:
+            return "[]", 0.0, 1
+        return "some draft answer", 0.0, 1  # never matches the dict `expected` -> always fails scoring
+
+    monkeypatch.setattr(llm, "complete", fake_complete)
+
+    reinforce_calls: list[tuple[str, str, bool]] = []
+    real_reinforce = memory.reinforce
+
+    def recording_reinforce(entry_id: str, domain: str, helped: bool, base_dir: Any = memory.DEFAULT_MEMORY_ROOT) -> None:
+        reinforce_calls.append((entry_id, domain, helped))
+        real_reinforce(entry_id, domain, helped, base_dir=base_dir)
+
+    monkeypatch.setattr(memory, "reinforce", recording_reinforce)
+
+    learning_curve.run_learning_curve(
+        domain_id,
+        passes=1,
+        memory_mode="on",
+        agent_path=str(agent_dir),
+        domains_root=FIXTURES_DOMAINS_ROOT,
+        memory_base_dir=base_dir,
+        reset_memory=False,
+        output_dir=tmp_path / "out",
+    )
+
+    # 3 train tasks (t1-t3), each retrieving mem-seeded exactly once ->
+    # exactly 3 reinforce() calls, none from holdout (t4, t5 never reinforce).
+    assert reinforce_calls == [("mem-seeded", domain_id, False)] * 3
+
+
+def test_seed_memory_prepopulates_store_before_pass_0_without_touching_holdout(tmp_path, monkeypatch):
+    monkeypatch.setattr(llm, "complete", _fake_reflect_complete())
+
+    records = learning_curve.run_learning_curve(
+        DOMAIN,
+        passes=1,
+        memory_mode="on",
+        agent_path=GOOD_AGENT,
+        domains_root=FIXTURES_DOMAINS_ROOT,
+        memory_base_dir=tmp_path / "mem",
+        output_dir=tmp_path / "out",
+        seed_memory=2,
+    )
+
+    # Seeding ran 2 extra train tasks (with reflection) before pass 0's own
+    # 3 train tasks, so pass 0 already sees the seeded lessons - more
+    # entries than a single pass of 3 train tasks alone could produce.
+    assert records[0]["memory_entry_count"] >= 2
+
+    baseline = learning_curve.run_learning_curve(
+        DOMAIN,
+        passes=1,
+        memory_mode="on",
+        agent_path=GOOD_AGENT,
+        domains_root=FIXTURES_DOMAINS_ROOT,
+        memory_base_dir=tmp_path / "mem_unseeded",
+        output_dir=tmp_path / "out_unseeded",
+        seed_memory=0,
+    )
+    assert records[0]["memory_entry_count"] > baseline[0]["memory_entry_count"]
+
+
+def test_seed_memory_is_a_noop_when_memory_is_off(tmp_path, monkeypatch):
+    monkeypatch.setattr(memory, "write", _fail_if_called("memory.write"))
+    monkeypatch.setattr(reflect, "reflect", _fail_if_called("reflect.reflect"))
+
+    records = learning_curve.run_learning_curve(
+        DOMAIN,
+        passes=1,
+        memory_mode="off",
+        agent_path=GOOD_AGENT,
+        domains_root=FIXTURES_DOMAINS_ROOT,
+        memory_base_dir=tmp_path / "mem",
+        output_dir=tmp_path / "out",
+        seed_memory=4,
+    )
+
+    assert records[0]["memory_entry_count"] == 0
 
 
 def test_output_jsonl_has_one_record_per_pass_with_documented_fields(tmp_path, monkeypatch):
@@ -306,28 +432,6 @@ def test_memory_off_control_arm_is_deterministic_across_independent_runs(tmp_pat
     assert scorecards_a == scorecards_b
     # And flat across passes within a single run, per the control's contract.
     assert all(sc["accuracy"] == scorecards_a[0]["accuracy"] for sc in scorecards_a)
-
-
-def test_augment_task_input_does_not_mutate_original_or_add_key_when_empty():
-    original = {"a": 1}
-    result = learning_curve._augment_task_input(original, [])
-    assert result is original
-    assert learning_curve._MEMORY_CONTEXT_KEY not in result
-
-    entry = MemoryEntry(
-        id="mem-1",
-        domain_id=DOMAIN,
-        scope="rule",
-        content="c",
-        trigger="t",
-        evidence_task_ids=[],
-        source_run_id="r",
-        created_gen=0,
-    )
-    augmented = learning_curve._augment_task_input(original, [entry])
-    assert augmented is not original
-    assert learning_curve._MEMORY_CONTEXT_KEY not in original
-    assert augmented[learning_curve._MEMORY_CONTEXT_KEY][0]["content"] == "c"
 
 
 def test_cli_main_writes_same_records_it_prints(tmp_path, monkeypatch, capsys):
