@@ -56,6 +56,20 @@ def test_graph_yaml_parses_with_expected_step_shape():
         assert step["type"] in {"llm_call", "tool_call", "verify", "recall", "reflect"}
 
 
+def test_solve_and_finalize_steps_use_default_model():
+    """solve/finalize set no explicit `model`, so they must pick up
+    run.py's DEFAULT_MODEL (the main-generation model) rather than
+    silently drifting to whatever core.llm.complete() itself defaults to."""
+    from agents.current import run
+
+    graph = yaml.safe_load((AGENT_DIR / "graph.yaml").read_text())
+    llm_steps = {step["name"]: step for step in graph["steps"] if step["type"] == "llm_call"}
+
+    assert "model" not in llm_steps["solve"]
+    assert "model" not in llm_steps["finalize"]
+    assert run.DEFAULT_MODEL == "claude-sonnet-4-6"
+
+
 def test_run_happy_path_returns_final_llm_output(monkeypatch):
     monkeypatch.setattr(llm, "complete", _fake_complete(["draft answer", "def f(): return 1"]))
     run_fn = _load_agent_run_fn(str(AGENT_DIR))

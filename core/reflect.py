@@ -94,7 +94,7 @@ from core.types import RunResult
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_MODEL = "claude-sonnet-5"
+DEFAULT_MODEL = "claude-haiku-4-5"
 
 # Above this Jaccard similarity (see core.memory._similarity) to an
 # existing entry's content alone, a candidate is treated as restating

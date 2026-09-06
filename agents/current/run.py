@@ -55,7 +55,7 @@ from core.types import RunResult
 logger = logging.getLogger(__name__)
 
 AGENT_DIR = Path(__file__).resolve().parent
-DEFAULT_MODEL = "claude-sonnet-5"
+DEFAULT_MODEL = "claude-sonnet-4-6"
 
 
 def _load_sibling_module(name: str) -> ModuleType:
