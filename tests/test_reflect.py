@@ -86,6 +86,13 @@ def _lesson(**overrides) -> dict[str, Any]:
     return defaults
 
 
+def test_reflect_default_model_is_the_cheap_reflection_model():
+    """reflect() defaults to a cheap model, distinct from the baseline
+    agent's main-generation DEFAULT_MODEL in agents/current/run.py -
+    reflection writes lessons, it doesn't produce the task answer."""
+    assert reflect.DEFAULT_MODEL == "claude-haiku-4-5"
+
+
 def test_reflect_returns_empty_list_when_model_finds_nothing_new(monkeypatch):
     monkeypatch.setattr(llm, "complete", _fake_complete("[]"))
 
