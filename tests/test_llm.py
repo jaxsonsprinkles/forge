@@ -1,9 +1,23 @@
+import re
+from pathlib import Path
+
 import anthropic
 import httpx2
 import pytest
 
 from core import llm
-from core.llm import InfraError, SpendCeilingExceeded, complete, estimate_cost_usd
+from core.llm import PRICING_PER_MTOK, InfraError, SpendCeilingExceeded, complete, estimate_cost_usd
+
+REPO_ROOT = Path(__file__).parent.parent
+
+# Files that hardcode a default Claude model - if one of these picks a new
+# default without a matching core.llm.PRICING_PER_MTOK entry, cost estimation
+# silently prices every call at $0 (see the claude-sonnet-4-6 regression).
+_FILES_WITH_DEFAULT_MODELS = [
+    REPO_ROOT / "agents" / "current" / "run.py",
+    REPO_ROOT / "core" / "reflect.py",
+    REPO_ROOT / "evals" / "learning_curve.py",
+]
 
 
 @pytest.fixture(autouse=True)
@@ -123,8 +137,11 @@ def test_estimate_cost_usd_known_model():
     assert estimate_cost_usd("claude-opus-5", input_tokens=1_000_000, output_tokens=0) == 5.00
 
 
-def test_estimate_cost_usd_unknown_model_is_free():
-    assert estimate_cost_usd("some-unknown-model", input_tokens=1000, output_tokens=1000) == 0.0
+def test_estimate_cost_usd_unknown_model_is_free_but_warns(caplog):
+    with caplog.at_level("WARNING", logger="core.llm"):
+        cost = estimate_cost_usd("some-unknown-model", input_tokens=1000, output_tokens=1000)
+    assert cost == 0.0
+    assert "some-unknown-model" in caplog.text
 
 
 def test_spend_ceiling_raises_before_calling_seam(tmp_path, monkeypatch):
@@ -234,3 +251,37 @@ def test_non_credit_bad_request_error_propagates_unchanged(tmp_path, monkeypatch
         complete(messages=[{"role": "user", "content": "hi"}], model="claude-opus-5", cache_dir=tmp_path)
 
     assert not isinstance(excinfo.value, InfraError)
+
+
+def test_all_hardcoded_default_models_have_real_pricing():
+    """Every 'claude-*' model literal hardcoded as a default in the files below
+    must have a non-zero PRICING_PER_MTOK entry.
+
+    This is a regression test for the claude-sonnet-4-6 bug: run.py's
+    DEFAULT_MODEL was bumped without adding a matching pricing entry, so
+    estimate_cost_usd() silently priced every call at $0 (see
+    test_estimate_cost_usd_unknown_model_is_free_but_warns for that
+    fallback behavior) - breaking FORGE_MAX_SPEND_USD enforcement and cost
+    reporting. A new default model must be added to PRICING_PER_MTOK in the
+    same change.
+    """
+    model_pattern = re.compile(r"claude-[A-Za-z0-9.-]*")
+    found_any = False
+
+    for path in _FILES_WITH_DEFAULT_MODELS:
+        source = path.read_text()
+        models = set(model_pattern.findall(source))
+        found_any = found_any or bool(models)
+
+        for model in models:
+            rates = PRICING_PER_MTOK.get(model)
+            assert rates is not None, (
+                f"{path} hardcodes default model {model!r}, which has no "
+                f"PRICING_PER_MTOK entry in core/llm.py"
+            )
+            assert rates != (0.0, 0.0), (
+                f"{path} hardcodes default model {model!r}, which prices at $0/Mtok "
+                f"in core/llm.py's PRICING_PER_MTOK"
+            )
+
+    assert found_any, "expected at least one hardcoded 'claude-*' model literal across the checked files"
