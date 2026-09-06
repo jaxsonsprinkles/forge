@@ -897,7 +897,7 @@
 
       card.appendChild(seriesLegend(series));
       card.appendChild(seriesLineChart(series, {
-        yMin: 0, yMax: 1,
+        yMin: 0.2, yMax: 0.6,
         yFormat: function (v) { return Math.round(v * 100) + "%"; },
         xFormat: function (v) { return "pass " + Math.round(v); },
         pointLabel: function (p) { return "pass " + p.x + ", holdout accuracy " + (p.y * 100).toFixed(1) + "%"; },
