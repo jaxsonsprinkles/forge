@@ -33,6 +33,40 @@ schema.
 Forge itself lives in `core/`. It's normal software and nobody is trying
 to optimize it. The thing being optimized is always `agents/current/`.
 
+## Setup
+
+```
+git clone https://github.com/jaxsonsprinkles/forge.git
+cd forge
+pip install -r requirements.txt
+```
+
+Needs Python 3.10–3.13 (see Rough Edges below for why). Nothing that
+actually calls a model will run until you set:
+
+- `ANTHROPIC_API_KEY` — required. `core/llm.py` reads it straight out of
+  `os.environ` when it builds the provider client, and every model call
+  in this repo goes through `core/llm.py` (that's a hard rule, not just
+  the common path — see `AGENTS.md`). No key, no `llm_call` steps,
+  no `evals/run_eval.py`, no `evals/learning_curve.py`.
+- `NEATLOGS_API_KEY` — optional. It's only for tracing. `core/runner.py`
+  checks for it, logs a warning, and degrades to `trace_id=None` if it's
+  missing — a run works fine without it, you just don't get spans.
+
+Confirm the install actually works before spending anything: run the test
+suite. It's fully offline — LLM calls in tests are mocked or hit the
+on-disk cache under `ledger/llm_cache/`, so this needs no API key and
+costs nothing real.
+
+```
+python -m pytest
+```
+
+Green from a clean checkout is literally this project's own definition of
+done (`AGENTS.md`). Once that passes and you've exported
+`ANTHROPIC_API_KEY`, you're ready for a real (billed) eval run — see
+"Running an eval" below.
+
 ## The five-file agent contract
 
 `agents/current/` is exactly five plain files, one per mutation surface.
