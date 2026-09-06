@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import os
 from dataclasses import dataclass
 from pathlib import Path
@@ -21,6 +22,8 @@ from typing import Any
 
 import anthropic
 
+logger = logging.getLogger(__name__)
+
 DEFAULT_CACHE_DIR = Path(os.environ.get("FORGE_LLM_CACHE_DIR", "ledger/llm_cache"))
 
 # USD per million tokens, as (input_rate, output_rate).
@@ -28,6 +31,7 @@ PRICING_PER_MTOK: dict[str, tuple[float, float]] = {
     "claude-opus-5": (5.00, 25.00),
     "claude-sonnet-5": (2.00, 10.00),
     "claude-haiku-4-5": (1.00, 5.00),
+    "claude-sonnet-4-6": (3.00, 15.00),
 }
 
 # Assumed output size when estimating cost *before* a call is made, since
@@ -91,8 +95,18 @@ def estimate_cost_usd(model: str, input_tokens: int, output_tokens: int) -> floa
     """Estimate the dollar cost of a call from its token counts.
 
     Unknown models are priced at $0 rather than raising, since cost
-    estimation should never be the reason a call fails.
+    estimation should never be the reason a call fails (e.g. a test
+    fixture may legitimately call this with a made-up model name). A
+    warning is logged instead, so a real model missing from
+    PRICING_PER_MTOK - like a new DEFAULT_MODEL added without updating
+    this table - is loud rather than silently under-billed.
     """
+    if model not in PRICING_PER_MTOK:
+        logger.warning(
+            "no pricing entry for model %r; treating as $0/Mtok. If this is a "
+            "real model, add it to core.llm.PRICING_PER_MTOK.",
+            model,
+        )
     input_rate, output_rate = PRICING_PER_MTOK.get(model, (0.0, 0.0))
     return (input_tokens * input_rate + output_tokens * output_rate) / 1_000_000
 
