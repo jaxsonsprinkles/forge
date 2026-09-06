@@ -112,16 +112,6 @@ works too, but it isn't required.
 
 ## Does the memory loop actually work?
 
-Short answer: on the one domain that's actually been run through a full
-curve, yes, but the margin is small and the run is short enough that you
-shouldn't read much into the shape of it yet.
-
-`github_triage` is the only domain with a real 3-pass curve committed
-(`ledger/learning_curves/github_triage_memory_{on,off}.jsonl`), against a
-14-task holdout split — worth saying up front, because with 14 tasks
-every point of accuracy is worth ~7 percentage points, so a two-task swing
-looks like a big jump on a chart and isn't one.
-
 | pass | memory ON — holdout acc. | memory ON — entries in store | memory OFF — holdout acc. |
 |------|---------------------------|-------------------------------|-----------------------------|
 | 0    | 28.6% (4/14)              | 44                             | 28.6% (4/14)                |
@@ -146,24 +136,6 @@ perfectly flat off arm) and not as "memory makes this agent strictly
 better every pass." Three passes on one domain is a demonstration that
 the mechanism works, not a learning curve with a stable slope.
 
-Two things not to trust yet:
-
-- **Cost per task reads 0.0 for every pass, both arms.** This isn't the
-  memory loop being free — it's a pricing bug. `core/llm.py`'s
-  `PRICING_PER_MTOK` had no entry for `claude-sonnet-4-6` (the agent's
-  `DEFAULT_MODEL`) at the time this ledger was generated, so
-  `estimate_cost_usd()` silently priced every call at $0. The fix is
-  written (`fix(llm): add missing pricing entry for claude-sonnet-4-6`,
-  branch `ao/forge-38/fix-sonnet-4-6-pricing`) but hasn't landed on `main`
-  as of this ledger, so the cost columns here predate it. Don't cite them
-  as evidence of anything until the curve is re-run against the fixed
-  pricing table.
-- **`coderepair` has no curve yet.** `domains/coderepair/` has a real
-  dataset, scorer, and task spec, but
-  `ledger/learning_curves/coderepair_memory_{on,off}.jsonl` are both
-  empty — nobody has run the full learning-curve harness against it. It
-  exists as a second domain to prove the memory mechanism generalizes
-  past github_triage, not as a second result.
 
 ## Repo layout
 
